@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/nocturne-2e02886b-1e44-4a41-b221-80854cfe6292/styles.css">
+  <script src="_ds/nocturne-2e02886b-1e44-4a41-b221-80854cfe6292/_ds_bundle.js"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+  <style>
+    body{margin:0;background:#0c0d15;font-family:var(--font-body);color:var(--color-text);-webkit-font-smoothing:antialiased}
+    i.ph,i.ph-bold,i.ph-fill,i.ph-duotone{line-height:1;display:inline-block}
+    .mscroll{overflow-y:auto;scrollbar-width:none}
+    .mscroll::-webkit-scrollbar{display:none}
+    a{color:var(--color-accent)}a:hover{color:var(--color-accent-300)}
+    @keyframes mPulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.09);opacity:1}}
+    @keyframes mSpin{to{transform:rotate(360deg)}}
+    @keyframes mDots{0%,80%,100%{opacity:.25}40%{opacity:1}}
+    @keyframes mRise{from{transform:scaleY(.15);opacity:0}to{transform:scaleY(1);opacity:1}}
+    @keyframes mRing{from{stroke-dashoffset:339}to{stroke-dashoffset:0}}
+    @keyframes mFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:20px;padding:28px 16px 48px;background:radial-gradient(1200px 700px at 50% -10%, #17192a 0%, #0c0d15 60%)">
+
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center">
+    <span style="font-family:var(--font-heading);font-weight:600;font-size:15px;letter-spacing:.02em;display:flex;align-items:center;gap:8px"><i class="ph-fill ph-barbell" style="color:var(--color-accent);font-size:20px"></i>Musculator</span>
+    <span style="width:1px;height:18px;background:var(--color-divider)"></span>
+    <div style="display:inline-flex;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden;font-size:12px">
+      <button onClick="{{ setIos }}" style="padding:6px 12px;background:{{ iosBg }};color:{{ iosFg }};border:0;cursor:pointer;font:inherit;display:flex;align-items:center;gap:6px"><i class="ph ph-apple-logo"></i>iOS</button>
+      <button onClick="{{ setAndroid }}" style="padding:6px 12px;background:{{ andBg }};color:{{ andFg }};border:0;border-left:1px solid var(--color-divider);cursor:pointer;font:inherit;display:flex;align-items:center;gap:6px"><i class="ph ph-android-logo"></i>Android</button>
+    </div>
+    <button onClick="{{ toggleOnline }}" title="Mode hors-ligne" style="padding:6px 12px;background:transparent;color:{{ onlineFg }};border:1px solid var(--color-divider);border-radius:var(--radius-md);cursor:pointer;font:inherit;font-size:12px;display:flex;align-items:center;gap:6px"><i class="ph {{ onlineIcon }}"></i>{{ onlineLabel }}</button>
+  </div>
+
+  <div style="position:relative;width:392px;height:840px;border-radius:52px;background:#000;padding:11px;box-shadow:0 0 0 2px #262838, 0 40px 90px -20px rgba(0,0,0,.9);flex:none">
+    <div style="position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;background:var(--color-bg)">
+
+      <!-- status bar -->
+      <div style="position:absolute;top:0;left:0;right:0;height:52px;z-index:60;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px 8px;font-size:14px;font-weight:600;pointer-events:none">
+        <span>9:41</span>
+        <span style="display:flex;align-items:center;gap:6px;font-size:15px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph {{ wifiIcon }}"></i><i class="ph-fill ph-battery-high"></i></span>
+      </div>
+      <sc-if value="{{ isIos }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:118px;height:32px;background:#000;border-radius:20px;z-index:61"></div>
+      </sc-if>
+      <sc-if value="{{ isAndroid }}">
+        <div style="position:absolute;top:13px;left:50%;transform:translateX(-50%);width:11px;height:11px;background:#000;border-radius:50%;z-index:61"></div>
+      </sc-if>
+
+      <!-- ===================== HOME ===================== -->
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <div class="mscroll" style="position:absolute;inset:0;padding:64px 18px 92px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px">
+          <div>
+            <div style="font-size:12px;color:var(--color-neutral-400)">{{ greeting }}</div>
+            <h3 style="margin:2px 0 0">Prêt à forger ? 💪</h3>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="display:flex;align-items:center;gap:6px;background:var(--color-accent-900);border:1px solid var(--color-accent-800);color:var(--color-accent-200);padding:6px 11px;border-radius:999px;font-size:13px;font-weight:600"><i class="ph-fill ph-fire" style="color:#f0a35e"></i>{{ streak }}</div>
+            <button onClick="{{ openProfile }}" title="Profil & objectifs" style="width:36px;height:36px;flex:none;border-radius:50%;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-200);cursor:pointer;display:grid;place-items:center"><i class="ph ph-gear-six" style="font-size:19px"></i></button>
+          </div>
+        </div>
+
+        <!-- progression du jour -->
+        <div style="background:linear-gradient(135deg,var(--color-accent-900),var(--color-surface));border:1px solid var(--color-accent-800);border-radius:var(--radius-lg);padding:16px;margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-200)">Progression du jour</span>
+            <span style="font-size:12px;color:var(--color-neutral-300)">{{ weekCount }} / 4 séances</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:14px">
+            <span style="flex:1;height:6px;border-radius:3px;background:var(--color-accent)"></span>
+            <span style="flex:1;height:6px;border-radius:3px;background:var(--color-accent)"></span>
+            <span style="flex:1;height:6px;border-radius:3px;background:var(--color-accent)"></span>
+            <span style="flex:1;height:6px;border-radius:3px;background:var(--color-neutral-800)"></span>
+          </div>
+          <div style="display:flex;gap:20px">
+            <div><div style="font-size:22px;font-weight:600;font-family:var(--font-heading)">{{ totalTimeShort }}</div><div style="font-size:11px;color:var(--color-neutral-400)">cette semaine</div></div>
+            <div><div style="font-size:22px;font-weight:600;font-family:var(--font-heading)">{{ weekKcal }}</div><div style="font-size:11px;color:var(--color-neutral-400)">kcal estimées</div></div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <button onClick="{{ startToday }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;margin-bottom:8px;font-family:var(--font-heading);font-weight:600;font-size:16px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-lg);cursor:pointer;box-shadow:0 0 24px -4px color-mix(in srgb, var(--color-accent) 55%, transparent)"><i class="ph-fill ph-play-circle" style="font-size:22px"></i>Commencer une séance</button>
+        <div style="font-size:11px;color:var(--color-neutral-500);text-align:center;margin-bottom:16px">{{ todayName }} · {{ todayMeta }}</div>
+
+        <div onClick="{{ openBodyMap }}" style="display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;margin-bottom:20px;cursor:pointer">
+          <div style="width:42px;height:42px;flex:none;border-radius:var(--radius-md);background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200)"><i class="ph-fill ph-person" style="font-size:24px"></i></div>
+          <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">Cartographie musculaire</div><div style="font-size:11px;color:var(--color-neutral-400)">Vois quels muscles sont prêts à travailler</div></div>
+          <i class="ph ph-caret-right" style="color:var(--color-neutral-500)"></i>
+        </div>
+
+        <!-- conseils rapides -->
+        <div style="display:flex;gap:8px;overflow-x:auto;margin:0 -18px 22px;padding:0 18px" class="mscroll">
+          <div style="flex:none;width:132px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px"><i class="ph ph-thermometer-hot" style="color:var(--color-accent);font-size:20px"></i><div style="font-size:13px;font-weight:600;margin-top:6px">Échauffe-toi</div><div style="font-size:11px;color:var(--color-neutral-400)">5 min avant chaque séance</div></div>
+          <div style="flex:none;width:132px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px"><i class="ph ph-drop" style="color:var(--color-accent);font-size:20px"></i><div style="font-size:13px;font-weight:600;margin-top:6px">Hydrate-toi</div><div style="font-size:11px;color:var(--color-neutral-400)">Bois avant, pendant, après</div></div>
+          <div style="flex:none;width:132px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px"><i class="ph ph-moon-stars" style="color:var(--color-accent);font-size:20px"></i><div style="font-size:13px;font-weight:600;margin-top:6px">Repose-toi</div><div style="font-size:11px;color:var(--color-neutral-400)">Le muscle pousse au repos</div></div>
+          <div style="flex:none;width:132px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px"><i class="ph ph-trend-up" style="color:var(--color-accent);font-size:20px"></i><div style="font-size:13px;font-weight:600;margin-top:6px">Progresse</div><div style="font-size:11px;color:var(--color-neutral-400)">Augmente peu à peu</div></div>
+        </div>
+
+        <!-- programmes recommandés -->
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px">
+          <h5 style="margin:0">Programmes recommandés</h5>
+          <span onClick="{{ goPrograms }}" style="font-size:12px;color:var(--color-accent);cursor:pointer">Tout voir</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ recommended }}" as="p" hint-placeholder-count="3">
+            <div onClick="{{ p.onOpen }}" style="display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px;cursor:pointer">
+              <div style="width:42px;height:42px;flex:none;border-radius:var(--radius-md);background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200)"><i class="ph {{ p.icon }}" style="font-size:22px"></i></div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:14px;font-weight:600">{{ p.nom }}</div>
+                <div style="font-size:11px;color:var(--color-neutral-400)">{{ p.meta }}</div>
+              </div>
+              <i class="ph ph-caret-right" style="color:var(--color-neutral-500)"></i>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- avertissement médical -->
+        <div style="display:flex;gap:10px;margin-top:20px;background:color-mix(in srgb,#f0a35e 10%,transparent);border:1px solid color-mix(in srgb,#f0a35e 32%,transparent);border-radius:var(--radius-md);padding:12px">
+          <i class="ph-fill ph-warning-circle" style="color:#f0a35e;font-size:20px;flex:none"></i>
+          <div style="font-size:11px;line-height:1.5;color:var(--color-neutral-300)">Avant tout programme, consulte un professionnel de santé — surtout en cas de problème de santé, blessure ou douleur. <span onClick="{{ showDisclaimer }}" style="color:var(--color-accent);cursor:pointer">En savoir plus</span></div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== PROGRAMMES ===================== -->
+      <sc-if value="{{ isPrograms }}">
+      <div class="mscroll" style="position:absolute;inset:0;padding:60px 18px 92px">
+        <h3 style="margin:0 0 4px">Programmes</h3>
+        <p style="font-size:12px;color:var(--color-neutral-400);margin:0 0 14px">Choisis selon ton objectif, ton niveau et ton temps.</p>
+
+        <button onClick="{{ openBuilder }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;margin-bottom:18px;font-family:var(--font-heading);font-weight:600;font-size:14px;color:var(--color-accent-100);background:transparent;border:1px dashed var(--color-accent);border-radius:var(--radius-md);cursor:pointer"><i class="ph ph-plus-circle" style="font-size:18px"></i>Créer une séance</button>
+
+        <sc-if value="{{ hasMyWorkouts }}">
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:8px">Mes séances</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+          <sc-for list="{{ myWorkouts }}" as="p" hint-placeholder-count="1">
+            <div onClick="{{ p.onOpen }}" style="display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid var(--color-accent-800);border-radius:var(--radius-md);padding:12px;cursor:pointer">
+              <div style="width:42px;height:42px;flex:none;border-radius:var(--radius-md);background:var(--color-accent-800);display:grid;place-items:center;color:var(--color-accent-100)"><i class="ph {{ p.icon }}" style="font-size:22px"></i></div>
+              <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">{{ p.nom }}</div><div style="font-size:11px;color:var(--color-neutral-400)">{{ p.exCount }} exercices · {{ p.dureeLabel }}</div></div>
+              <span class="tag tag-outline">Perso</span>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:7px">Durée</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px">
+          <sc-for list="{{ durOpts }}" as="o" hint-placeholder-count="5">
+            <button onClick="{{ o.onClick }}" style="padding:6px 13px;border-radius:999px;font:inherit;font-size:12px;cursor:pointer;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:7px">Niveau</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px">
+          <sc-for list="{{ levelOpts }}" as="o" hint-placeholder-count="4">
+            <button onClick="{{ o.onClick }}" style="padding:6px 13px;border-radius:999px;font:inherit;font-size:12px;cursor:pointer;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:7px">Matériel & lieu</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px">
+          <sc-for list="{{ equipOpts }}" as="o" hint-placeholder-count="6">
+            <button onClick="{{ o.onClick }}" style="padding:6px 13px;border-radius:999px;font:inherit;font-size:12px;cursor:pointer;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+
+        <div style="font-size:11px;color:var(--color-neutral-500);margin-bottom:10px">{{ progCountLabel }}</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ programsFiltered }}" as="p" hint-placeholder-count="4">
+            <div onClick="{{ p.onOpen }}" style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:14px;cursor:pointer">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+                <div style="width:44px;height:44px;flex:none;border-radius:var(--radius-md);background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200)"><i class="ph {{ p.icon }}" style="font-size:24px"></i></div>
+                <div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600">{{ p.nom }}</div><div style="font-size:11px;color:var(--color-neutral-400)">{{ p.exCount }} exercices · {{ p.obj }}</div></div>
+                <i class="ph ph-caret-right" style="color:var(--color-neutral-500)"></i>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <span class="tag tag-accent"><i class="ph ph-clock" style="margin-right:4px"></i>{{ p.dureeLabel }}</span>
+                <span class="tag tag-neutral">{{ p.niveau }}</span>
+                <span class="tag tag-outline">{{ p.lieu }}</span>
+              </div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noPrograms }}">
+            <div style="text-align:center;color:var(--color-neutral-500);font-size:13px;padding:30px 0"><i class="ph ph-magnifying-glass" style="font-size:26px;display:block;margin-bottom:8px"></i>Aucun programme avec ces filtres.</div>
+          </sc-if>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== BIBLIOTHÈQUE D'EXERCICES ===================== -->
+      <sc-if value="{{ isLibrary }}">
+      <div class="mscroll" style="position:absolute;inset:0;padding:60px 18px 92px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <h3 style="margin:0">Bibliothèque</h3>
+          <button onClick="{{ openBodyMap }}" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:var(--radius-md);border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-200);cursor:pointer;font:inherit;font-size:12px"><i class="ph ph-person"></i>Vue corps</button>
+        </div>
+        <p style="font-size:12px;color:var(--color-neutral-400);margin:0 0 14px">{{ libCount }} exercices détaillés — technique, erreurs, variantes.</p>
+
+        <div style="position:relative;margin-bottom:14px">
+          <i class="ph ph-magnifying-glass" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--color-neutral-500)"></i>
+          <input class="input" value="{{ libSearch }}" onChange="{{ onLibSearch }}" placeholder="Rechercher un exercice ou un muscle…" style="padding-left:34px"/>
+        </div>
+
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:7px">Niveau</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px">
+          <sc-for list="{{ libLevelOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.onClick }}" style="padding:6px 13px;border-radius:999px;font:inherit;font-size:12px;cursor:pointer;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button></sc-for>
+        </div>
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:7px">Matériel</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px">
+          <sc-for list="{{ libMatOpts }}" as="o" hint-placeholder-count="6"><button onClick="{{ o.onClick }}" style="padding:6px 13px;border-radius:999px;font:inherit;font-size:12px;cursor:pointer;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button></sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ libList }}" as="e" hint-placeholder-count="6">
+            <div onClick="{{ e.onOpen }}" style="display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px;cursor:pointer">
+              <div style="width:48px;height:48px;flex:none;border-radius:var(--radius-md);background:radial-gradient(120% 120% at 30% 20%,var(--color-accent-800),var(--color-neutral-900));display:grid;place-items:center;color:var(--color-accent-100)"><i class="ph-fill {{ e.icon }}" style="font-size:26px"></i></div>
+              <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">{{ e.nom }}</div><div style="font-size:11px;color:var(--color-neutral-400)">{{ e.muscle }}</div><div style="font-size:10px;color:var(--color-neutral-500);margin-top:2px">{{ e.niveau }} · {{ e.matLabel }}</div></div>
+              <i class="ph ph-caret-right" style="color:var(--color-neutral-500)"></i>
+            </div>
+          </sc-for>
+          <sc-if value="{{ libEmpty }}"><div style="text-align:center;color:var(--color-neutral-500);font-size:13px;padding:30px 0"><i class="ph ph-magnifying-glass" style="font-size:26px;display:block;margin-bottom:8px"></i>Aucun exercice trouvé.</div></sc-if>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== JOURNAL + ANALYSE IA ===================== -->
+      <sc-if value="{{ isJournal }}">
+      <div class="mscroll" style="position:absolute;inset:0;padding:60px 18px 92px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2px">
+          <h3 style="margin:0">Journal du jour</h3>
+          <span style="font-size:11px;color:var(--color-neutral-500);text-transform:capitalize;text-align:right;max-width:120px">{{ dayDate }}</span>
+        </div>
+        <p style="font-size:12px;color:var(--color-neutral-400);margin:0 0 14px">Récap de tes séances, puis lance l'analyse IA.</p>
+
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <div style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px 6px;text-align:center"><div style="font-size:18px;font-weight:600;font-family:var(--font-heading)">{{ dayTimeLabel }}</div><div style="font-size:10px;color:var(--color-neutral-400)">temps</div></div>
+          <div style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px 6px;text-align:center"><div style="font-size:18px;font-weight:600;font-family:var(--font-heading)">{{ dayKcal }}</div><div style="font-size:10px;color:var(--color-neutral-400)">kcal</div></div>
+          <div style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px 6px;text-align:center"><div style="font-size:18px;font-weight:600;font-family:var(--font-heading)">{{ daySeries }}</div><div style="font-size:10px;color:var(--color-neutral-400)">séries</div></div>
+        </div>
+
+        <button onClick="{{ runAnalysis }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:15px;margin-bottom:8px;font-family:var(--font-heading);font-weight:600;font-size:15px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-lg);cursor:pointer;box-shadow:0 0 24px -4px color-mix(in srgb, var(--color-accent) 55%, transparent)">
+          <sc-if value="{{ analysisIdle }}" hint-placeholder-val="{{ true }}"><i class="ph-fill ph-sparkle" style="font-size:20px"></i>Analyse IA de ma journée</sc-if>
+          <sc-if value="{{ analysisLoading }}"><i class="ph ph-circle-notch" style="font-size:19px;animation:mSpin .9s linear infinite"></i>Analyse en cours…</sc-if>
+        </button>
+        <sc-if value="{{ hasAnalysisError }}"><div style="font-size:12px;color:#f0a35e;text-align:center;margin-bottom:10px">{{ analysisError }}</div></sc-if>
+
+        <sc-if value="{{ analysisReady }}">
+        <div style="margin:6px 0 18px;animation:mFade .35s ease">
+          <div style="background:linear-gradient(135deg,var(--color-accent-900),var(--color-surface));border:1px solid var(--color-accent-800);border-radius:var(--radius-lg);padding:14px;margin-bottom:11px">
+            <div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-200);margin-bottom:6px;display:flex;align-items:center;gap:5px"><i class="ph-fill ph-sparkle"></i>Analyse IA</div>
+            <div style="font-size:13px;line-height:1.55;color:var(--color-neutral-100)">{{ anResume }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:11px">
+            <div style="display:flex;gap:11px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px"><i class="ph-fill ph-flame" style="color:#f0a35e;font-size:22px;flex:none"></i><div><div style="font-size:12px;font-weight:600;margin-bottom:1px">Énergie dépensée</div><div style="font-size:12px;color:var(--color-neutral-300);line-height:1.5">{{ anEnergie }}</div></div></div>
+            <div style="display:flex;gap:11px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px"><i class="ph-fill ph-barbell" style="color:var(--color-accent-200);font-size:22px;flex:none"></i><div><div style="font-size:12px;font-weight:600;margin-bottom:1px">Tonus musculaire</div><div style="font-size:12px;color:var(--color-neutral-300);line-height:1.5">{{ anTonus }}</div></div></div>
+          </div>
+          <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:13px;margin-bottom:14px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;font-weight:600">Progression vers l'objectif</span><span style="font-size:16px;font-weight:600;font-family:var(--font-heading);color:var(--color-accent-200)">{{ anProgression }}</span></div>
+            <div style="height:8px;background:var(--color-neutral-800);border-radius:4px;overflow:hidden;margin-bottom:8px"><div style="height:100%;width:{{ anProgression }};background:var(--color-accent);border-radius:4px;transition:width .5s ease"></div></div>
+            <div style="font-size:11px;color:var(--color-neutral-400);line-height:1.5">{{ anProgressionTexte }}</div>
+          </div>
+          <h6 style="color:var(--color-neutral-400);margin-bottom:8px">À faire pour ton objectif</h6>
+          <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px">
+            <sc-for list="{{ anAFaire }}" as="a" hint-placeholder-count="3">
+              <div style="display:flex;gap:9px;font-size:12px;line-height:1.5;color:var(--color-neutral-200)"><i class="ph-fill ph-arrow-circle-right" style="color:var(--color-accent-200);flex:none;margin-top:1px"></i><span>{{ a }}</span></div>
+            </sc-for>
+          </div>
+          <h6 style="color:var(--color-neutral-400);margin-bottom:8px">À améliorer</h6>
+          <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px">
+            <sc-for list="{{ anAmeliorer }}" as="a" hint-placeholder-count="2">
+              <div style="display:flex;gap:9px;font-size:12px;line-height:1.5;color:var(--color-neutral-200)"><i class="ph-fill ph-wrench" style="color:#f0a35e;flex:none;margin-top:1px"></i><span>{{ a }}</span></div>
+            </sc-for>
+          </div>
+          <div style="font-size:10px;color:var(--color-neutral-500);line-height:1.5;font-style:italic">Estimation générée par IA à partir de tes données — indicative, ne remplace pas l'avis d'un professionnel de santé.</div>
+        </div>
+        </sc-if>
+
+        <div style="display:flex;align-items:baseline;justify-content:space-between;margin:4px 0 10px">
+          <h6 style="color:var(--color-neutral-400);margin:0">Séances d'aujourd'hui · {{ dayCount }}</h6>
+        </div>
+        <sc-if value="{{ journalEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="text-align:center;color:var(--color-neutral-500);font-size:13px;padding:24px 10px;background:var(--color-surface);border:1px dashed var(--color-divider);border-radius:var(--radius-md)"><i class="ph ph-moon" style="font-size:24px;display:block;margin-bottom:8px"></i>Aucune séance encore aujourd'hui.<br/>Lance-toi depuis l'accueil !</div>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ journal }}" as="j" hint-placeholder-count="1">
+            <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:13px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                <div style="font-size:14px;font-weight:600">{{ j.nom }}</div>
+                <span style="font-size:11px;color:var(--color-neutral-500)">{{ j.heure }}</span>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px"><span class="tag tag-neutral"><i class="ph ph-clock" style="margin-right:4px"></i>{{ j.dureeLabel }}</span><span class="tag tag-neutral"><i class="ph ph-flame" style="margin-right:4px"></i>{{ j.kcal }} kcal</span><span class="tag tag-neutral">{{ j.series }} séries</span></div>
+              <div style="font-size:11px;color:var(--color-neutral-400);line-height:1.5">{{ j.exosLabel }}</div>
+              <div style="font-size:11px;color:var(--color-accent-300);margin-top:4px">Muscles : {{ j.musclesLabel }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== CRÉATION DE SÉANCE ===================== -->
+      <sc-if value="{{ showBuilder }}">
+      <div class="mscroll" style="position:absolute;inset:0;z-index:57;background:var(--color-bg);padding:52px 0 96px">
+        <div style="padding:8px 16px 0"><button onClick="{{ closeOverlay }}" class="btn btn-secondary" style="gap:6px"><i class="ph ph-arrow-left"></i>Retour</button></div>
+        <div style="padding:14px 18px 0">
+          <h3 style="margin:0 0 4px">Créer une séance</h3>
+          <p style="font-size:12px;color:var(--color-neutral-400);margin:0 0 16px">Compose ta séance : exercices, séries, répétitions, charge, repos et ordre.</p>
+
+          <div class="field" style="margin-bottom:14px"><label>Nom de la séance</label><input class="input" value="{{ bName }}" onChange="{{ onBName }}" placeholder="ex. Haut du corps"/></div>
+          <div style="display:flex;gap:10px;margin-bottom:14px">
+            <div class="field" style="flex:1"><label>Durée cible (min)</label><input class="input" type="number" value="{{ bDuree }}" onChange="{{ onBDuree }}"/></div>
+          </div>
+          <div class="field" style="margin-bottom:6px"><label>Objectif</label></div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px">
+            <sc-for list="{{ bObjOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.onClick }}" style="padding:8px 14px;border-radius:999px;font:inherit;font-size:12px;cursor:pointer;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button></sc-for>
+          </div>
+
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px"><h6 style="color:var(--color-neutral-400);margin:0">Exercices</h6><span style="font-size:11px;color:var(--color-neutral-500)">{{ bCount }}</span></div>
+          <sc-if value="{{ bEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="text-align:center;color:var(--color-neutral-500);font-size:13px;padding:22px 10px;background:var(--color-surface);border:1px dashed var(--color-divider);border-radius:var(--radius-md);margin-bottom:12px"><i class="ph ph-barbell" style="font-size:24px;display:block;margin-bottom:8px"></i>Ajoute ton premier exercice.</div>
+          </sc-if>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px">
+            <sc-for list="{{ bExos }}" as="e" hint-placeholder-count="0">
+              <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:12px">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                  <div style="width:30px;height:30px;flex:none;border-radius:8px;background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200);font-size:13px;font-weight:600">{{ e.num }}</div>
+                  <div style="flex:1;min-width:0;font-size:14px;font-weight:600">{{ e.nom }}</div>
+                  <button onClick="{{ e.up }}" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-300);cursor:pointer;display:grid;place-items:center"><i class="ph ph-caret-up"></i></button>
+                  <button onClick="{{ e.down }}" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-300);cursor:pointer;display:grid;place-items:center"><i class="ph ph-caret-down"></i></button>
+                  <button onClick="{{ e.remove }}" style="width:28px;height:28px;border-radius:7px;border:1px solid var(--color-divider);background:transparent;color:#f0a35e;cursor:pointer;display:grid;place-items:center"><i class="ph ph-trash"></i></button>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <div class="field" style="flex:1"><label>Séries</label><input class="input" type="number" value="{{ e.series }}" onChange="{{ e.onSeries }}" style="text-align:center"/></div>
+                  <div class="field" style="flex:1"><label>Reps</label><input class="input" value="{{ e.reps }}" onChange="{{ e.onReps }}" style="text-align:center"/></div>
+                  <div class="field" style="flex:1"><label>Repos (s)</label><input class="input" type="number" value="{{ e.repos }}" onChange="{{ e.onRepos }}" style="text-align:center"/></div>
+                </div>
+                <div class="field" style="margin-top:8px"><label>Charge</label><input class="input" value="{{ e.charge }}" onChange="{{ e.onCharge }}" placeholder="ex. 20 kg, poids du corps, élastique"/></div>
+              </div>
+            </sc-for>
+          </div>
+          <button onClick="{{ openBPicker }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;font-family:var(--font-heading);font-weight:600;font-size:14px;color:var(--color-accent-100);background:transparent;border:1px dashed var(--color-accent);border-radius:var(--radius-md);cursor:pointer"><i class="ph ph-plus-circle" style="font-size:18px"></i>Ajouter un exercice</button>
+        </div>
+
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 18px 26px;background:linear-gradient(transparent,var(--color-bg) 30%)">
+          <button onClick="{{ saveWorkout }}" disabled="{{ bEmpty }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:15px;font-family:var(--font-heading);font-weight:600;font-size:16px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-lg);cursor:pointer"><i class="ph ph-floppy-disk" style="font-size:20px"></i>Enregistrer la séance</button>
+        </div>
+
+        <sc-if value="{{ bPicker }}">
+        <div class="mscroll" style="position:absolute;inset:0;z-index:60;background:var(--color-bg);padding:52px 0 30px">
+          <div style="padding:8px 16px 0"><button onClick="{{ closeBPicker }}" class="btn btn-secondary" style="gap:6px"><i class="ph ph-x"></i>Fermer</button></div>
+          <div style="padding:14px 18px 0">
+            <h4 style="margin:0 0 12px">Choisir un exercice</h4>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <sc-for list="{{ bPickList }}" as="e" hint-placeholder-count="6">
+                <div onClick="{{ e.onAdd }}" style="display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px;cursor:pointer">
+                  <div style="width:40px;height:40px;flex:none;border-radius:8px;background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200)"><i class="ph-fill {{ e.icon }}" style="font-size:22px"></i></div>
+                  <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">{{ e.nom }}</div><div style="font-size:11px;color:var(--color-neutral-400)">{{ e.muscle }}</div></div>
+                  <i class="ph ph-plus" style="color:var(--color-accent-200)"></i>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <!-- ===================== CARTOGRAPHIE MUSCULAIRE ===================== -->
+      <sc-if value="{{ showBodyMap }}">
+      <div class="mscroll" style="position:absolute;inset:0;z-index:56;background:var(--color-bg);padding:52px 0 30px">
+        <div style="padding:8px 16px 0"><button onClick="{{ closeOverlay }}" class="btn btn-secondary" style="gap:6px"><i class="ph ph-arrow-left"></i>Retour</button></div>
+        <div style="padding:14px 18px 0">
+          <h3 style="margin:0 0 4px">Cartographie musculaire</h3>
+          <p style="font-size:12px;color:var(--color-neutral-400);margin:0 0 14px">Touche un muscle pour voir sa sollicitation, sa récupération et les exercices qui le ciblent.</p>
+
+          <div style="display:flex;justify-content:center;margin-bottom:12px">
+            <div style="display:inline-flex;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden;font-size:13px">
+              <button onClick="{{ setFront }}" style="padding:7px 18px;border:0;cursor:pointer;font:inherit;background:{{ frontBg }};color:{{ frontFg }}">Avant</button>
+              <button onClick="{{ setBack }}" style="padding:7px 18px;border:0;border-left:1px solid var(--color-divider);cursor:pointer;font:inherit;background:{{ backBg }};color:{{ backFg }}">Arrière</button>
+            </div>
+          </div>
+
+          <div style="background:radial-gradient(120% 90% at 50% 10%,var(--color-surface),var(--color-bg));border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:12px 0 6px;margin-bottom:12px">
+            <sc-if value="{{ bodyFront }}" hint-placeholder-val="{{ true }}">
+            <svg viewBox="0 0 200 360" style="width:180px;display:block;margin:0 auto">
+              <g fill="var(--color-neutral-800)">
+                <circle cx="100" cy="30" r="17"/><rect x="72" y="50" width="56" height="92" rx="16"/><rect x="74" y="138" width="52" height="26" rx="12"/>
+                <rect x="50" y="56" width="16" height="80" rx="8"/><rect x="134" y="56" width="16" height="80" rx="8"/>
+                <rect x="77" y="164" width="19" height="150" rx="9"/><rect x="104" y="164" width="19" height="150" rx="9"/>
+              </g>
+              <g stroke-width="2.5">
+                <rect onClick="{{ mc.epaules.onClick }}" x="60" y="52" width="80" height="15" rx="7" fill="{{ mc.epaules.fill }}" stroke="{{ mc.epaules.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.pecs.onClick }}" x="74" y="65" width="52" height="24" rx="9" fill="{{ mc.pecs.fill }}" stroke="{{ mc.pecs.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.biceps.onClick }}" x="50" y="70" width="16" height="30" rx="8" fill="{{ mc.biceps.fill }}" stroke="{{ mc.biceps.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.biceps.onClick }}" x="134" y="70" width="16" height="30" rx="8" fill="{{ mc.biceps.fill }}" stroke="{{ mc.biceps.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.abdos.onClick }}" x="80" y="93" width="40" height="44" rx="9" fill="{{ mc.abdos.fill }}" stroke="{{ mc.abdos.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.quads.onClick }}" x="77" y="168" width="19" height="72" rx="9" fill="{{ mc.quads.fill }}" stroke="{{ mc.quads.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.quads.onClick }}" x="104" y="168" width="19" height="72" rx="9" fill="{{ mc.quads.fill }}" stroke="{{ mc.quads.stroke }}" style="cursor:pointer"/>
+              </g>
+            </svg>
+            </sc-if>
+            <sc-if value="{{ bodyBack }}">
+            <svg viewBox="0 0 200 360" style="width:180px;display:block;margin:0 auto">
+              <g fill="var(--color-neutral-800)">
+                <circle cx="100" cy="30" r="17"/><rect x="72" y="50" width="56" height="92" rx="16"/><rect x="74" y="138" width="52" height="26" rx="12"/>
+                <rect x="50" y="56" width="16" height="80" rx="8"/><rect x="134" y="56" width="16" height="80" rx="8"/>
+                <rect x="77" y="164" width="19" height="150" rx="9"/><rect x="104" y="164" width="19" height="150" rx="9"/>
+              </g>
+              <g stroke-width="2.5">
+                <rect onClick="{{ mc.trapezes.onClick }}" x="80" y="52" width="40" height="18" rx="8" fill="{{ mc.trapezes.fill }}" stroke="{{ mc.trapezes.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.dos.onClick }}" x="76" y="72" width="48" height="42" rx="9" fill="{{ mc.dos.fill }}" stroke="{{ mc.dos.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.triceps.onClick }}" x="50" y="70" width="16" height="30" rx="8" fill="{{ mc.triceps.fill }}" stroke="{{ mc.triceps.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.triceps.onClick }}" x="134" y="70" width="16" height="30" rx="8" fill="{{ mc.triceps.fill }}" stroke="{{ mc.triceps.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.fessiers.onClick }}" x="76" y="140" width="48" height="24" rx="10" fill="{{ mc.fessiers.fill }}" stroke="{{ mc.fessiers.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.ischios.onClick }}" x="77" y="168" width="19" height="56" rx="9" fill="{{ mc.ischios.fill }}" stroke="{{ mc.ischios.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.ischios.onClick }}" x="104" y="168" width="19" height="56" rx="9" fill="{{ mc.ischios.fill }}" stroke="{{ mc.ischios.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.mollets.onClick }}" x="77" y="258" width="19" height="52" rx="9" fill="{{ mc.mollets.fill }}" stroke="{{ mc.mollets.stroke }}" style="cursor:pointer"/>
+                <rect onClick="{{ mc.mollets.onClick }}" x="104" y="258" width="19" height="52" rx="9" fill="{{ mc.mollets.fill }}" stroke="{{ mc.mollets.stroke }}" style="cursor:pointer"/>
+              </g>
+            </svg>
+            </sc-if>
+            <div style="display:flex;justify-content:center;gap:12px;font-size:10px;color:var(--color-neutral-400);padding:4px 8px 2px;flex-wrap:wrap">
+              <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:3px;background:var(--color-accent-500);display:inline-block"></span>Élevée</span>
+              <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:3px;background:var(--color-accent-700);display:inline-block"></span>Modérée</span>
+              <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:3px;background:var(--color-accent-900);display:inline-block"></span>Faible</span>
+            </div>
+          </div>
+
+          <sc-if value="{{ hasMuscle }}" hint-placeholder-val="{{ true }}">
+          <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:15px;animation:mFade .25s ease">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <div style="font-size:17px;font-weight:600;font-family:var(--font-heading)">{{ muscle.nom }}</div>
+              <span style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--color-surface) 100%,transparent);border:1px solid {{ muscle.recColor }};color:{{ muscle.recColor }}">{{ muscle.recLabel }}</span>
+            </div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px"><span style="font-size:12px;color:var(--color-neutral-400)">Niveau de sollicitation</span><span style="font-size:12px;font-weight:600;color:var(--color-accent-200)">{{ muscle.solLabel }}</span></div>
+            <div style="height:8px;background:var(--color-neutral-800);border-radius:4px;overflow:hidden;margin-bottom:14px"><div style="height:100%;width:{{ muscle.loadPct }};background:var(--color-accent);border-radius:4px;transition:width .4s ease"></div></div>
+            <div style="display:flex;gap:8px;margin-bottom:16px">
+              <div style="flex:1;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:10px 12px"><div style="font-size:10px;color:var(--color-neutral-500);display:flex;align-items:center;gap:5px;margin-bottom:3px"><i class="ph ph-clock-counter-clockwise"></i>Dernière séance</div><div style="font-size:13px;font-weight:600">{{ muscle.lastSession }}</div></div>
+              <div style="flex:1;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:10px 12px"><div style="font-size:10px;color:var(--color-neutral-500);display:flex;align-items:center;gap:5px;margin-bottom:3px"><i class="ph ph-calendar-blank"></i>Sollicité</div><div style="font-size:13px;font-weight:600">{{ muscle.daysLabel }}</div></div>
+            </div>
+            <h6 style="color:var(--color-neutral-400);margin-bottom:10px">Exercices ciblant ce muscle</h6>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <sc-for list="{{ muscle.exos }}" as="e" hint-placeholder-count="3">
+                <div onClick="{{ e.onOpen }}" style="display:flex;align-items:center;gap:12px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:10px 12px;cursor:pointer">
+                  <div style="width:34px;height:34px;flex:none;border-radius:8px;background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200)"><i class="ph-fill {{ e.icon }}" style="font-size:18px"></i></div>
+                  <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">{{ e.nom }}</div><div style="font-size:11px;color:var(--color-neutral-400)">{{ e.muscle }}</div></div>
+                  <i class="ph ph-caret-right" style="color:var(--color-neutral-500)"></i>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== PROFIL & OBJECTIFS ===================== -->
+      <sc-if value="{{ showProfile }}">
+      <div class="mscroll" style="position:absolute;inset:0;z-index:56;background:var(--color-bg);padding:52px 0 30px">
+        <div style="padding:8px 16px 0"><button onClick="{{ closeOverlay }}" class="btn btn-secondary" style="gap:6px"><i class="ph ph-arrow-left"></i>Retour</button></div>
+        <div style="padding:14px 18px 0">
+          <h3 style="margin:0 0 4px">Mon profil & objectifs</h3>
+          <p style="font-size:12px;color:var(--color-neutral-400);margin:0 0 18px">Ces données permettent au coach IA d'analyser précisément tes séances.</p>
+
+          <div class="field" style="margin-bottom:14px"><label>Prénom</label><input class="input" value="{{ pName }}" onChange="{{ onPName }}" placeholder="Ton prénom"/></div>
+
+          <div style="display:flex;gap:10px;margin-bottom:14px">
+            <div class="field" style="flex:1"><label>Âge</label><input class="input" type="number" value="{{ pAge }}" onChange="{{ onPAge }}"/></div>
+            <div class="field" style="flex:2"><label>Sexe</label>
+              <div style="display:flex;gap:7px;flex-wrap:wrap">
+                <sc-for list="{{ sexeOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="padding:7px 13px;border-radius:999px;font:inherit;font-size:12px;cursor:pointer;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button></sc-for>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-bottom:14px">
+            <div class="field" style="flex:1"><label>Poids (kg)</label><input class="input" type="number" value="{{ pPoids }}" onChange="{{ onPPoids }}"/></div>
+            <div class="field" style="flex:1"><label>Taille (cm)</label><input class="input" type="number" value="{{ pTaille }}" onChange="{{ onPTaille }}"/></div>
+            <div class="field" style="flex:1"><label>Poids cible</label><input class="input" type="number" value="{{ pPoidsCible }}" onChange="{{ onPPoidsCible }}"/></div>
+          </div>
+
+          <div class="field" style="margin-bottom:6px"><label>Objectif principal</label></div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px">
+            <sc-for list="{{ objOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.onClick }}" style="padding:8px 14px;border-radius:999px;font:inherit;font-size:12px;cursor:pointer;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button></sc-for>
+          </div>
+
+          <div class="field" style="margin-bottom:6px"><label>Zones musculaires prioritaires</label></div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px">
+            <sc-for list="{{ zoneChips }}" as="o" hint-placeholder-count="6"><button onClick="{{ o.onClick }}" style="padding:7px 13px;border-radius:999px;font:inherit;font-size:12px;cursor:pointer;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button></sc-for>
+          </div>
+
+          <div class="field" style="margin-bottom:6px"><label>Niveau d'expérience</label></div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px">
+            <sc-for list="{{ expOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.onClick }}" style="padding:7px 13px;border-radius:999px;font:inherit;font-size:12px;cursor:pointer;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }}">{{ o.label }}</button></sc-for>
+          </div>
+
+          <div class="field" style="margin-bottom:16px"><label>Fréquence visée : {{ pFreq }} séances / semaine</label><input type="range" min="1" max="7" step="1" value="{{ pFreq }}" onChange="{{ onPFreq }}" style="width:100%;accent-color:var(--color-accent)"/></div>
+
+          <div class="field" style="margin-bottom:18px"><label>Contraintes / blessures (optionnel)</label><textarea class="input" value="{{ pContraintes }}" onChange="{{ onPContraintes }}" placeholder="ex. genou sensible, éviter les sauts"></textarea></div>
+
+          <button onClick="{{ saveProfile }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;font-family:var(--font-heading);font-weight:600;font-size:15px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-md);cursor:pointer"><i class="ph ph-check"></i>Enregistrer</button>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== PROGRÈS ===================== -->
+      <sc-if value="{{ isProgress }}">
+      <div class="mscroll" style="position:absolute;inset:0;padding:60px 18px 92px">
+        <h3 style="margin:0 0 16px">Progrès</h3>
+
+        <div style="display:flex;gap:10px;margin-bottom:18px">
+          <div style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:13px"><i class="ph-fill ph-fire" style="color:#f0a35e;font-size:20px"></i><div style="font-size:22px;font-weight:600;font-family:var(--font-heading);margin-top:4px">{{ streak }}</div><div style="font-size:11px;color:var(--color-neutral-400)">jours consécutifs</div></div>
+          <div style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:13px"><i class="ph-fill ph-check-circle" style="color:var(--color-accent);font-size:20px"></i><div style="font-size:22px;font-weight:600;font-family:var(--font-heading);margin-top:4px">{{ totalSessions }}</div><div style="font-size:11px;color:var(--color-neutral-400)">séances au total</div></div>
+        </div>
+
+        <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:16px;margin-bottom:16px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px"><span style="font-size:13px;font-weight:600">Séances par semaine</span><span style="font-size:11px;color:var(--color-neutral-400)">6 dernières</span></div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:8px;height:96px">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end"><div style="width:100%;height:40%;background:var(--color-accent-700);border-radius:5px 5px 0 0;transform-origin:bottom;animation:mRise .5s ease"></div><span style="font-size:10px;color:var(--color-neutral-500)">S-5</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end"><div style="width:100%;height:60%;background:var(--color-accent-700);border-radius:5px 5px 0 0;transform-origin:bottom;animation:mRise .5s ease .05s both"></div><span style="font-size:10px;color:var(--color-neutral-500)">S-4</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end"><div style="width:100%;height:50%;background:var(--color-accent-700);border-radius:5px 5px 0 0;transform-origin:bottom;animation:mRise .5s ease .1s both"></div><span style="font-size:10px;color:var(--color-neutral-500)">S-3</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end"><div style="width:100%;height:80%;background:var(--color-accent-700);border-radius:5px 5px 0 0;transform-origin:bottom;animation:mRise .5s ease .15s both"></div><span style="font-size:10px;color:var(--color-neutral-500)">S-2</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end"><div style="width:100%;height:70%;background:var(--color-accent-700);border-radius:5px 5px 0 0;transform-origin:bottom;animation:mRise .5s ease .2s both"></div><span style="font-size:10px;color:var(--color-neutral-500)">S-1</span></div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end"><div style="width:100%;height:90%;background:var(--color-accent);border-radius:5px 5px 0 0;transform-origin:bottom;animation:mRise .5s ease .25s both"></div><span style="font-size:10px;color:var(--color-accent-200)">Cette sem.</span></div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-bottom:20px">
+          <div style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:13px"><div style="font-size:11px;color:var(--color-neutral-400);display:flex;align-items:center;gap:5px"><i class="ph ph-clock"></i>Temps total</div><div style="font-size:19px;font-weight:600;font-family:var(--font-heading);margin-top:4px">{{ totalTimeShort }}</div></div>
+          <div style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:13px"><div style="font-size:11px;color:var(--color-neutral-400);display:flex;align-items:center;gap:5px"><i class="ph ph-flame"></i>Calories</div><div style="font-size:19px;font-weight:600;font-family:var(--font-heading);margin-top:4px">{{ weekKcal }} kcal</div></div>
+        </div>
+
+        <h5 style="margin:0 0 10px">Badges</h5>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px">
+          <sc-for list="{{ badges }}" as="b" hint-placeholder-count="8">
+            <div style="text-align:center;opacity:{{ b.op }}">
+              <div style="width:50px;height:50px;margin:0 auto 5px;border-radius:14px;display:grid;place-items:center;background:{{ b.bg }};border:1px solid {{ b.bd }};color:{{ b.fg }}"><i class="ph-fill {{ b.icon }}" style="font-size:24px"></i></div>
+              <div style="font-size:10px;line-height:1.2;color:var(--color-neutral-300)">{{ b.nom }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <h5 style="margin:0 0 10px">Historique des séances</h5>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <sc-for list="{{ history }}" as="h" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px 13px">
+              <div style="width:36px;height:36px;flex:none;border-radius:var(--radius-md);background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200)"><i class="ph ph-check-fat"></i></div>
+              <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">{{ h.nom }}</div><div style="font-size:11px;color:var(--color-neutral-400)">{{ h.date }} · {{ h.exos }} exercices</div></div>
+              <div style="font-size:12px;color:var(--color-neutral-300);font-family:var(--font-heading)">{{ h.duree }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== TAB BAR ===================== -->
+      <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;bottom:0;left:0;right:0;z-index:45;background:color-mix(in srgb,var(--color-bg) 92%,transparent);backdrop-filter:blur(12px);border-top:1px solid var(--color-divider);display:flex;padding:8px 6px 26px">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+          <button onClick="{{ t.onClick }}" style="flex:1;background:transparent;border:0;cursor:pointer;font:inherit;display:flex;flex-direction:column;align-items:center;gap:3px;color:{{ t.color }}">
+            <i class="{{ t.icon }}" style="font-size:23px"></i>
+            <span style="font-size:10px;font-weight:500">{{ t.label }}</span>
+          </button>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <!-- ===================== FICHE EXERCICE ===================== -->
+      <sc-if value="{{ showExercise }}">
+      <div class="mscroll" style="position:absolute;inset:0;z-index:55;background:var(--color-bg);padding:52px 0 30px">
+        <div style="padding:8px 16px 0"><button onClick="{{ closeOverlay }}" class="btn btn-secondary" style="gap:6px"><i class="ph ph-arrow-left"></i>Retour</button></div>
+        <div style="position:relative;margin:12px 16px 0;height:200px;border-radius:var(--radius-lg);overflow:hidden;background:radial-gradient(120% 120% at 30% 20%,var(--color-accent-800),var(--color-neutral-900));display:grid;place-items:center">
+          <svg width="120" height="120" viewBox="0 0 120 120" style="position:absolute"><circle cx="60" cy="60" r="54" fill="none" stroke="color-mix(in srgb,var(--color-accent) 40%,transparent)" stroke-width="2" stroke-dasharray="339" style="animation:mRing 2.2s ease-out infinite" transform="rotate(-90 60 60)"/></svg>
+          <i class="ph-fill {{ ex.icon }}" style="font-size:64px;color:var(--color-accent-100);animation:mPulse 2.4s ease-in-out infinite"></i>
+          <span style="position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);padding:5px 10px;border-radius:999px;font-size:11px;display:flex;align-items:center;gap:5px"><i class="ph-fill ph-play"></i>Démo animée</span>
+        </div>
+        <div style="padding:16px 18px 0">
+          <h3 style="margin:0 0 4px">{{ ex.nom }}</h3>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"><span class="tag tag-accent"><i class="ph ph-target" style="margin-right:4px"></i>{{ ex.primaire }}</span><span class="tag tag-neutral">{{ ex.niveau }}</span><span class="tag tag-outline"><i class="ph ph-barbell" style="margin-right:4px"></i>{{ ex.matLabel }}</span></div>
+          <div style="font-size:12px;color:var(--color-neutral-400);margin-bottom:16px">Muscles secondaires : <span style="color:var(--color-neutral-200)">{{ ex.secondairesLabel }}</span></div>
+
+          <div style="display:flex;gap:8px;margin-bottom:16px">
+            <div style="flex:1;text-align:center;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px 6px"><div style="font-size:20px;font-weight:600;font-family:var(--font-heading)">{{ ex.series }}</div><div style="font-size:10px;color:var(--color-neutral-400)">séries</div></div>
+            <div style="flex:1;text-align:center;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px 6px"><div style="font-size:20px;font-weight:600;font-family:var(--font-heading)">{{ ex.reps }}</div><div style="font-size:10px;color:var(--color-neutral-400)">répétitions</div></div>
+            <div style="flex:1;text-align:center;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px 6px"><div style="font-size:20px;font-weight:600;font-family:var(--font-heading)">{{ ex.reposLabel }}</div><div style="font-size:10px;color:var(--color-neutral-400)">repos</div></div>
+          </div>
+
+          <h6 style="color:var(--color-neutral-400);margin-bottom:6px">Description technique</h6>
+          <p style="font-size:13px;line-height:1.6;color:var(--color-neutral-200);margin-bottom:16px">{{ ex.desc }}</p>
+
+          <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px">
+            <div style="display:flex;gap:11px"><div style="width:30px;height:30px;flex:none;border-radius:8px;background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200)"><i class="ph ph-flag"></i></div><div><div style="font-size:12px;font-weight:600;margin-bottom:2px">Position de départ</div><div style="font-size:12px;color:var(--color-neutral-300);line-height:1.5">{{ ex.depart }}</div></div></div>
+            <div style="display:flex;gap:11px"><div style="width:30px;height:30px;flex:none;border-radius:8px;background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200)"><i class="ph ph-arrows-down-up"></i></div><div><div style="font-size:12px;font-weight:600;margin-bottom:2px">Mouvement</div><div style="font-size:12px;color:var(--color-neutral-300);line-height:1.5">{{ ex.mouvement }}</div></div></div>
+            <div style="display:flex;gap:11px"><div style="width:30px;height:30px;flex:none;border-radius:8px;background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200)"><i class="ph ph-wind"></i></div><div><div style="font-size:12px;font-weight:600;margin-bottom:2px">Respiration</div><div style="font-size:12px;color:var(--color-neutral-300);line-height:1.5">{{ ex.respiration }}</div></div></div>
+          </div>
+
+          <h6 style="color:var(--color-neutral-400);margin-bottom:8px">Erreurs fréquentes</h6>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+            <sc-for list="{{ ex.erreurs }}" as="er" hint-placeholder-count="3">
+              <div style="display:flex;gap:9px;font-size:12px;line-height:1.5;color:var(--color-neutral-200)"><i class="ph-fill ph-x-circle" style="color:#f0a35e;flex:none;margin-top:1px"></i><span>{{ er }}</span></div>
+            </sc-for>
+          </div>
+
+          <h6 style="color:var(--color-neutral-400);margin-bottom:8px">Conseils de sécurité</h6>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+            <sc-for list="{{ ex.conseils }}" as="c" hint-placeholder-count="3">
+              <div style="display:flex;gap:9px;font-size:12px;line-height:1.5;color:var(--color-neutral-200)"><i class="ph-fill ph-shield-check" style="color:var(--color-accent);flex:none;margin-top:1px"></i><span>{{ c }}</span></div>
+            </sc-for>
+          </div>
+
+          <h6 style="color:var(--color-neutral-400);margin-bottom:8px">Variantes</h6>
+          <div style="display:flex;gap:8px;margin-bottom:18px">
+            <div style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px"><div style="font-size:11px;color:#5fd08a;font-weight:600;display:flex;align-items:center;gap:5px;margin-bottom:4px"><i class="ph-fill ph-arrow-bend-down-left"></i>Plus facile</div><div style="font-size:12px;color:var(--color-neutral-300);line-height:1.5">{{ ex.variFacile }}</div></div>
+            <div style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px"><div style="font-size:11px;color:var(--color-accent-200);font-weight:600;display:flex;align-items:center;gap:5px;margin-bottom:4px"><i class="ph-fill ph-arrow-bend-up-right"></i>Plus difficile</div><div style="font-size:12px;color:var(--color-neutral-300);line-height:1.5">{{ ex.variDifficile }}</div></div>
+          </div>
+
+          <h6 style="color:var(--color-neutral-400);margin-bottom:8px">Exercices similaires</h6>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <sc-for list="{{ ex.similaires }}" as="sim" hint-placeholder-count="2">
+              <div onClick="{{ sim.onOpen }}" style="display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:10px 12px;cursor:pointer">
+                <div style="width:34px;height:34px;flex:none;border-radius:8px;background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200)"><i class="ph-fill {{ sim.icon }}" style="font-size:18px"></i></div>
+                <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">{{ sim.nom }}</div><div style="font-size:11px;color:var(--color-neutral-400)">{{ sim.muscle }}</div></div>
+                <i class="ph ph-caret-right" style="color:var(--color-neutral-500)"></i>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== DÉTAIL PROGRAMME ===================== -->
+      <sc-if value="{{ showProgram }}">
+      <div class="mscroll" style="position:absolute;inset:0;z-index:55;background:var(--color-bg);padding:52px 0 110px">
+        <div style="padding:8px 16px 0"><button onClick="{{ closeOverlay }}" class="btn btn-secondary" style="gap:6px"><i class="ph ph-arrow-left"></i>Retour</button></div>
+        <div style="padding:14px 18px 0">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+            <div style="width:52px;height:52px;flex:none;border-radius:var(--radius-md);background:var(--color-accent-800);display:grid;place-items:center;color:var(--color-accent-100)"><i class="ph {{ prog.icon }}" style="font-size:28px"></i></div>
+            <div><h3 style="margin:0">{{ prog.nom }}</h3><div style="font-size:12px;color:var(--color-neutral-400)">{{ prog.obj }}</div></div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"><span class="tag tag-accent"><i class="ph ph-clock" style="margin-right:4px"></i>{{ prog.dureeLabel }}</span><span class="tag tag-neutral">{{ prog.niveau }}</span><span class="tag tag-outline">{{ prog.lieu }}</span><span class="tag tag-neutral"><i class="ph ph-flame" style="margin-right:4px"></i>~{{ prog.kcal }} kcal</span></div>
+          <p style="font-size:13px;line-height:1.6;color:var(--color-neutral-200);margin-bottom:18px">{{ prog.desc }}</p>
+          <h6 style="color:var(--color-neutral-400);margin-bottom:10px">{{ prog.exCount }} exercices</h6>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <sc-for list="{{ prog.list }}" as="e" hint-placeholder-count="4">
+              <div onClick="{{ e.onOpen }}" style="display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px 13px;cursor:pointer">
+                <div style="width:34px;height:34px;flex:none;border-radius:8px;background:var(--color-accent-900);display:grid;place-items:center;color:var(--color-accent-200);font-size:13px;font-weight:600">{{ e.num }}</div>
+                <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">{{ e.nom }}</div><div style="font-size:11px;color:var(--color-neutral-400)">{{ e.meta }}</div></div>
+                <i class="ph ph-caret-right" style="color:var(--color-neutral-500)"></i>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 18px 30px;background:linear-gradient(transparent,var(--color-bg) 30%)">
+          <button onClick="{{ startProg }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:15px;font-family:var(--font-heading);font-weight:600;font-size:16px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-lg);cursor:pointer;box-shadow:0 0 24px -4px color-mix(in srgb, var(--color-accent) 55%, transparent)"><i class="ph-fill ph-play-circle" style="font-size:22px"></i>Démarrer ce programme</button>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===================== SÉANCE EN COURS ===================== -->
+      <sc-if value="{{ showWorkout }}">
+      <div style="position:absolute;inset:0;z-index:58;background:var(--color-bg);display:flex;flex-direction:column;padding-top:52px">
+        <div style="padding:6px 16px 14px;display:flex;align-items:center;justify-content:space-between">
+          <button onClick="{{ quitWorkout }}" style="width:34px;height:34px;border-radius:50%;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-200);cursor:pointer;display:grid;place-items:center"><i class="ph ph-x"></i></button>
+          <div style="text-align:center"><div style="font-size:12px;color:var(--color-neutral-400)">{{ wProgName }}</div><div style="font-size:13px;font-weight:600;font-family:var(--font-heading)">{{ wStepLabel }}</div></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button onClick="{{ toggleBig }}" title="Mode plein écran" style="width:34px;height:34px;border-radius:50%;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-200);cursor:pointer;display:grid;place-items:center"><i class="ph ph-arrows-out"></i></button>
+            <button onClick="{{ toggleVoice }}" title="Voix du coach" style="width:34px;height:34px;border-radius:50%;border:1px solid {{ voiceBd }};background:transparent;color:{{ voiceFg }};cursor:pointer;display:grid;place-items:center"><i class="ph {{ voiceIcon }}"></i></button>
+            <button onClick="{{ togglePause }}" style="width:34px;height:34px;border-radius:50%;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-200);cursor:pointer;display:grid;place-items:center"><i class="ph {{ pauseIcon }}"></i></button>
+          </div>
+        </div>
+        <div style="height:4px;background:var(--color-neutral-800);margin:0 16px;border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ wProgress }};background:var(--color-accent);border-radius:2px;transition:width .4s ease"></div></div>
+        <div style="padding:4px 16px 0;display:flex;justify-content:flex-end;font-size:11px;color:var(--color-neutral-500)">Total : {{ wElapsedFmt }}</div>
+
+        <!-- phase exercice -->
+        <sc-if value="{{ wIsExercise }}">
+
+        <!-- mode normal -->
+        <sc-if value="{{ wSmallEx }}">
+        <div class="mscroll" style="flex:1;display:flex;flex-direction:column;align-items:center;padding:8px 20px 0">
+          <div style="position:relative;width:148px;height:148px;margin:8px 0 12px;border-radius:50%;background:radial-gradient(120% 120% at 30% 20%,var(--color-accent-800),var(--color-neutral-900));display:grid;place-items:center">
+            <svg width="148" height="148" viewBox="0 0 120 120" style="position:absolute"><circle cx="60" cy="60" r="54" fill="none" stroke="color-mix(in srgb,var(--color-accent) 45%,transparent)" stroke-width="2.5" stroke-dasharray="339" style="animation:mRing 2.4s ease-out infinite" transform="rotate(-90 60 60)"/></svg>
+            <i class="ph-fill {{ wCur.icon }}" style="font-size:60px;color:var(--color-accent-100);animation:mPulse 2.4s ease-in-out infinite"></i>
+          </div>
+          <h2 style="margin:0 0 4px;text-align:center">{{ wCur.nom }}</h2>
+          <div style="font-size:13px;color:var(--color-accent-300);margin-bottom:8px">{{ wCur.muscle }}</div>
+          <div style="font-size:13px;font-weight:600;font-family:var(--font-heading);color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:999px;padding:5px 16px;margin-bottom:14px">{{ wSetLabel }}</div>
+
+          <div style="width:100%;max-width:340px;display:flex;align-items:center;gap:12px;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:12px 14px;margin-bottom:10px">
+            <div style="flex:1"><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500)">Chronomètre série</div><div style="font-size:30px;font-weight:600;font-family:var(--font-heading);line-height:1.1;font-variant-numeric:tabular-nums">{{ wSwFmt }}</div></div>
+            <button onClick="{{ toggleSw }}" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--color-accent);background:var(--color-accent-800);color:var(--color-accent-100);cursor:pointer;display:grid;place-items:center;font-size:18px"><i class="ph-fill {{ wSwIcon }}"></i></button>
+            <button onClick="{{ resetSw }}" title="Réinitialiser" style="width:44px;height:44px;border-radius:50%;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-300);cursor:pointer;display:grid;place-items:center;font-size:18px"><i class="ph ph-arrow-counter-clockwise"></i></button>
+          </div>
+
+          <div style="width:100%;max-width:340px;display:flex;gap:10px;margin-bottom:10px">
+            <div style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px 12px">
+              <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:2px">Répétitions</div>
+              <div style="font-size:22px;font-weight:600;font-family:var(--font-heading);line-height:1.1;margin-bottom:8px">{{ wReps }}</div>
+              <button onClick="{{ editReps }}" class="btn btn-secondary" style="width:100%;gap:6px;padding:7px"><i class="ph ph-pencil-simple"></i>Modifier</button>
+            </div>
+            <div style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:11px 12px">
+              <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500);margin-bottom:2px">Charge</div>
+              <div style="font-size:16px;font-weight:600;font-family:var(--font-heading);line-height:1.2;margin-bottom:8px;min-height:26px">{{ wCharge }}</div>
+              <button onClick="{{ editCharge }}" class="btn btn-secondary" style="width:100%;gap:6px;padding:7px"><i class="ph ph-pencil-simple"></i>Modifier</button>
+            </div>
+          </div>
+
+          <div style="width:100%;max-width:340px;display:flex;flex-direction:column;gap:9px;margin-bottom:14px">
+            <div style="font-size:12px;color:var(--color-neutral-400);display:flex;align-items:center;gap:6px"><i class="ph ph-waveform" style="color:var(--color-accent-300);font-size:15px"></i>Le coach rythme : {{ wCueHint }}</div>
+            <button onClick="{{ editNotes }}" style="width:100%;text-align:left;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:10px 12px;cursor:pointer;color:var(--color-neutral-200);display:flex;align-items:flex-start;gap:8px">
+              <i class="ph ph-note-pencil" style="color:var(--color-accent-300);font-size:16px;flex:none;margin-top:1px"></i>
+              <span style="flex:1;font-size:12px;line-height:1.5"><span style="color:var(--color-neutral-500)">Notes personnelles</span><br/>{{ wNoteDisplay }}</span>
+            </button>
+            <div onClick="{{ openCurEx }}" style="font-size:12px;color:var(--color-accent);cursor:pointer;display:flex;align-items:center;gap:5px"><i class="ph ph-info"></i>Voir la fiche & les conseils</div>
+          </div>
+        </div>
+        <div style="padding:10px 18px 22px;display:flex;flex-direction:column;gap:9px">
+          <button onClick="{{ toggleBig }}" class="btn btn-secondary" style="width:100%;gap:8px;padding:11px"><i class="ph ph-arrows-out"></i>Mode plein écran (gros boutons)</button>
+          <button onClick="{{ finishSet }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;font-family:var(--font-heading);font-weight:600;font-size:16px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-lg);cursor:pointer">{{ finishSetLabel }}<i class="ph-fill ph-check-circle" style="font-size:22px"></i></button>
+        </div>
+        </sc-if>
+
+        <!-- mode plein écran / gros boutons -->
+        <sc-if value="{{ wBigEx }}">
+        <div style="flex:1;display:flex;flex-direction:column;padding:6px 16px 18px;text-align:center">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:2px"><button onClick="{{ toggleBig }}" class="btn btn-ghost" style="gap:6px;padding:8px 12px"><i class="ph ph-arrows-in"></i>Quitter plein écran</button></div>
+          <div style="font-size:clamp(26px,7vw,40px);font-weight:600;font-family:var(--font-heading);line-height:1.05;margin-bottom:4px">{{ wCur.nom }}</div>
+          <div style="font-size:20px;font-weight:600;color:var(--color-accent-200);margin-bottom:14px">{{ wSetLabel }}</div>
+          <div style="display:flex;gap:12px;margin-bottom:14px">
+            <button onClick="{{ editReps }}" style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:16px 8px;cursor:pointer;color:var(--color-text)"><div style="font-size:46px;font-weight:600;font-family:var(--font-heading);line-height:1">{{ wReps }}</div><div style="font-size:13px;color:var(--color-neutral-400);margin-top:4px">répétitions ✎</div></button>
+            <button onClick="{{ editCharge }}" style="flex:1;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:16px 8px;cursor:pointer;color:var(--color-text)"><div style="font-size:26px;font-weight:600;font-family:var(--font-heading);line-height:1.15;min-height:52px;display:flex;align-items:center;justify-content:center">{{ wCharge }}</div><div style="font-size:13px;color:var(--color-neutral-400);margin-top:4px">charge ✎</div></button>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px">
+            <div style="font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-300)">Chronomètre</div>
+            <div style="font-size:clamp(64px,22vw,120px);font-weight:600;font-family:var(--font-heading);line-height:.95;font-variant-numeric:tabular-nums">{{ wSwFmt }}</div>
+            <div style="display:flex;gap:12px;margin-top:8px">
+              <button onClick="{{ toggleSw }}" style="width:60px;height:60px;border-radius:50%;border:1px solid var(--color-accent);background:var(--color-accent-800);color:var(--color-accent-100);cursor:pointer;font-size:26px;display:grid;place-items:center"><i class="ph-fill {{ wSwIcon }}"></i></button>
+              <button onClick="{{ resetSw }}" style="width:60px;height:60px;border-radius:50%;border:1px solid var(--color-divider);background:transparent;color:var(--color-neutral-300);cursor:pointer;font-size:24px;display:grid;place-items:center"><i class="ph ph-arrow-counter-clockwise"></i></button>
+            </div>
+          </div>
+          <button onClick="{{ finishSet }}" style="width:100%;min-height:96px;display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px;font-family:var(--font-heading);font-weight:600;font-size:24px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-lg);cursor:pointer;box-shadow:0 0 40px -10px var(--color-accent)">{{ finishSetLabel }}<i class="ph-fill ph-check-circle" style="font-size:32px"></i></button>
+        </div>
+        </sc-if>
+
+        </sc-if>
+
+        <!-- phase repos -->
+        <sc-if value="{{ wIsRest }}">
+
+        <sc-if value="{{ wSmallRest }}">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 24px">
+          <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-accent-300);margin-bottom:6px">{{ wRestKindLabel }}</div>
+          <div style="font-size:74px;font-weight:600;font-family:var(--font-heading);line-height:1;margin-bottom:6px;font-variant-numeric:tabular-nums">{{ wRestFmt }}</div>
+          <div style="font-size:13px;color:var(--color-neutral-400);margin-bottom:28px;text-align:center">Récupère. Ensuite : <span style="color:var(--color-neutral-100)">{{ wRestNext }}</span></div>
+          <div style="display:flex;gap:10px;margin-bottom:12px">
+            <button onClick="{{ addRest }}" class="btn btn-secondary" style="padding:12px 18px">+15 s</button>
+            <button onClick="{{ skipRest }}" style="padding:12px 22px;font-family:var(--font-heading);font-weight:600;font-size:15px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-md);cursor:pointer;display:flex;align-items:center;gap:8px">Passer<i class="ph-fill ph-skip-forward"></i></button>
+          </div>
+          <button onClick="{{ toggleBig }}" class="btn btn-ghost" style="gap:8px;padding:9px"><i class="ph ph-arrows-out"></i>Mode plein écran</button>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ wBigRest }}">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;text-align:center">
+          <div style="font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-accent-300);margin-bottom:10px">{{ wRestKindLabel }}</div>
+          <div style="font-size:clamp(88px,32vw,180px);font-weight:600;font-family:var(--font-heading);line-height:.9;margin-bottom:10px;font-variant-numeric:tabular-nums">{{ wRestFmt }}</div>
+          <div style="font-size:16px;color:var(--color-neutral-300);margin-bottom:30px">Ensuite : <span style="color:var(--color-neutral-100)">{{ wRestNext }}</span></div>
+          <div style="display:flex;gap:14px;width:100%;max-width:360px">
+            <button onClick="{{ addRest }}" style="flex:1;min-height:76px;font-family:var(--font-heading);font-weight:600;font-size:20px;color:var(--color-neutral-100);background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);cursor:pointer">+15 s</button>
+            <button onClick="{{ skipRest }}" style="flex:1;min-height:76px;font-family:var(--font-heading);font-weight:600;font-size:20px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-lg);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">Passer<i class="ph-fill ph-skip-forward" style="font-size:26px"></i></button>
+          </div>
+          <button onClick="{{ toggleBig }}" class="btn btn-ghost" style="gap:8px;padding:10px;margin-top:16px"><i class="ph ph-arrows-in"></i>Quitter plein écran</button>
+        </div>
+        </sc-if>
+
+        </sc-if>
+
+        <!-- feuille d'édition (charge / répétitions / notes) -->
+        <sc-if value="{{ wEditOpen }}">
+        <div style="position:absolute;inset:0;z-index:10;background:color-mix(in srgb,var(--color-bg) 82%,transparent);backdrop-filter:blur(3px);display:flex;align-items:flex-end">
+          <div style="width:100%;background:var(--color-surface);border-top:1px solid var(--color-divider);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:20px 20px 26px">
+            <div style="font-size:16px;font-weight:600;font-family:var(--font-heading);margin-bottom:14px">{{ wEditTitle }}</div>
+            <sc-if value="{{ wEditIsNote }}">
+              <textarea class="input" value="{{ wEditVal }}" onChange="{{ onEditVal }}" placeholder="Ressenti, ajustements, douleurs…" style="width:100%;min-height:120px;font-size:16px;resize:none"></textarea>
+            </sc-if>
+            <sc-if value="{{ wEditNotNote }}">
+              <input class="input" value="{{ wEditVal }}" onChange="{{ onEditVal }}" style="width:100%;font-size:20px;text-align:center;padding:14px"/>
+            </sc-if>
+            <div style="display:flex;gap:10px;margin-top:16px">
+              <button onClick="{{ cancelEdit }}" class="btn btn-secondary" style="flex:1;padding:14px;font-size:15px">Annuler</button>
+              <button onClick="{{ saveEdit }}" style="flex:1;padding:14px;font-family:var(--font-heading);font-weight:600;font-size:15px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-md);cursor:pointer">Enregistrer</button>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+      </div>
+      </sc-if>
+
+      <!-- ===================== SÉANCE TERMINÉE ===================== -->
+      <sc-if value="{{ showComplete }}">
+      <div style="position:absolute;inset:0;z-index:59;background:radial-gradient(120% 90% at 50% 0%,var(--color-accent-900),var(--color-bg) 60%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px">
+        <div style="width:96px;height:96px;border-radius:50%;background:var(--color-accent-800);border:1px solid var(--color-accent);display:grid;place-items:center;margin-bottom:20px;animation:mPulse 2s ease-in-out infinite;box-shadow:0 0 40px -6px var(--color-accent)"><i class="ph-fill ph-trophy" style="font-size:48px;color:var(--color-accent-100)"></i></div>
+        <h2 style="margin:0 0 4px;text-align:center">Séance terminée !</h2>
+        <div style="font-size:13px;color:var(--color-neutral-300);text-align:center;margin-bottom:24px">Bravo — tu construis du muscle 💪</div>
+        <div style="display:flex;gap:10px;width:100%;max-width:320px;margin-bottom:14px">
+          <div style="flex:1;text-align:center;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:13px 4px"><div style="font-size:20px;font-weight:600;font-family:var(--font-heading)">{{ cTime }}</div><div style="font-size:10px;color:var(--color-neutral-400)">durée</div></div>
+          <div style="flex:1;text-align:center;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:13px 4px"><div style="font-size:20px;font-weight:600;font-family:var(--font-heading)">{{ cExos }}</div><div style="font-size:10px;color:var(--color-neutral-400)">exercices</div></div>
+          <div style="flex:1;text-align:center;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-md);padding:13px 4px"><div style="font-size:20px;font-weight:600;font-family:var(--font-heading)">{{ cKcal }}</div><div style="font-size:10px;color:var(--color-neutral-400)">kcal</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:color-mix(in srgb,#f0a35e 12%,transparent);border:1px solid color-mix(in srgb,#f0a35e 32%,transparent);border-radius:999px;padding:8px 14px;margin-bottom:30px;font-size:12px"><i class="ph-fill ph-fire" style="color:#f0a35e;font-size:16px"></i>Série de {{ streak }} jours — continue !</div>
+        <button onClick="{{ finishHome }}" style="width:100%;max-width:320px;padding:15px;font-family:var(--font-heading);font-weight:600;font-size:16px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-lg);cursor:pointer">Terminer</button>
+      </div>
+      </sc-if>
+
+      <!-- ===================== AVERTISSEMENT MÉDICAL ===================== -->
+      <sc-if value="{{ disclaimer }}">
+      <div style="position:absolute;inset:0;z-index:70;background:color-mix(in srgb,#000 62%,transparent);backdrop-filter:blur(3px);display:flex;align-items:flex-end;padding:16px">
+        <div style="background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:22px 20px 20px;box-shadow:var(--shadow-lg)">
+          <div style="width:48px;height:48px;border-radius:14px;background:color-mix(in srgb,#f0a35e 16%,transparent);display:grid;place-items:center;margin-bottom:14px"><i class="ph-fill ph-heartbeat" style="color:#f0a35e;font-size:26px"></i></div>
+          <h4 style="margin:0 0 8px">Avertissement médical</h4>
+          <p style="font-size:13px;line-height:1.6;color:var(--color-neutral-200);margin-bottom:8px">Avant de commencer un programme de renforcement musculaire, il est recommandé de <strong style="color:var(--color-text);font-weight:600">consulter un professionnel de santé</strong>, surtout en cas de problèmes de santé, blessures ou douleurs.</p>
+          <p style="font-size:12px;line-height:1.6;color:var(--color-neutral-400);margin-bottom:18px">Échauffe-toi, exécute les mouvements correctement, hydrate-toi, repose-toi suffisamment et progresse graduellement. Arrête en cas de douleur.</p>
+          <button onClick="{{ acceptDisclaimer }}" style="width:100%;padding:13px;font-family:var(--font-heading);font-weight:600;font-size:15px;color:var(--color-accent-100);background:var(--color-accent-800);border:1px solid var(--color-accent);border-radius:var(--radius-md);cursor:pointer">J'ai compris</button>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- offline banner -->
+      <sc-if value="{{ offline }}">
+      <div style="position:absolute;top:52px;left:0;right:0;z-index:62;background:var(--color-neutral-800);color:var(--color-neutral-100);font-size:11px;text-align:center;padding:5px;display:flex;align-items:center;justify-content:center;gap:6px"><i class="ph ph-cloud-slash"></i>Mode hors-ligne — tes séances restent accessibles</div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:440,&quot;height&quot;:900},&quot;device&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;ios&quot;,&quot;android&quot;],&quot;default&quot;:&quot;ios&quot;,&quot;tsType&quot;:&quot;'ios'|'android'&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;coachTone&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;motivant&quot;,&quot;calme et pédagogue&quot;,&quot;exigeant&quot;],&quot;default&quot;:&quot;motivant&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Coach IA&quot;},&quot;estimatedKcalPerMin&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:9,&quot;min&quot;:4,&quot;max&quot;:16,&quot;unit&quot;:&quot;kcal/min&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Statistiques&quot;}}">
+class Component extends DCLogic {
+  EX = [
+    {id:'pompes',nom:'Pompes',muscle:'Pectoraux · triceps',niveau:'Débutant',lieu:'Maison',mat:['Sans matériel','Maison'],series:4,reps:'12',repos:60,icon:'ph-person-simple',desc:"Gaine tout le corps, mains un peu plus larges que les épaules. Descends la poitrine près du sol en gardant les coudes à ~45°, puis pousse pour remonter.",conseils:["Garde le dos droit, sans creux dans le bas du dos","Inspire en descendant, souffle en poussant","Débutant : pose les genoux au sol pour alléger"]},
+    {id:'squats',nom:'Squats',muscle:'Quadriceps · fessiers',niveau:'Débutant',lieu:'Maison',mat:['Sans matériel','Maison'],series:4,reps:'15',repos:60,icon:'ph-person',desc:"Pieds largeur d'épaules, descends les hanches vers l'arrière comme pour t'asseoir, buste droit, puis remonte en poussant dans les talons.",conseils:["Genoux dans l'axe des pieds, jamais vers l'intérieur","Talons ancrés au sol tout le mouvement","Descends jusqu'aux cuisses parallèles au sol"]},
+    {id:'gainage',nom:'Gainage (planche)',muscle:'Sangle abdominale',niveau:'Débutant',lieu:'Maison',mat:['Sans matériel','Maison'],series:3,reps:'45 s',repos:45,icon:'ph-line-segment',desc:"En appui sur les avant-bras et la pointe des pieds, garde le corps parfaitement aligné des épaules aux talons. Contracte les abdos et les fessiers.",conseils:["Ne creuse pas et ne cambre pas le bas du dos","Respire normalement, ne bloque pas ta respiration","Regarde le sol pour garder la nuque neutre"]},
+    {id:'abdos',nom:'Abdominaux (crunch)',muscle:'Grand droit',niveau:'Débutant',lieu:'Maison',mat:['Sans matériel','Maison'],series:4,reps:'20',repos:40,icon:'ph-person-simple-tai-chi',desc:"Allongé, genoux pliés, décolle les omoplates du sol en enroulant le buste vers les genoux, puis reviens sans relâcher totalement.",conseils:["Ne tire pas sur ta nuque avec les mains","Le mouvement vient des abdos, pas des bras","Souffle en montant"]},
+    {id:'tractions',nom:'Tractions',muscle:'Dos · biceps',niveau:'Avancé',lieu:'Salle',mat:['Salle'],series:3,reps:'8',repos:90,icon:'ph-person-simple-hike',desc:"Suspendu à la barre en pronation, tire ton corps vers le haut jusqu'à ce que le menton dépasse la barre, puis redescends en contrôlant.",conseils:["Descends complètement les bras à chaque répétition","Évite de balancer le corps (pas d'élan)","Débutant : utilise un élastique d'assistance"]},
+    {id:'fentes',nom:'Fentes',muscle:'Quadriceps · fessiers',niveau:'Débutant',lieu:'Maison',mat:['Sans matériel','Maison'],series:3,reps:'12 / jambe',repos:60,icon:'ph-person-simple-walk',desc:"Fais un grand pas en avant et descends le genou arrière vers le sol, buste droit. Remonte en poussant dans le talon avant, puis change de jambe.",conseils:["Le genou avant reste au-dessus de la cheville","Garde le buste droit, regard devant","Contrôle la descente, ne te laisse pas tomber"]},
+    {id:'dips',nom:'Dips',muscle:'Triceps · pectoraux',niveau:'Intermédiaire',lieu:'Maison',mat:['Sans matériel','Maison'],series:3,reps:'10',repos:75,icon:'ph-arrow-fat-lines-down',desc:"Appuie-toi sur une chaise ou deux barres, jambes tendues devant. Plie les coudes pour descendre le bassin, puis pousse pour remonter.",conseils:["Coudes vers l'arrière, pas vers l'extérieur","Ne descends pas trop bas si tu sens l'épaule","Garde les épaules basses, loin des oreilles"]},
+    {id:'developpe',nom:'Développé haltères',muscle:'Épaules',niveau:'Intermédiaire',lieu:'Salle',mat:['Haltères','Salle'],series:4,reps:'12',repos:60,icon:'ph-barbell',desc:"Assis ou debout, haltères au niveau des épaules, pousse-les vers le haut jusqu'à tendre les bras, puis redescends lentement.",conseils:["Gaine les abdos pour protéger le bas du dos","Ne verrouille pas violemment les coudes en haut","Choisis un poids que tu contrôles sur 12 reps"]},
+    {id:'rowing',nom:'Rowing élastique',muscle:'Dos',niveau:'Débutant',lieu:'Maison',mat:['Élastique','Maison'],series:3,reps:'15',repos:60,icon:'ph-arrows-in-line-horizontal',desc:"Élastique fixé devant toi, tire les poignées vers ton torse en resserrant les omoplates, puis reviens en contrôlant la tension.",conseils:["Serre les omoplates en fin de tirage","Garde les épaules basses et le buste droit","Ne tire pas avec les bras seuls, pense au dos"]},
+    {id:'mountain',nom:'Mountain climbers',muscle:'Full body · cardio',niveau:'Intermédiaire',lieu:'Maison',mat:['Sans matériel','Maison'],series:4,reps:'30 s',repos:30,icon:'ph-sneaker-move',desc:"En position de planche, ramène alternativement les genoux vers la poitrine à un rythme soutenu, en gardant le bassin bas.",conseils:["Garde les hanches basses, pas de rebond","Mains bien à plat sous les épaules","Adapte le rythme à ton souffle"]}
+  ];
+  PROG = [
+    {id:'fullbody',nom:'Full Body Maison',obj:'Prise de masse',niveau:'Tous niveaux',lieu:'Maison',duree:20,kcal:210,mat:['Sans matériel','Maison'],icon:'ph-house-line',exos:['pompes','squats','fentes','gainage','abdos'],desc:"Un circuit complet du corps, sans aucun matériel — la base idéale pour construire du muscle à la maison."},
+    {id:'haut',nom:'Haut du corps',obj:'Prise de masse',niveau:'Intermédiaire',lieu:'Salle',duree:25,kcal:180,mat:['Haltères','Salle'],icon:'ph-barbell',exos:['pompes','dips','developpe','rowing','tractions'],desc:"Pectoraux, dos, épaules et bras : du volume ciblé sur tout le haut du corps."},
+    {id:'bas',nom:'Bas du corps',obj:'Prise de masse',niveau:'Intermédiaire',lieu:'Maison',duree:20,kcal:200,mat:['Sans matériel','Maison'],icon:'ph-person-simple-walk',exos:['squats','fentes','mountain'],desc:"Quadriceps et fessiers : puissance et volume des jambes, sans matériel."},
+    {id:'core',nom:'Abdos / Core',obj:'Gainage',niveau:'Débutant',lieu:'Maison',duree:10,kcal:90,mat:['Sans matériel','Maison'],icon:'ph-shield-check',exos:['gainage','abdos','mountain'],desc:"Renforce la sangle abdominale et stabilise ton tronc pour tous tes autres mouvements."},
+    {id:'hiit',nom:'HIIT Brûle-graisse',obj:'Cardio & sèche',niveau:'Avancé',lieu:'Maison',duree:15,kcal:240,mat:['Sans matériel','Maison'],icon:'ph-lightning',exos:['mountain','squats','pompes','fentes'],desc:"Intervalles intenses : du cardio pour sécher tout en préservant ta masse musculaire."},
+    {id:'express',nom:'Renforcement Express',obj:'Prise de masse',niveau:'Débutant',lieu:'Maison',duree:5,kcal:55,mat:['Sans matériel','Maison'],icon:'ph-timer',exos:['pompes','squats','gainage'],desc:"5 minutes, 3 exercices : parfait quand le temps manque mais que tu veux rester régulier."}
+  ];
+  BADGES = [
+    {icon:'ph-flag-checkered',nom:'1re séance',on:true},
+    {icon:'ph-fire',nom:'3 jours',on:true},
+    {icon:'ph-barbell',nom:'10 séances',on:true},
+    {icon:'ph-timer',nom:'Matinal',on:true},
+    {icon:'ph-mountains',nom:'HIIT',on:false},
+    {icon:'ph-crown-simple',nom:'30 jours',on:false},
+    {icon:'ph-lightning',nom:'100 séances',on:false},
+    {icon:'ph-medal',nom:'Élite',on:false}
+  ];
+
+  CUES={
+    pompes:{beat:1500,seq:['En bas','En haut']},
+    squats:{beat:1500,seq:['Descends','Remonte']},
+    gainage:{beat:4000,seq:['Gaine','Tiens bon','Respire','Reste solide']},
+    abdos:{beat:1300,seq:['Monte','Relâche']},
+    tractions:{beat:2000,seq:['Tire','Descends']},
+    fentes:{beat:1600,seq:['Descends','Pousse']},
+    dips:{beat:1500,seq:['En bas','En haut']},
+    developpe:{beat:1500,seq:['Pousse','Descends']},
+    rowing:{beat:1500,seq:['Tire','Relâche']},
+    mountain:{beat:750,seq:['Droite','Gauche']}
+  };
+  ENCOUR=['Allez, continue !','Tu gères !','Encore un effort !','Beau boulot !','Ne lâche rien !','Respire bien !','Reste concentré !'];
+
+  DETAILS={
+    pompes:{primaire:'Pectoraux',secondaires:['Triceps','Deltoïdes antérieurs','Gainage'],depart:"À plat ventre, mains posées un peu plus larges que les épaules, corps gainé en planche, pointes de pieds au sol.",mouvement:"Fléchis les coudes pour descendre la poitrine près du sol, puis pousse pour revenir bras tendus sans casser l'alignement du corps.",respiration:"Inspire en descendant, souffle en poussant.",erreurs:["Bassin qui s'affaisse ou remonte","Coudes qui s'écartent à 90°","Amplitude partielle : ne pas descendre assez bas"],variFacile:"Pompes sur les genoux ou contre un mur.",variDifficile:"Pompes déclinées (pieds surélevés) ou lestées.",similaires:['dips','developpe']},
+    squats:{primaire:'Quadriceps',secondaires:['Fessiers','Ischio-jambiers','Gainage'],depart:"Debout, pieds largeur d'épaules, pointes légèrement ouvertes, buste droit, regard devant.",mouvement:"Descends les hanches vers l'arrière et le bas jusqu'à cuisses parallèles au sol, puis remonte en poussant dans les talons.",respiration:"Inspire en descendant, souffle en remontant.",erreurs:["Genoux qui rentrent vers l'intérieur","Talons qui décollent du sol","Dos qui s'arrondit"],variFacile:"Squats sur une chaise : s'asseoir puis se relever.",variDifficile:"Squats sautés ou lestés (haltères, sac à dos).",similaires:['fentes','mountain']},
+    gainage:{primaire:'Sangle abdominale',secondaires:['Lombaires','Fessiers','Épaules'],depart:"En appui sur les avant-bras, coudes sous les épaules, jambes tendues, pointes de pieds au sol.",mouvement:"Maintiens le corps parfaitement aligné, abdos et fessiers contractés, sans bouger pendant toute la durée.",respiration:"Respire lentement et régulièrement, sans jamais bloquer.",erreurs:["Bassin trop haut ou trop bas","Nuque cassée : garde le regard au sol","Retenir sa respiration"],variFacile:"Gainage sur les genoux ou durée réduite.",variDifficile:"Gainage avec levée de jambe ou de bras alternée.",similaires:['abdos','mountain']},
+    abdos:{primaire:'Grand droit',secondaires:['Obliques','Transverse'],depart:"Allongé sur le dos, genoux fléchis, pieds au sol, mains sur les tempes ou croisées sur la poitrine.",mouvement:"Enroule le buste pour décoller les omoplates vers les genoux, puis redescends sans relâcher totalement.",respiration:"Souffle en montant, inspire en descendant.",erreurs:["Tirer sur la nuque avec les mains","Prendre de l'élan","Décoller tout le dos du sol"],variFacile:"Crunch avec amplitude réduite.",variDifficile:"Crunch jambes tendues à la verticale ou lesté.",similaires:['gainage','mountain']},
+    tractions:{primaire:'Grand dorsal',secondaires:['Biceps','Trapèzes','Avant-bras'],depart:"Suspendu à la barre en pronation (paumes vers l'avant), bras tendus, épaules engagées vers le bas.",mouvement:"Tire le corps vers le haut jusqu'à passer le menton au-dessus de la barre, puis redescends en contrôlant.",respiration:"Souffle en tirant, inspire en descendant.",erreurs:["Se balancer pour prendre de l'élan","Ne pas tendre les bras en bas","Monter les épaules vers les oreilles"],variFacile:"Tractions assistées à l'élastique ou tirage horizontal.",variDifficile:"Tractions lestées ou à tempo lent.",similaires:['rowing','developpe']},
+    fentes:{primaire:'Quadriceps',secondaires:['Fessiers','Ischio-jambiers','Gainage'],depart:"Debout, pieds joints, buste droit, mains sur les hanches.",mouvement:"Fais un grand pas en avant et descends le genou arrière vers le sol, puis pousse sur la jambe avant pour revenir.",respiration:"Inspire en descendant, souffle en remontant.",erreurs:["Genou avant qui dépasse la pointe du pied","Buste penché en avant","Pas trop court, instable"],variFacile:"Fentes statiques, sans avancer.",variDifficile:"Fentes sautées alternées ou lestées.",similaires:['squats','mountain']},
+    dips:{primaire:'Triceps',secondaires:['Pectoraux','Deltoïdes antérieurs'],depart:"Assis au bord d'une chaise, mains agrippées au bord, bassin décollé devant le siège, jambes tendues.",mouvement:"Fléchis les coudes pour descendre le bassin, puis pousse pour remonter bras tendus.",respiration:"Inspire en descendant, souffle en poussant.",erreurs:["Coudes qui s'écartent vers l'extérieur","Descendre trop bas (tension épaule)","Épaules qui remontent"],variFacile:"Dips genoux fléchis, pieds proches du corps.",variDifficile:"Dips sur barres parallèles, pieds surélevés.",similaires:['pompes','developpe']},
+    developpe:{primaire:'Deltoïdes',secondaires:['Triceps','Trapèzes'],depart:"Assis ou debout gainé, haltères au niveau des épaules, coudes sous les poignets.",mouvement:"Pousse les haltères vers le haut jusqu'à tendre les bras, puis redescends lentement au niveau des épaules.",respiration:"Souffle en poussant, inspire en descendant.",erreurs:["Cambrer le bas du dos","Verrouiller violemment les coudes","Charge trop lourde mal contrôlée"],variFacile:"Développé assis avec dossier, poids légers.",variDifficile:"Développé debout ou Arnold press.",similaires:['pompes','tractions']},
+    rowing:{primaire:'Grand dorsal',secondaires:['Trapèzes','Biceps','Deltoïdes postérieurs'],depart:"Élastique fixé devant toi à hauteur de poitrine, une poignée dans chaque main, bras tendus, buste droit.",mouvement:"Tire les poignées vers le torse en resserrant les omoplates, puis reviens en contrôlant la tension.",respiration:"Souffle en tirant, inspire en revenant.",erreurs:["Tirer seulement avec les bras","Arrondir le dos","Hausser les épaules"],variFacile:"Rowing élastique assis au sol.",variDifficile:"Rowing haltère unilatéral ou élastique plus résistant.",similaires:['tractions','developpe']},
+    mountain:{primaire:'Sangle abdominale',secondaires:['Fléchisseurs de hanche','Épaules','Cardio'],depart:"En position de planche haute, mains sous les épaules, corps gainé, jambes tendues.",mouvement:"Ramène alternativement un genou vers la poitrine à rythme soutenu, en gardant le bassin bas.",respiration:"Respiration rythmée et régulière selon la cadence.",erreurs:["Bassin qui monte trop haut","Mains mal placées sous les épaules","Rythme au détriment de la posture"],variFacile:"Mountain climbers lents ou en appui surélevé (sur une table).",variDifficile:"Cross-body mountain climbers rapides.",similaires:['gainage','squats']}
+  };
+
+  MUSCLES=[
+    {id:'epaules',nom:'Épaules (deltoïdes)',region:'front',days:1,load:60,lastSession:'Haut du corps',exos:['developpe','pompes']},
+    {id:'pecs',nom:'Pectoraux',region:'front',days:1,load:78,lastSession:'Full Body Maison',exos:['pompes','dips','developpe']},
+    {id:'biceps',nom:'Biceps',region:'front',days:2,load:45,lastSession:'Haut du corps',exos:['tractions','rowing']},
+    {id:'abdos',nom:'Abdominaux',region:'front',days:0,load:85,lastSession:'Renforcement Express',exos:['gainage','abdos','mountain']},
+    {id:'quads',nom:'Quadriceps',region:'front',days:1,load:70,lastSession:'Full Body Maison',exos:['squats','fentes']},
+    {id:'trapezes',nom:'Trapèzes',region:'back',days:3,load:35,lastSession:'Haut du corps',exos:['tractions','rowing','developpe']},
+    {id:'dos',nom:'Dos (grand dorsal)',region:'back',days:3,load:40,lastSession:'Haut du corps',exos:['tractions','rowing']},
+    {id:'triceps',nom:'Triceps',region:'back',days:2,load:55,lastSession:'Haut du corps',exos:['dips','pompes','developpe']},
+    {id:'fessiers',nom:'Fessiers',region:'back',days:1,load:65,lastSession:'Full Body Maison',exos:['squats','fentes']},
+    {id:'ischios',nom:'Ischio-jambiers',region:'back',days:1,load:50,lastSession:'Full Body Maison',exos:['fentes','squats']},
+    {id:'mollets',nom:'Mollets',region:'back',days:6,load:15,lastSession:'Bas du corps',exos:['fentes']}
+  ];
+
+  state = {
+    tab:'home', view:null, device:this.props.device ?? 'ios', online:true, disclaimer:true, voiceOn:true,
+    selEx:'pompes', selProg:'fullbody',
+    wProgId:null, wIndex:0, wSet:1, wPhase:'exercise', wRest:0, wRestKind:'exercise', wElapsed:0, wStopwatch:0, wSwRun:true, wPaused:false, wDone:[],
+    bigMode:false, wCharge:{}, wReps:{}, wNotes:{}, wEdit:null, wEditVal:'',
+    cSummary:{time:'0:00',exos:0,kcal:0},
+    profile:{prenom:'Alex',sexe:'Homme',age:28,poids:75,taille:178,poidsCible:80,experience:'Intermédiaire',objectif:'Prise de masse',zones:['Pectoraux','Dos','Jambes'],frequence:4,contraintes:''},
+    journal:[{nom:'Renforcement Express',time:320,kcal:48,series:11,exos:['Pompes','Squats','Gainage (planche)'],muscles:['Pectoraux','Quadriceps','Sangle abdominale'],heure:'08:12'}],
+    analysis:null, analysisLoading:false, analysisError:'',
+    libSearch:'', libLevel:'Tous', libMat:'Tous',
+    bodySide:'front', selMuscle:'pecs',
+    customWorkouts:[], bName:'', bDuree:30, bObjectif:'Prise de masse', bExos:[], bPicker:false,
+    fLevel:'Tous', fEquip:'Tous', fDur:'Toutes',
+    streak:5, totalSessions:12,
+    history:[
+      {nom:'Full Body Maison',date:'Hier',exos:5,duree:'19:40'},
+      {nom:'Abdos / Core',date:'Il y a 2 j',exos:3,duree:'09:12'},
+      {nom:'HIIT Brûle-graisse',date:'Il y a 3 j',exos:4,duree:'14:05'}
+    ]
+  };
+
+  componentDidMount(){
+    try{ if(localStorage.getItem('musculator_ack')==='1') this.setState({disclaimer:false}); }catch(e){}
+    try{ if(window.speechSynthesis){ window.speechSynthesis.getVoices(); window.speechSynthesis.onvoiceschanged=()=>{}; } }catch(e){}
+    try{ const p=localStorage.getItem('musculator_profile'); if(p) this.setState({profile:JSON.parse(p)}); }catch(e){}
+    try{ const w=localStorage.getItem('musculator_workouts'); if(w) this.setState({customWorkouts:JSON.parse(w)}); }catch(e){}
+    this.timer=setInterval(()=>this.tick(),1000);
+  }
+  componentWillUnmount(){ clearInterval(this.timer); this.stopCadence(); }
+
+  componentDidUpdate(pp,ps){
+    const s=this.state;
+    const sig=[s.view,s.wPhase,s.wIndex,s.wPaused,s.voiceOn].join('|');
+    if(sig===this._sig) return;
+    this._sig=sig;
+    const active=s.view==='workout'&&s.wPhase==='exercise'&&!s.wPaused&&s.voiceOn;
+    if(active){ this.startCadence(); }
+    else{ this.stopCadence(); if(s.view==='workout'&&s.wPhase==='rest'&&s.voiceOn) this.say('Repos. Récupère.'); }
+  }
+
+  pickVoice(){ try{ const vs=window.speechSynthesis.getVoices()||[]; return vs.find(v=>/^fr/i.test(v.lang))||null; }catch(e){ return null; } }
+  say(text,rate){ if(!this.state.voiceOn||!window.speechSynthesis) return; try{ window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='fr-FR'; u.rate=rate||1.05; u.pitch=1; const v=this.pickVoice(); if(v) u.voice=v; window.speechSynthesis.speak(u); }catch(e){} }
+  sayQueue(text,rate){ if(!this.state.voiceOn||!window.speechSynthesis) return; try{ const u=new SpeechSynthesisUtterance(text); u.lang='fr-FR'; u.rate=rate||1.05; const v=this.pickVoice(); if(v) u.voice=v; window.speechSynthesis.speak(u); }catch(e){} }
+  startCadence(){
+    this.stopCadence();
+    const prog=this.progById(this.state.wProgId); if(!prog) return;
+    const ex=this.exById(prog.exos[this.state.wIndex]);
+    const c=this.CUES[ex.id]||{beat:1500,seq:['Allez','Continue']};
+    try{ window.speechSynthesis&&window.speechSynthesis.cancel(); }catch(e){}
+    this.sayQueue(ex.nom+", c'est parti !");
+    let i=-1;
+    this.cadenceTimer=setInterval(()=>{
+      if(this.state.wPaused||!this.state.voiceOn) return;
+      i++;
+      if(i>0&&i%9===0) this.say(this.ENCOUR[Math.floor(Math.random()*this.ENCOUR.length)]);
+      else this.say(c.seq[i%c.seq.length]);
+    },c.beat);
+  }
+  stopCadence(){ if(this.cadenceTimer){ clearInterval(this.cadenceTimer); this.cadenceTimer=null; } try{ window.speechSynthesis&&window.speechSynthesis.cancel(); }catch(e){} }
+
+  exById(id){ return this.EX.find(e=>e.id===id)||this.EX[0]; }
+  progById(id){ const custom=(this.state&&this.state.customWorkouts)||[]; return this.PROG.concat(custom).find(p=>p.id===id)||this.PROG[0]; }
+  fmt(s){ s=Math.max(0,Math.round(s)); const m=Math.floor(s/60); const r=s%60; return m+':'+String(r).padStart(2,'0'); }
+  short(min){ const h=Math.floor(min/60); const m=min%60; return h>0?(h+'h'+String(m).padStart(2,'0')):(m+' min'); }
+
+  tick(){
+    if(this.state.view!=='workout'||this.state.wPaused) return;
+    this.setState(s=>{
+      let {wElapsed,wPhase,wRest,wIndex,wSet,wStopwatch,wSwRun}=s; wElapsed++;
+      if(wPhase==='rest'){ wRest--; if(wRest<=0){ if(s.wRestKind==='series'){ wSet=wSet+1; } else { wIndex=wIndex+1; wSet=1; } wPhase='exercise'; wRest=0; wStopwatch=0; wSwRun=true; } }
+      else if(wPhase==='exercise'&&wSwRun){ wStopwatch=(wStopwatch||0)+1; }
+      return {wElapsed,wPhase,wRest,wIndex,wSet,wStopwatch,wSwRun};
+    });
+  }
+
+  go(tab){ this.setState({tab,view:null}); }
+  setDevice(d){ this.setState({device:d}); }
+  acceptDisclaimer(){ try{localStorage.setItem('musculator_ack','1');}catch(e){} this.setState({disclaimer:false}); }
+
+  startWorkout(id){ this.setState({view:'workout',wProgId:id,wIndex:0,wSet:1,wPhase:'exercise',wRest:0,wRestKind:'exercise',wElapsed:0,wStopwatch:0,wSwRun:true,wPaused:false,wDone:[],wCharge:{},wReps:{},wNotes:{},wEdit:null,wEditVal:''}); }
+
+  effSeries(id){ const p=this.progById(this.state.wProgId); const cp=(p&&p.isCustom&&p.custom&&p.custom[id])?p.custom[id]:null; return Number(cp?cp.series:this.exById(id).series)||1; }
+  effRepos(id){ const p=this.progById(this.state.wProgId); const cp=(p&&p.isCustom&&p.custom&&p.custom[id])?p.custom[id]:null; return Number(cp?cp.repos:this.exById(id).repos)||45; }
+  baseReps(id){ const p=this.progById(this.state.wProgId); const cp=(p&&p.isCustom&&p.custom&&p.custom[id])?p.custom[id]:null; return cp?cp.reps:this.exById(id).reps; }
+  baseCharge(id){ const p=this.progById(this.state.wProgId); const cp=(p&&p.isCustom&&p.custom&&p.custom[id])?p.custom[id]:null; return (cp&&cp.charge)?cp.charge:(this.exById(id).charge||'Poids du corps'); }
+  curCharge(id){ const o=this.state.wCharge||{}; return (o[id]!=null&&o[id]!=='')?o[id]:this.baseCharge(id); }
+  curReps(id){ const o=this.state.wReps||{}; return (o[id]!=null&&o[id]!=='')?o[id]:this.baseReps(id); }
+
+  finishSet(){
+    const s=this.state; const prog=this.progById(s.wProgId); const cur=prog.exos[s.wIndex];
+    const total=this.effSeries(cur);
+    if(s.wSet<total){ this.setState({wPhase:'rest',wRest:this.effRepos(cur),wRestKind:'series',wStopwatch:0,wSwRun:false}); }
+    else{
+      const done=[...s.wDone,cur];
+      if(s.wIndex>=prog.exos.length-1){ this.finishWorkout(done); }
+      else{ this.setState({wDone:done,wPhase:'rest',wRest:this.effRepos(cur),wRestKind:'exercise',wStopwatch:0,wSwRun:false}); }
+    }
+  }
+  skipRest(){ this.setState(s=>{ if(s.wRestKind==='series') return {wPhase:'exercise',wSet:s.wSet+1,wRest:0,wStopwatch:0,wSwRun:true}; return {wPhase:'exercise',wIndex:s.wIndex+1,wSet:1,wRest:0,wStopwatch:0,wSwRun:true}; }); }
+  addRest(){ this.setState(s=>({wRest:s.wRest+15})); }
+  togglePause(){ this.setState(s=>({wPaused:!s.wPaused})); }
+  toggleSw(){ this.setState(s=>({wSwRun:!s.wSwRun})); }
+  resetSw(){ this.setState({wStopwatch:0,wSwRun:true}); }
+  toggleBig(){ const on=!this.state.bigMode; this.setState({bigMode:on}); try{ const el=document.documentElement; if(on){ el.requestFullscreen&&el.requestFullscreen().catch(()=>{}); } else if(document.fullscreenElement){ document.exitFullscreen&&document.exitFullscreen(); } }catch(e){} }
+  openEdit(kind){ const s=this.state; const cur=this.progById(s.wProgId).exos[s.wIndex]; let val=''; if(kind==='charge') val=this.curCharge(cur); else if(kind==='reps') val=this.curReps(cur); else val=(s.wNotes&&s.wNotes[cur])||''; this.setState({wEdit:kind,wEditVal:val}); }
+  saveEdit(){ const s=this.state; const cur=this.progById(s.wProgId).exos[s.wIndex]; const v=s.wEditVal; this.setState(st=>{ if(st.wEdit==='charge') return {wCharge:{...st.wCharge,[cur]:v},wEdit:null}; if(st.wEdit==='reps') return {wReps:{...st.wReps,[cur]:v},wEdit:null}; return {wNotes:{...st.wNotes,[cur]:v},wEdit:null}; }); }
+  cancelEdit(){ this.setState({wEdit:null}); }
+  finishWorkout(done){
+    const s=this.state; const prog=this.progById(s.wProgId);
+    const kpm=this.props.estimatedKcalPerMin ?? 9;
+    const kcal=Math.round((s.wElapsed/60)*kpm);
+    const exObjs=prog.exos.map(id=>this.exById(id));
+    const entry={nom:prog.nom,date:"Aujourd'hui",exos:prog.exos.length,duree:this.fmt(s.wElapsed)};
+    const journalEntry={nom:prog.nom,time:s.wElapsed,kcal,series:exObjs.reduce((a,e)=>a+e.series,0),exos:exObjs.map(e=>e.nom),muscles:[...new Set(exObjs.map(e=>e.muscle.split(' · ')[0]))],heure:this.nowHM()};
+    this.say('Séance terminée. Bravo, tu as tout donné !');
+    this.setState({
+      view:'complete',
+      cSummary:{time:this.fmt(s.wElapsed),exos:prog.exos.length,kcal},
+      history:[entry,...s.history],
+      journal:[...s.journal,journalEntry],
+      analysis:null,
+      totalSessions:s.totalSessions+1,
+      streak:s.streak+1
+    });
+  }
+  quitWorkout(){ this.setState({view:null,tab:'home'}); }
+
+  nowHM(){ const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+  todayLabel(){ try{ return new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'}); }catch(e){ return "Aujourd'hui"; } }
+  setProfile(key,val){ this.setState(s=>({profile:{...s.profile,[key]:val}})); }
+  toggleZone(z){ this.setState(s=>{ const has=s.profile.zones.includes(z); const zones=has?s.profile.zones.filter(x=>x!==z):[...s.profile.zones,z]; return {profile:{...s.profile,zones}}; }); }
+  saveProfile(){ try{ localStorage.setItem('musculator_profile',JSON.stringify(this.state.profile)); }catch(e){} this.setState({view:null,tab:'journal'}); }
+
+  openBuilder(){ this.setState({view:'builder',bName:'',bDuree:30,bObjectif:'Prise de masse',bExos:[],bPicker:false}); }
+  addBExo(id){ this.setState(s=>({bExos:[...s.bExos,{id,series:3,reps:'12',charge:'Poids du corps',repos:60}],bPicker:false})); }
+  updBExo(i,k,v){ this.setState(s=>{ const a=s.bExos.slice(); a[i]={...a[i],[k]:v}; return {bExos:a}; }); }
+  rmBExo(i){ this.setState(s=>({bExos:s.bExos.filter((_,j)=>j!==i)})); }
+  moveBExo(i,d){ this.setState(s=>{ const a=s.bExos.slice(); const j=i+d; if(j<0||j>=a.length) return {}; const t=a[i]; a[i]=a[j]; a[j]=t; return {bExos:a}; }); }
+  saveWorkout(){
+    const s=this.state; if(!s.bExos.length) return;
+    const id='custom-'+Date.now();
+    const custom={}; s.bExos.forEach(e=>{ custom[e.id]={series:Number(e.series)||1,reps:e.reps||'',charge:e.charge||'',repos:Number(e.repos)||30}; });
+    const w={id,nom:(s.bName||'').trim()||'Ma séance',obj:s.bObjectif,niveau:'Perso',lieu:'Perso',duree:Number(s.bDuree)||20,kcal:Math.round((Number(s.bDuree)||20)*8),mat:['Perso'],icon:'ph-user-gear',exos:s.bExos.map(e=>e.id),custom,isCustom:true};
+    const list=[...s.customWorkouts,w];
+    try{ localStorage.setItem('musculator_workouts',JSON.stringify(list)); }catch(e){}
+    this.setState({customWorkouts:list,view:'program',selProg:id});
+  }
+
+  async runAnalysis(){
+    const s=this.state; if(s.analysisLoading) return;
+    if(s.journal.length===0){ this.setState({analysisError:"Aucune séance à analyser aujourd'hui. Lance une séance depuis l'accueil."}); return; }
+    this.setState({analysisLoading:true,analysis:null,analysisError:''});
+    const totalTime=s.journal.reduce((a,j)=>a+j.time,0);
+    const totalKcal=s.journal.reduce((a,j)=>a+j.kcal,0);
+    const totalSeries=s.journal.reduce((a,j)=>a+j.series,0);
+    const muscles=[...new Set(s.journal.flatMap(j=>j.muscles))];
+    const data={
+      profil:s.profile,
+      journee:{ nbSeances:s.journal.length, tempsTotalMin:Math.round(totalTime/60), kcal:totalKcal, seriesTotales:totalSeries, musclesTravailles:muscles,
+        seances:s.journal.map(j=>({nom:j.nom,dureeMin:Math.round(j.time/60),kcal:j.kcal,series:j.series,exercices:j.exos,muscles:j.muscles})) }
+    };
+    const sys="Tu es un coach sportif expert en prise de masse musculaire. On te fournit le PROFIL de l'utilisateur (données corporelles, objectif, zones prioritaires, fréquence visée) et le JOURNAL de ses séances du jour, en JSON. Analyse précisément la journée par rapport à SON objectif et à SES données. "+
+      "Réponds UNIQUEMENT par un objet JSON valide, sans aucun texte autour, avec EXACTEMENT ces clés : "+
+      "\"resume\" (string, 1-2 phrases personnalisées), "+
+      "\"energie\" (string, une phrase chiffrée sur l'énergie/calories dépensées et l'intensité), "+
+      "\"tonus\" (string, une phrase sur le gain de tonus/muscle estimé et les groupes musculaires travaillés), "+
+      "\"progression\" (entier 0-100, estimation de l'avancée du jour vers l'objectif), "+
+      "\"progressionTexte\" (string courte), "+
+      "\"aFaire\" (tableau de 2 à 4 strings courts et concrets : ce qu'il reste à faire pour atteindre l'objectif), "+
+      "\"ameliorer\" (tableau de 2 à 3 strings courts : points techniques ou de programmation à améliorer). "+
+      "Chiffre quand c'est possible, reste concret et bienveillant, en français.";
+    try{
+      const raw=await window.claude.complete({ model:'claude-sonnet-4-5', system:sys, messages:[{role:'user',content:JSON.stringify(data)}], max_tokens:800 });
+      let obj=null; try{ obj=JSON.parse(raw); }catch(e){ const m=raw&&raw.match(/\{[\s\S]*\}/); if(m){ try{ obj=JSON.parse(m[0]); }catch(e2){} } }
+      if(obj){ this.setState({analysis:obj,analysisLoading:false}); }
+      else{ this.setState({analysisLoading:false,analysis:{resume:(raw||'Analyse indisponible.').slice(0,400),energie:'',tonus:'',progression:0,progressionTexte:'',aFaire:[],ameliorer:[]}}); }
+    }catch(e){
+      this.setState({analysisLoading:false,analysis:{
+        resume:"Analyse hors-ligne : bon volume de travail aujourd'hui, en cohérence avec un objectif de prise de masse. Pense à la récupération.",
+        energie:"Environ "+totalKcal+" kcal dépensées sur "+Math.round(totalTime/60)+" min d'effort.",
+        tonus:"Muscles sollicités : "+muscles.join(', ')+". Bon stimulus pour l'hypertrophie.",
+        progression:55, progressionTexte:"Tu es sur la bonne voie.",
+        aFaire:["Vise "+(s.profile.frequence||4)+" séances cette semaine","Ajoute 1 série sur tes exercices prioritaires","Augmente progressivement les répétitions"],
+        ameliorer:["Soigne l'exécution (amplitude complète)","Repos suffisant entre les séries"]
+      }});
+    }
+  }
+
+  filtered(){
+    const {fLevel,fEquip,fDur}=this.state;
+    return this.PROG.filter(p=>{
+      const okL=fLevel==='Tous'||p.niveau===fLevel||p.niveau==='Tous niveaux';
+      const okE=fEquip==='Tous'||p.mat.includes(fEquip);
+      let okD=true;
+      if(fDur==='5 min') okD=p.duree<=5;
+      else if(fDur==='10 min') okD=p.duree>5&&p.duree<=10;
+      else if(fDur==='20 min') okD=p.duree>10&&p.duree<=20;
+      else if(fDur==='30+ min') okD=p.duree>20;
+      return okL&&okE&&okD;
+    });
+  }
+  pill(active,label,onClick){
+    return {label,onClick,
+      bg:active?'var(--color-accent-800)':'transparent',
+      fg:active?'var(--color-accent-100)':'var(--color-neutral-300)',
+      bd:active?'var(--color-accent)':'var(--color-divider)'};
+  }
+  mapProg(p){
+    return {...p, exCount:p.exos.length, dureeLabel:p.duree+' min',
+      meta:p.exos.length+' exercices · '+p.duree+' min · '+p.niveau,
+      onOpen:()=>this.setState({view:'program',selProg:p.id})};
+  }
+
+  renderVals(){
+    const s=this.state; const dev=s.device;
+    const h=new Date().getHours();
+    const greeting=h<12?'Bonjour':(h<18?'Bon après-midi':'Bonsoir');
+    const tabDef=[
+      {key:'home',label:'Accueil',i:'ph-house'},
+      {key:'programs',label:'Programmes',i:'ph-list-checks'},
+      {key:'library',label:'Exos',i:'ph-books'},
+      {key:'journal',label:'Journal',i:'ph-notebook'},
+      {key:'progress',label:'Progrès',i:'ph-chart-line-up'}
+    ];
+    const tabs=tabDef.map(t=>{
+      const on=s.tab===t.key&&!s.view;
+      return {label:t.label,onClick:()=>this.go(t.key),
+        color:on?'var(--color-accent)':'var(--color-neutral-500)',
+        icon:(on?'ph-fill ':'ph ')+t.i};
+    });
+
+    const today=this.mapProg(this.progById('fullbody'));
+    const recommended=['fullbody','core','hiit'].map(id=>this.mapProg(this.progById(id)));
+    const flt=this.filtered().map(p=>this.mapProg(p));
+
+    const exBase=this.exById(s.selEx); const det=this.DETAILS[exBase.id]||{};
+    const ex={...exBase,...det, reposLabel:exBase.repos+' s',
+      secondairesLabel:(det.secondaires||[]).join(' · '),
+      matLabel:exBase.mat.join(' · '),
+      hasVarFacile:!!det.variFacile, hasVarDifficile:!!det.variDifficile,
+      similaires:(det.similaires||[]).map(id=>{const e=this.exById(id);return {nom:e.nom,icon:e.icon,muscle:this.exById(id).muscle,onOpen:()=>this.setState({view:'exercise',selEx:id})};})};
+
+    const libList=this.EX.filter(e=>{
+      const q=s.libSearch.trim().toLowerCase();
+      const okQ=!q||e.nom.toLowerCase().includes(q)||e.muscle.toLowerCase().includes(q);
+      const okL=s.libLevel==='Tous'||e.niveau===s.libLevel;
+      const okM=s.libMat==='Tous'||e.mat.includes(s.libMat);
+      return okQ&&okL&&okM;
+    }).map(e=>({nom:e.nom,icon:e.icon,muscle:e.muscle,niveau:e.niveau,matLabel:e.mat.join(' · '),onOpen:()=>this.setState({view:'exercise',selEx:e.id})}));
+
+    const solColor=(load)=>load>=70?'var(--color-accent-500)':load>=40?'var(--color-accent-700)':load>=1?'var(--color-accent-900)':'var(--color-neutral-800)';
+    const mc={};
+    this.MUSCLES.forEach(m=>{ mc[m.id]={fill:solColor(m.load),stroke:(s.selMuscle===m.id)?'var(--color-accent-100)':'transparent',onClick:()=>this.setState({selMuscle:m.id})}; });
+    const selM=this.MUSCLES.find(x=>x.id===s.selMuscle)||null;
+    let selDetail={exos:[]};
+    if(selM){
+      const rec=selM.days===0?{l:'Travaillé aujourd\'hui',c:'#f0a35e'}:selM.days<=1?{l:'En récupération',c:'#f0a35e'}:selM.days<=3?{l:'Bientôt prêt',c:'var(--color-accent-200)'}:{l:'Prêt à travailler',c:'#5fd08a'};
+      const dl=selM.days===0?"Aujourd'hui":selM.days===1?'Hier':'Il y a '+selM.days+' jours';
+      const sol=selM.load>=70?'Élevée':selM.load>=40?'Modérée':'Faible';
+      selDetail={nom:selM.nom,recLabel:rec.l,recColor:rec.c,daysLabel:dl,lastSession:selM.lastSession,solLabel:sol,loadPct:selM.load+'%',
+        exos:selM.exos.map(id=>{const e=this.exById(id);return {nom:e.nom,icon:e.icon,muscle:e.muscle,onOpen:()=>this.setState({view:'exercise',selEx:id})};})};
+    }
+
+    const pv=this.progById(s.selProg);
+    const prog={...pv, exCount:pv.exos.length, dureeLabel:pv.duree+' min',
+      list:pv.exos.map((eid,i)=>{const e=this.exById(eid);const cp=(pv.isCustom&&pv.custom&&pv.custom[eid])?pv.custom[eid]:null;const se=cp?cp.series:e.series;const rp=cp?cp.reps:e.reps;const ro=cp?cp.repos:e.repos;const ch=cp?cp.charge:'';return {num:i+1,nom:e.nom,meta:se+' × '+rp+(ch?' · '+ch:'')+' · repos '+ro+'s',onOpen:()=>this.setState({view:'exercise',selEx:eid})};})};
+
+    // workout
+    const wProg=s.wProgId?this.progById(s.wProgId):null;
+    let wCur=this.EX[0],wNextName='',wStepLabel='',wProgress='0%',validateLabel='Valider l\'exercice',isLast=false,wCueHint='';
+    if(wProg){
+      const cid=wProg.exos[Math.min(s.wIndex,wProg.exos.length-1)];
+      const cbase=this.exById(cid);
+      const cp=(wProg.isCustom&&wProg.custom&&wProg.custom[cid])?wProg.custom[cid]:null;
+      wCur={...cbase, series:cp?cp.series:cbase.series, reps:cp?cp.reps:cbase.reps, charge:cp?cp.charge:''};
+      const cc=this.CUES[cbase.id]; wCueHint=cc?('« '+cc.seq.join(' — ')+' »'):'';
+      const nid=wProg.exos[Math.min(s.wIndex+1,wProg.exos.length-1)];
+      wNextName=this.exById(nid).nom;
+      wStepLabel='Exercice '+(s.wIndex+1)+' / '+wProg.exos.length;
+      wProgress=Math.round((s.wDone.length/wProg.exos.length)*100)+'%';
+      isLast=s.wIndex>=wProg.exos.length-1;
+      validateLabel=isLast?'Terminer la séance':'Valider l\'exercice';
+    }
+    const curId=wProg?wProg.exos[Math.min(s.wIndex,wProg.exos.length-1)]:'pompes';
+    const wSeriesTotal=wProg?this.effSeries(curId):(Number(wCur.series)||1);
+    const wSetNum=Math.min(s.wSet,wSeriesTotal);
+    const curCharge=wProg?this.curCharge(curId):(wCur.charge||'Poids du corps');
+    const curReps=wProg?this.curReps(curId):wCur.reps;
+    const curNote=(s.wNotes&&s.wNotes[curId])||'';
+
+    const badges=this.BADGES.map(b=>({nom:b.nom,icon:b.icon,op:b.on?'1':'.4',
+      bg:b.on?'var(--color-accent-800)':'var(--color-neutral-900)',
+      bd:b.on?'var(--color-accent)':'var(--color-divider)',
+      fg:b.on?'var(--color-accent-100)':'var(--color-neutral-600)'}));
+
+    const journalV=s.journal.map(j=>({nom:j.nom,heure:j.heure,kcal:j.kcal,series:j.series,dureeLabel:this.fmt(j.time),exosLabel:j.exos.join(' · '),musclesLabel:j.muscles.join(' · ')}));
+    const dayTime=s.journal.reduce((a,j)=>a+j.time,0);
+    const dayKcal=s.journal.reduce((a,j)=>a+j.kcal,0);
+    const daySeries=s.journal.reduce((a,j)=>a+j.series,0);
+    const an=s.analysis;
+    const pf=s.profile;
+    const objLabel=pf.objectif+' · cible '+pf.poidsCible+' kg';
+
+    const durOpts=['Toutes','5 min','10 min','20 min','30+ min'].map(l=>this.pill(s.fDur===l,l,()=>this.setState({fDur:l})));
+    const levelOpts=['Tous','Débutant','Intermédiaire','Avancé'].map(l=>this.pill(s.fLevel===l,l,()=>this.setState({fLevel:l})));
+    const equipOpts=['Tous','Sans matériel','Haltères','Élastique','Maison','Salle'].map(l=>this.pill(s.fEquip===l,l,()=>this.setState({fEquip:l})));
+
+    return {
+      isIos:dev==='ios', isAndroid:dev==='android', isDeviceIos:dev==='ios',
+      setIos:()=>this.setDevice('ios'), setAndroid:()=>this.setDevice('android'),
+      iosBg:dev==='ios'?'var(--color-accent-800)':'transparent', iosFg:dev==='ios'?'var(--color-accent-100)':'var(--color-neutral-400)',
+      andBg:dev==='android'?'var(--color-accent-800)':'transparent', andFg:dev==='android'?'var(--color-accent-100)':'var(--color-neutral-400)',
+      wifiIcon:s.online?'ph-fill ph-wifi-high':'ph ph-wifi-slash',
+      toggleOnline:()=>this.setState(st=>({online:!st.online})),
+      onlineFg:s.online?'var(--color-neutral-300)':'#f0a35e',
+      onlineIcon:s.online?'ph-wifi-high':'ph-cloud-slash',
+      onlineLabel:s.online?'En ligne':'Hors-ligne',
+      offline:!s.online,
+
+      isHome:s.tab==='home'&&!s.view, isPrograms:s.tab==='programs'&&!s.view,
+      isJournal:s.tab==='journal'&&!s.view, isProgress:s.tab==='progress'&&!s.view,
+      isLibrary:s.tab==='library'&&!s.view,
+      libList, libEmpty:libList.length===0, libCount:libList.length,
+      libSearch:s.libSearch, onLibSearch:e=>this.setState({libSearch:e.target.value}),
+      libLevelOpts:['Tous','Débutant','Intermédiaire','Avancé'].map(o=>this.pill(s.libLevel===o,o,()=>this.setState({libLevel:o}))),
+      libMatOpts:['Tous','Sans matériel','Haltères','Élastique','Salle','Maison'].map(o=>this.pill(s.libMat===o,o,()=>this.setState({libMat:o}))),
+      showBodyMap:s.view==='bodymap', openBodyMap:()=>this.setState({view:'bodymap'}),
+      bodyFront:s.bodySide==='front', bodyBack:s.bodySide==='back',
+      setFront:()=>this.setState({bodySide:'front'}), setBack:()=>this.setState({bodySide:'back'}),
+      frontBg:s.bodySide==='front'?'var(--color-accent-800)':'transparent', frontFg:s.bodySide==='front'?'var(--color-accent-100)':'var(--color-neutral-300)',
+      backBg:s.bodySide==='back'?'var(--color-accent-800)':'transparent', backFg:s.bodySide==='back'?'var(--color-accent-100)':'var(--color-neutral-300)',
+      mc, hasMuscle:!!selM, muscle:selDetail,
+      openBuilder:()=>this.openBuilder(), showBuilder:s.view==='builder',
+      myWorkouts:s.customWorkouts.map(p=>this.mapProg(p)), hasMyWorkouts:s.customWorkouts.length>0,
+      bName:s.bName, onBName:e=>this.setState({bName:e.target.value}),
+      bDuree:s.bDuree, onBDuree:e=>this.setState({bDuree:Number(e.target.value)||0}),
+      bObjOpts:['Prise de masse','Force','Tonus','Endurance'].map(o=>this.pill(s.bObjectif===o,o,()=>this.setState({bObjectif:o}))),
+      bExos:s.bExos.map((e,i)=>{const ex=this.exById(e.id);return {nom:ex.nom,icon:ex.icon,num:i+1,series:e.series,reps:e.reps,charge:e.charge,repos:e.repos,
+        onSeries:ev=>this.updBExo(i,'series',ev.target.value),onReps:ev=>this.updBExo(i,'reps',ev.target.value),onCharge:ev=>this.updBExo(i,'charge',ev.target.value),onRepos:ev=>this.updBExo(i,'repos',ev.target.value),
+        up:()=>this.moveBExo(i,-1),down:()=>this.moveBExo(i,1),remove:()=>this.rmBExo(i)};}),
+      bEmpty:s.bExos.length===0, bCount:s.bExos.length+' exercice'+(s.bExos.length>1?'s':''),
+      bPicker:s.bPicker, openBPicker:()=>this.setState({bPicker:true}), closeBPicker:()=>this.setState({bPicker:false}),
+      bPickList:this.EX.map(e=>({nom:e.nom,icon:e.icon,muscle:e.muscle,onAdd:()=>this.addBExo(e.id)})),
+      saveWorkout:()=>this.saveWorkout(), canSave:s.bExos.length>0,
+      showProfile:s.view==='profile',
+      showExercise:s.view==='exercise', showProgram:s.view==='program',
+      showWorkout:s.view==='workout', showComplete:s.view==='complete',
+      showTabs:!s.view,
+      tabs,
+
+      greeting, streak:s.streak, weekCount:3, totalTimeShort:this.short(214), weekKcal:1240,
+      startToday:()=>this.startWorkout('fullbody'),
+      todayName:today.nom, todayMeta:today.duree+' min · '+today.exos.length+' exercices',
+      goPrograms:()=>this.go('programs'), recommended,
+      showDisclaimer:()=>this.setState({disclaimer:true}),
+
+      durOpts, levelOpts, equipOpts,
+      programsFiltered:flt, noPrograms:flt.length===0,
+      progCountLabel:flt.length+' programme'+(flt.length>1?'s':''),
+
+      ex,
+      prog, startProg:()=>this.startWorkout(s.selProg),
+      closeOverlay:()=>this.setState({view:null}),
+
+      wProgName:wProg?wProg.nom:'', wStepLabel, wProgress, wElapsedFmt:this.fmt(s.wElapsed),
+      wIsExercise:s.wPhase==='exercise', wIsRest:s.wPhase==='rest',
+      wCur, wNextName, wRestFmt:this.fmt(s.wRest), validateLabel,
+      validateEx:()=>this.validateEx(), skipRest:()=>this.skipRest(), addRest:()=>this.addRest(),
+      togglePause:()=>this.togglePause(), pauseIcon:s.wPaused?'ph-play':'ph-pause',
+      wCueHint,
+      voiceOn:s.voiceOn, toggleVoice:()=>this.setState(st=>({voiceOn:!st.voiceOn})),
+      voiceIcon:s.voiceOn?'ph-speaker-high':'ph-speaker-simple-x',
+      voiceFg:s.voiceOn?'var(--color-accent-200)':'var(--color-neutral-500)',
+      voiceBd:s.voiceOn?'var(--color-accent)':'var(--color-divider)',
+      openCurEx:()=>this.setState({view:'exercise',selEx:wCur.id}),
+      quitWorkout:()=>this.quitWorkout(),
+      bigMode:s.bigMode, toggleBig:()=>this.toggleBig(),
+      wSmallEx:s.wPhase==='exercise'&&!s.bigMode, wBigEx:s.wPhase==='exercise'&&s.bigMode,
+      wSmallRest:s.wPhase==='rest'&&!s.bigMode, wBigRest:s.wPhase==='rest'&&s.bigMode,
+      wSetLabel:'Série '+wSetNum+' / '+wSeriesTotal, wSetNum, wSeriesTotal,
+      wCharge:curCharge, wReps:curReps,
+      wSwFmt:this.fmt(s.wStopwatch||0), wSwRun:s.wSwRun, wSwIcon:s.wSwRun?'ph-pause':'ph-play',
+      toggleSw:()=>this.toggleSw(), resetSw:()=>this.resetSw(),
+      finishSet:()=>this.finishSet(),
+      finishSetLabel:(wSetNum<wSeriesTotal?'Série terminée':(isLast?'Terminer la séance':'Exercice terminé')),
+      editCharge:()=>this.openEdit('charge'), editReps:()=>this.openEdit('reps'), editNotes:()=>this.openEdit('notes'),
+      wNoteDisplay:curNote||'Ajouter une note…',
+      wEditOpen:!!s.wEdit, wEditIsNote:s.wEdit==='notes', wEditNotNote:!!s.wEdit&&s.wEdit!=='notes',
+      wEditTitle:s.wEdit==='charge'?'Modifier la charge':(s.wEdit==='reps'?'Modifier les répétitions':'Notes personnelles'),
+      wEditVal:s.wEditVal, onEditVal:e=>this.setState({wEditVal:e.target.value}),
+      saveEdit:()=>this.saveEdit(), cancelEdit:()=>this.cancelEdit(),
+      wRestKindLabel:s.wRestKind==='series'?'Repos entre séries':'Repos — exercice suivant',
+      wRestNext:s.wRestKind==='series'?('Série '+(s.wSet+1)+' · '+wCur.nom):wNextName,
+
+      cTime:s.cSummary.time, cExos:s.cSummary.exos, cKcal:s.cSummary.kcal,
+      finishHome:()=>this.setState({view:null,tab:'home'}),
+
+      openProfile:()=>this.setState({view:'profile'}),
+      journal:journalV, journalEmpty:s.journal.length===0, dayDate:this.todayLabel(),
+      dayCount:s.journal.length, dayTimeLabel:this.fmt(dayTime), dayKcal, daySeries,
+      runAnalysis:()=>this.runAnalysis(), analysisLoading:s.analysisLoading, analysisIdle:!s.analysisLoading,
+      analysisError:s.analysisError, hasAnalysisError:!!s.analysisError, analysisReady:!!an,
+      anResume:an?an.resume:'', anEnergie:an?an.energie:'', anTonus:an?an.tonus:'',
+      anProgression:an?((an.progression||0)+'%'):'0%', anProgressionTexte:an?an.progressionTexte:'',
+      anAFaire:(an&&Array.isArray(an.aFaire))?an.aFaire:[], anAmeliorer:(an&&Array.isArray(an.ameliorer))?an.ameliorer:[],
+      objLabelHome:objLabel,
+      pName:pf.prenom, onPName:e=>this.setProfile('prenom',e.target.value),
+      pAge:pf.age, onPAge:e=>this.setProfile('age',Number(e.target.value)||0),
+      pPoids:pf.poids, onPPoids:e=>this.setProfile('poids',Number(e.target.value)||0),
+      pTaille:pf.taille, onPTaille:e=>this.setProfile('taille',Number(e.target.value)||0),
+      pPoidsCible:pf.poidsCible, onPPoidsCible:e=>this.setProfile('poidsCible',Number(e.target.value)||0),
+      pContraintes:pf.contraintes, onPContraintes:e=>this.setProfile('contraintes',e.target.value),
+      pFreq:pf.frequence, onPFreq:e=>this.setProfile('frequence',Number(e.target.value)||0),
+      sexeOpts:['Homme','Femme','Autre'].map(o=>this.pill(pf.sexe===o,o,()=>this.setProfile('sexe',o))),
+      expOpts:['Débutant','Intermédiaire','Avancé'].map(o=>this.pill(pf.experience===o,o,()=>this.setProfile('experience',o))),
+      objOpts:['Prise de masse','Force','Tonus','Endurance'].map(o=>this.pill(pf.objectif===o,o,()=>this.setProfile('objectif',o))),
+      zoneChips:['Pectoraux','Dos','Jambes','Épaules','Bras','Abdos'].map(z=>this.pill(pf.zones.includes(z),z,()=>this.toggleZone(z))),
+      saveProfile:()=>this.saveProfile(),
+
+      badges, totalSessions:s.totalSessions, history:s.history,
+
+      disclaimer:s.disclaimer, acceptDisclaimer:()=>this.acceptDisclaimer()
+    };
+  }
+}
+</script>
+</body>
+</html>
