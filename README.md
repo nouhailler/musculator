@@ -1,25 +1,65 @@
-# CODING AGENTS: READ THIS FIRST
+# Musculator
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+A mobile-first PWA for muscle-building strength training: personalized programs, guided
+sessions with a rest timer and a French voice coach, a muscle map, an exercise library, and
+a daily journal with an on-device "AI analysis" of your training.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+Built with React + Vite, installable and offline-capable (`vite-plugin-pwa`). All data —
+profile, custom workouts, session history — is stored locally (`localStorage`); there's no
+backend.
 
-## What you should do — IMPORTANT
+## Getting started
 
-**Read the chat transcripts first.** There are 2 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+```bash
+npm install
+npm run dev       # http://localhost:5173
+npm run build     # production build in dist/
+npm run preview   # serve the production build locally
+npm run lint       # oxlint
+npm run gen-icons  # regenerate public/icons/*.png from scripts/gen-icons.mjs
+```
 
-**Read `project/Musculator.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+## What's implemented
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+- **Accueil** — today's progress ring, week streak, one-tap "Commencer une séance", quick
+  tips, recommended programs, medical disclaimer.
+- **Séance guidée** — exercise/rest phases, per-set stopwatch, rest countdown (+15s/skip),
+  editable reps/charge/notes per exercise, a fullscreen "big buttons" mode for a phone
+  propped up next to you, and a French voice coach (Web Speech API) that calls out reps in
+  rhythm and encouragement, per exercise.
+- **Programmes** — filterable by duration/level/equipment, plus a workout builder to compose
+  and save custom sessions (exercises, series, reps, charge, rest, order).
+- **Bibliothèque** — searchable exercise catalogue with full technique sheets (setup,
+  movement, breathing, common mistakes, safety tips, easier/harder variants).
+- **Cartographie musculaire** — front/back muscle map; sollicitation level and recovery state
+  are derived from your real session history, not fixed demo numbers.
+- **Journal & Analyse IA** — today's sessions plus a structured training analysis (energy,
+  muscle stimulus, progress toward your goal, what to do next). See below.
+- **Progrès** — streak, sessions/week chart, badges (unlock from real usage), full history.
 
-## About the design files
+## About the "Analyse IA"
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+The original design called for a live LLM (OpenRouter). This build ships without a backend
+or API key, so `src/lib/analysis.js` computes a structured, personalized-looking analysis
+directly from your profile and session log instead of calling a model. The output shape
+(`resume/energie/tonus/progression/aFaire/ameliorer`) is exactly what a real model call would
+need to fill in — swapping `generateAnalysis()` for a backend request is the only change
+required to wire up a real model later; no caller needs to change.
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+## Project layout
 
-## Bundle contents
+```
+src/
+  data/        exercise/program/badge/muscle/cue catalogues (static content)
+  lib/         pure helpers: formatting, streak/muscle-stat derivation, voice, analysis
+  state/       single Context + reducer store, localStorage-backed
+  components/  shared chrome (tab bar, banners, modals) and ui/ primitives
+  screens/     the 5 tab screens
+  overlays/    full-screen views pushed on top of a tab (exercise sheet, workout, etc.)
+```
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Application mobile renforcement musculaire` project files (HTML prototypes, assets, components)
+## Origin
+
+This app was implemented from a Claude Design prototype handoff (see `chats/` for the
+original design conversation and `project/` for the exported HTML/CSS/JS prototype it was
+built from).
