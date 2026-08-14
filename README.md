@@ -118,6 +118,12 @@ a hand-typed food are interchangeable:
   rest of the app — but is precached, so offline search still works.
 - **Manual entry** — always available, for home-made food.
 
+Barcode scanning uses the native `BarcodeDetector` where it exists (Chrome/Edge on Android)
+and falls back to `@zxing/browser` elsewhere, which covers iOS Safari and Firefox. zxing is
+loaded on demand and kept out of the precache, so browsers with the native API never
+download it. The camera needs a secure context — over plain HTTP the scanner says so and
+hands over to the manual barcode field.
+
 ### Score Musculation Quotidien (/100)
 
 `src/lib/dailyScore.js`, weighted from `src/data/nutrition.js`:

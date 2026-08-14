@@ -46,6 +46,10 @@ grouped by date and reference the commit they landed in.
   - `nutriLog` and `foodCache` join the persisted slices.
   - Optional: imports a Nutritor journal CSV, merging into existing days rather than
     replacing them.
+  - Barcode scanning falls back to `@zxing/browser` where the native `BarcodeDetector` is
+    missing, so it works on iOS Safari and Firefox. The decoder is loaded on demand and
+    excluded from the precache — browsers with the native API never fetch it, and the ~466 KB
+    chunk is runtime-cached on first use instead of shipped to everyone.
   - The CIQUAL table is a lazily loaded chunk rather than part of the initial bundle: the
     entry bundle stays at 654 KB instead of 1 179 KB, and the 531 KB table is fetched when
     food search opens. It remains precached, so offline search is unaffected.

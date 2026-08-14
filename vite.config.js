@@ -4,6 +4,18 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    rollupOptions: {
+      output: {
+        // Give the zxing chunk a stable name so the service-worker rules below
+        // can single it out; its hash still changes with its content.
+        manualChunks(id) {
+          if (id.includes('@zxing')) return 'zxing';
+          return undefined;
+        },
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({
@@ -29,8 +41,21 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,woff2}'],
+        // The zxing decoder is only fetched by browsers without a native
+        // BarcodeDetector, and only once someone opens the scanner. Precaching
+        // it would make every Android and desktop user download ~460 KB they
+        // will never execute, so it is cached on first use instead.
+        globIgnores: ['**/zxing-*.js'],
         navigateFallback: '/index.html',
         runtimeCaching: [
+          {
+            urlPattern: /\/assets\/zxing-.*\.js$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'zxing-scanner',
+              expiration: { maxEntries: 2, maxAgeSeconds: 60 * 60 * 24 * 365 },
+            },
+          },
           {
             urlPattern: ({ url }) => url.origin === 'https://fonts.googleapis.com',
             handler: 'CacheFirst',

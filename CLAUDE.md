@@ -160,6 +160,12 @@ food came from. Two invariants matter:
   and `dailyScore` drops the component's weight from the denominator when too few are known.
   Defaulting a micronutrient to 0 would silently punish users for Open Food Facts' gaps —
   spot-checking four popular products returned 0, 0, 1 and 3 of the six the score reads.
+- **The scanner has two engines and neither is bundled eagerly.** Native `BarcodeDetector`
+  first, `@zxing/browser` (dynamic import) where it is missing — that fallback is what makes
+  iOS Safari and Firefox work. The zxing chunk is named via `manualChunks` in
+  `vite.config.js` and deliberately **excluded from the precache** (`globIgnores`) with a
+  runtime `CacheFirst` rule instead: precaching it would push ~466 KB onto every Android and
+  desktop user for code they never run. Don't "fix" that by dropping the globIgnores.
 - **`searchCiqual` is async, and deliberately so.** The table is ~530 KB — most of the app's
   payload — and is only needed once food search opens, so `data/ciqual.js` is a lazily
   imported chunk (`loadCiqual()`, memoised, failure not cached). It is still precached by the
