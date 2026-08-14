@@ -114,6 +114,8 @@ a hand-typed food are interchangeable:
 - **CIQUAL** (`src/data/ciqual.js`) — 3 167 generic French foods bundled with the app, so
   search works fully offline and covers foods that have no barcode. It also carries the
   micronutrients OFF usually lacks, which is what makes the score's third component work.
+  It is loaded as a separate chunk the first time food search opens — it is bigger than the
+  rest of the app — but is precached, so offline search still works.
 - **Manual entry** — always available, for home-made food.
 
 ### Score Musculation Quotidien (/100)

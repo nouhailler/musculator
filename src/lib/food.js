@@ -8,7 +8,6 @@
 // `micros` is deliberately sparse: a key that is absent means "unknown", which
 // the score treats differently from zero. Never default a micronutrient to 0.
 import { MICROS } from '../data/nutrition.js';
-import { CIQUAL } from '../data/ciqual.js';
 
 const round1 = (n) => Math.round(n * 10) / 10;
 const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
@@ -95,16 +94,50 @@ export function fromCiqual(c) {
   };
 }
 
+// The table is ~600 KB, which is most of the app's payload and is only needed
+// once the user opens food search — so it is a separate chunk loaded on demand
+// rather than part of the initial bundle. The chunk is still precached by the
+// service worker, so offline search keeps working after the first visit.
+let ciqualPromise = null;
+
+/**
+ * Starts loading the generic food table. Safe to call repeatedly — the promise
+ * is memoised — so screens can warm it up before the user actually searches.
+ */
+export function loadCiqual() {
+  if (!ciqualPromise) {
+    ciqualPromise = import('../data/ciqual.js')
+      .then((m) => m.CIQUAL)
+      .catch((e) => {
+        // Don't cache the failure: a first attempt made offline before the
+        // service worker had the chunk must not poison every later search.
+        ciqualPromise = null;
+        throw e;
+      });
+  }
+  return ciqualPromise;
+}
+
 /**
  * Offline generic search. Runs against the bundled table, so it answers with no
  * network at all — this is the fallback when Open Food Facts is unreachable and
  * the main source for foods that have no barcode (an apple, rice, chicken).
+ *
+ * Returns [] rather than throwing when the chunk cannot be loaded: search still
+ * has Open Food Facts and manual entry, and a failed generic table should not
+ * take the whole screen down with it.
  */
-export function searchCiqual(query, limit = 25) {
+export async function searchCiqual(query, limit = 25) {
   const q = norm(query);
   if (q.length < 2) return [];
+  let table;
+  try {
+    table = await loadCiqual();
+  } catch {
+    return [];
+  }
   const scored = [];
-  for (const c of CIQUAL) {
+  for (const c of table) {
     const name = norm(c.name);
     if (!name.includes(q)) continue;
     // Prefer a prefix match, then the shortest name — "riz" should surface

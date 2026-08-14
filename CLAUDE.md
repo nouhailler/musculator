@@ -160,6 +160,11 @@ food came from. Two invariants matter:
   and `dailyScore` drops the component's weight from the denominator when too few are known.
   Defaulting a micronutrient to 0 would silently punish users for Open Food Facts' gaps —
   spot-checking four popular products returned 0, 0, 1 and 3 of the six the score reads.
+- **`searchCiqual` is async, and deliberately so.** The table is ~530 KB — most of the app's
+  payload — and is only needed once food search opens, so `data/ciqual.js` is a lazily
+  imported chunk (`loadCiqual()`, memoised, failure not cached). It is still precached by the
+  service worker, so offline search works after the first visit; verified. Don't turn the
+  import back into a static one to make the function synchronous.
 - **CIQUAL rows can carry macros with `kcal: 0`** (968 of 3 167). `fromCiqual` derives the
   energy with the Atwater factors in that case; treating 0 as a real value shows a 0 kcal
   lentil and wrecks the calorie half of the score.

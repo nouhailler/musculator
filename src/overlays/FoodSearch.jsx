@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../state/context.js';
 import { MEALS, mealLabel } from '../data/nutrition.js';
-import { fromOFF, manualFood, searchCiqual } from '../lib/food.js';
+import { fromOFF, loadCiqual, manualFood, searchCiqual } from '../lib/food.js';
 import { productByBarcode, searchProducts } from '../lib/off.js';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
@@ -48,15 +48,17 @@ export default function FoodSearch() {
   const [barcode, setBarcode] = useState('');
   const [manual, setManual] = useState(null);
 
+  useEffect(() => { loadCiqual().catch(() => {}); }, []);
+
   // Offline-first: the bundled generic table answers instantly and without a
   // network, and Open Food Facts is layered on top when it is reachable.
   const runSearch = async (q) => {
     const term = (q ?? query).trim();
     if (term.length < 2) return;
     setError(''); setNotice(''); setManual(null);
-    const local = searchCiqual(term);
-    setResults(local);
     setLoading(true);
+    const local = await searchCiqual(term);
+    setResults(local);
     try {
       const products = await searchProducts(term);
       const remote = products.map(fromOFF).filter((f) => f.per100.kcal > 0);

@@ -46,6 +46,9 @@ grouped by date and reference the commit they landed in.
   - `nutriLog` and `foodCache` join the persisted slices.
   - Optional: imports a Nutritor journal CSV, merging into existing days rather than
     replacing them.
+  - The CIQUAL table is a lazily loaded chunk rather than part of the initial bundle: the
+    entry bundle stays at 654 KB instead of 1 179 KB, and the 531 KB table is fetched when
+    food search opens. It remains precached, so offline search is unaffected.
 
 - **Optional OpenRouter backend for the "Analyse IA"** — a new section in *Mon profil &
   objectifs* takes an OpenRouter API key and lets you pick a free model; that model then
