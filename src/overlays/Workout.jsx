@@ -2,6 +2,8 @@ import { useApp, allPrograms } from '../state/context.js';
 import { progById } from '../data/programs.js';
 import { exById } from '../data/exercises.js';
 import { CUES } from '../data/cues.js';
+import { demoFor } from '../data/demos.js';
+import ExerciseDemo from '../components/ExerciseDemo.jsx';
 import { effSeries, curCharge as getCurCharge, curReps as getCurReps } from '../lib/workout.js';
 import { fmt } from '../lib/format.js';
 import Icon from '../components/ui/Icon.jsx';
@@ -58,11 +60,13 @@ export default function Workout() {
 
       {w.phase === 'exercise' && !w.bigMode && (
         <div className="mscroll" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '8px 20px 0' }}>
-          <div style={{ position: 'relative', width: 148, height: 148, margin: '8px 0 12px', borderRadius: '50%', background: 'radial-gradient(120% 120% at 30% 20%,var(--color-accent-800),var(--color-neutral-900))', display: 'grid', placeItems: 'center' }}>
-            <svg width="148" height="148" viewBox="0 0 120 120" style={{ position: 'absolute' }}>
+          <div style={{ position: 'relative', flex: 'none', width: 168, height: 168, margin: '8px 0 12px', borderRadius: '50%', overflow: 'hidden', background: 'radial-gradient(120% 120% at 30% 20%,var(--color-accent-800),var(--color-neutral-900))', display: 'grid', placeItems: 'center' }}>
+            <svg width="168" height="168" viewBox="0 0 120 120" style={{ position: 'absolute' }}>
               <circle cx="60" cy="60" r="54" fill="none" stroke="color-mix(in srgb,var(--color-accent) 45%,transparent)" strokeWidth="2.5" strokeDasharray="339" style={{ animation: 'mRing 2.4s ease-out infinite' }} transform="rotate(-90 60 60)" />
             </svg>
-            <Icon name={wCur.icon} weight="fill" size={60} color="var(--color-accent-100)" style={{ animation: 'mPulse 2.4s ease-in-out infinite' }} />
+            {demoFor(wCur.id)
+              ? <div style={{ position: 'absolute', inset: 25 }}><ExerciseDemo exId={wCur.id} label={wCur.nom} paused={w.paused} /></div>
+              : <Icon name={wCur.icon} weight="fill" size={60} color="var(--color-accent-100)" style={{ animation: 'mPulse 2.4s ease-in-out infinite' }} />}
           </div>
           <h2 style={{ margin: '0 0 4px', textAlign: 'center' }}>{wCur.nom}</h2>
           <div style={{ fontSize: 13, color: 'var(--color-accent-300)', marginBottom: 8 }}>{wCur.muscle}</div>

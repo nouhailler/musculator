@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { useApp } from '../state/context.js';
 import { exById } from '../data/exercises.js';
+import { demoFor } from '../data/demos.js';
+import ExerciseDemo from '../components/ExerciseDemo.jsx';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
 import { SecondaryButton } from '../components/ui/Button.jsx';
@@ -22,6 +25,8 @@ export default function ExerciseDetail({ exId, onBack }) {
   const { state, actions } = useApp();
   const ex = exById(exId || state.selExId);
   const back = onBack || actions.closeOverlay;
+  const [demoPaused, setDemoPaused] = useState(false);
+  const hasDemo = !!demoFor(ex.id);
 
   return (
     <div className="overlay mscroll">
@@ -29,13 +34,23 @@ export default function ExerciseDetail({ exId, onBack }) {
         <SecondaryButton icon="arrow-left" onClick={back} style={{ gap: 6 }}>Retour</SecondaryButton>
       </div>
       <div style={{ position: 'relative', margin: '12px 16px 0', height: 200, borderRadius: 'var(--radius-lg)', overflow: 'hidden', background: 'radial-gradient(120% 120% at 30% 20%,var(--color-accent-800),var(--color-neutral-900))', display: 'grid', placeItems: 'center' }}>
-        <svg width="120" height="120" viewBox="0 0 120 120" style={{ position: 'absolute' }}>
-          <circle cx="60" cy="60" r="54" fill="none" stroke="color-mix(in srgb,var(--color-accent) 40%,transparent)" strokeWidth="2" strokeDasharray="339" style={{ animation: 'mRing 2.2s ease-out infinite' }} transform="rotate(-90 60 60)" />
-        </svg>
-        <Icon name={ex.icon} weight="fill" size={64} color="var(--color-accent-100)" style={{ animation: 'mPulse 2.4s ease-in-out infinite' }} />
-        <span style={{ position: 'absolute', bottom: 12, left: 12, background: 'rgba(0,0,0,.5)', backdropFilter: 'blur(4px)', padding: '5px 10px', borderRadius: 999, fontSize: 11, display: 'flex', alignItems: 'center', gap: 5 }}>
-          <Icon name="play" weight="fill" size={12} />Démo animée
-        </span>
+        {hasDemo ? (
+          <div style={{ position: 'absolute', inset: 12 }}>
+            <ExerciseDemo exId={ex.id} label={ex.nom} paused={demoPaused} />
+          </div>
+        ) : (
+          <>
+            <svg width="120" height="120" viewBox="0 0 120 120" style={{ position: 'absolute' }}>
+              <circle cx="60" cy="60" r="54" fill="none" stroke="color-mix(in srgb,var(--color-accent) 40%,transparent)" strokeWidth="2" strokeDasharray="339" style={{ animation: 'mRing 2.2s ease-out infinite' }} transform="rotate(-90 60 60)" />
+            </svg>
+            <Icon name={ex.icon} weight="fill" size={64} color="var(--color-accent-100)" style={{ animation: 'mPulse 2.4s ease-in-out infinite' }} />
+          </>
+        )}
+        <button type="button" onClick={() => hasDemo && setDemoPaused((p) => !p)} disabled={!hasDemo}
+          style={{ position: 'absolute', bottom: 12, left: 12, background: 'rgba(0,0,0,.5)', backdropFilter: 'blur(4px)', border: 'none', color: 'var(--color-text)', padding: '5px 10px', borderRadius: 999, fontSize: 11, display: 'flex', alignItems: 'center', gap: 5, cursor: hasDemo ? 'pointer' : 'default' }}>
+          <Icon name={hasDemo && !demoPaused ? 'pause' : 'play'} weight="fill" size={12} />
+          {demoPaused ? 'Démo en pause' : 'Démo animée'}
+        </button>
       </div>
       <div style={{ padding: '16px 18px 0' }}>
         <h3 style={{ margin: '0 0 4px' }}>{ex.nom}</h3>
