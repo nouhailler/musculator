@@ -83,8 +83,13 @@ export function viewBox(id, demo, pad = 7) {
   }
   if (demo.scene === 'bar') add(50, 12);
   if (demo.scene === 'dipbars') add(50, 48, 0);
-  if (demo.scene === 'ground' || demo.scene === 'mat' || demo.scene === 'dipbars') add(50, GROUND);
+  if (demo.scene !== 'bar' && demo.scene !== 'none') add(50, GROUND);
   if (demo.band) add(demo.band[0], demo.band[1]);
+  if (demo.ankleBand) add(demo.ankleBand[0], demo.ankleBand[1]);
+  for (const p of demo.props || []) {
+    if (p.kind === 'block') { add(p.x - p.w / 2, p.y); add(p.x + p.w / 2, GROUND); }
+    if (p.kind === 'wall') { add(p.x, p.top ?? 20); add(p.x, GROUND); }
+  }
 
   const side = Math.max(maxX - minX, maxY - minY) + pad * 2;
   const box = [

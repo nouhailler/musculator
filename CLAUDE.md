@@ -97,10 +97,29 @@ viewBox); `lib/pose.js` does forward kinematics, interpolation and per-exercise 
 framing and is kept React-free; `components/ExerciseDemo.jsx` mutates SVG nodes imperatively
 via refs so a running animation never re-renders the tree above it.
 
-Only 10 of the 45 exercises have a demo. `demoFor(id)` returns `null` and both call sites
-degrade to no demo and no badge, so adding one is purely a `DEMOS` entry. Omit `cycle` to
-inherit the voice cadence (`CUES[id].beat × frames.length`) and stay in step with the spoken
-cues.
+All 45 exercises have a demo. `demoFor(id)` still returns `null` for an unknown id and both
+call sites degrade to the icon, so that guard stays — but a new exercise without a `DEMOS`
+entry is a gap, not a supported state.
+
+Two things to know before adding or editing a pose:
+
+- **Poses are stored as angles but should be authored as positions.** Hand-guessing joint
+  angles does not converge; solve them with two-link inverse kinematics from "hip here, foot
+  there" and bake the result in. The knee/elbow bend sign picks which side the joint bulges
+  — for a leg, `bend: -1` puts the knee forward.
+- **The floor is `GROUND = 90`, and a standing figure has its hip at y≈58** (thigh 16 +
+  shin 16). A support foot whose ankle does not land at y≈90 will look like it is hovering.
+
+Anything a demo is performed on is declared as data, not drawn ad hoc: `scene` for the floor
+and fixed apparatus, `props` for a bench/box/step or wall, and `weights` / `band` /
+`ankleBand` / `legBand` / `ball` / `hipLoad` for gear that tracks a joint each frame. Adding
+a new kind of equipment means touching three places — the renderer, `viewBox()` in
+`lib/pose.js` so the crop includes it, and the header comment in `demos.js`.
+
+Omit `cycle` to inherit the voice cadence (`CUES[id].beat × frames.length`) and stay in step
+with the spoken cues; isometric holds set it explicitly since they have no rep tempo. Note
+that only the original 10 exercises have `CUES` entries, so everything else falls back to a
+1500 ms beat.
 
 ### "Analyse IA"
 

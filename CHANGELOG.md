@@ -10,6 +10,19 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Animated demos for the whole catalogue** — the 35 lower-body exercises that previously
+  fell back to a pulsing icon now have a real animated demonstration, so every one of the
+  45 exercises shows its movement in the library sheet and during a guided session.
+  - The demo renderer gained the equipment those movements need: `props` for a
+    bench/box/step (`kind: 'block'`) or a wall (`kind: 'wall'`), `weights: 'disc' | 'kb'`
+    alongside the existing dumbbells, `ankleBand` and `legBand` for elastics strapped to an
+    ankle or stretched between the legs, `ball` for a ball at the knees or under the heels,
+    and `hipLoad` for a bar across the hips.
+  - `viewBox()` in `src/lib/pose.js` accounts for the new equipment so each demo still
+    frames itself, and `scene: 'none'` is now supported for a demo with no floor.
+  - Isometric holds (wall sit, Copenhagen, ball squeeze) set `cycle` explicitly; the rest
+    inherit the voice cadence, falling back to a 1500 ms beat where no `CUES` entry exists.
+
 - Documentation: `CHANGELOG.md` (this file) and `CLAUDE.md`.
 
 ## 2026-08-14

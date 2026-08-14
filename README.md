@@ -42,7 +42,7 @@ in the script if your Playwright browsers live elsewhere.
   and save custom sessions (exercises, series, reps, charge, rest, order).
 - **Bibliothèque** — searchable exercise catalogue (45 exercises) grouped by movement
   pattern, with full technique sheets (setup, movement, breathing, common mistakes, safety
-  tips, easier/harder variants).
+  tips, easier/harder variants) and an animated demo of every movement.
 - **Cartographie musculaire** — front/back muscle map over 13 muscle zones; sollicitation
   level and recovery state are derived from your real session history, not fixed demo
   numbers.
@@ -68,17 +68,26 @@ Use the helpers rather than filtering `EXERCISES` by hand: `coreExercises({ opti
 
 ## Animated demos
 
+Every one of the 45 exercises has an animated demonstration, shown in its library sheet and
+during a guided session — so you can always see the movement rather than read it.
+
 `src/data/demos.js` holds keyframe poses for a stick-figure skeleton rendered by
 `src/components/ExerciseDemo.jsx`; `src/lib/pose.js` does the forward kinematics, pose
 interpolation and per-exercise viewBox framing (React-free, so poses can be solved outside
 the app). A pose carries a hip position plus one angle per joint in a 100×100 viewBox;
 frames loop cyclically, so a normal exercise is just `[top, bottom]`.
 
-Demos exist for 10 exercises so far — the original prototype set. `demoFor(id)` returns
-`null` for the rest and both call sites (`ExerciseDetail`, `Workout`) degrade cleanly to no
-demo, so adding one is purely a matter of adding a `DEMOS` entry. Loop timing defaults to
-the voice cadence (`CUES[id].beat × frames.length`) so the figure moves in step with the
-spoken cues.
+A demo also declares the equipment it is performed on, and the renderer draws it: a floor,
+mat, pull-up bar or dip bars (`scene`), a bench/box/step or a wall (`props`), and moving
+gear that tracks the body — dumbbells, a loaded bar or a kettlebell in the hands
+(`weights`), an elastic anchored to a hand or ankle (`band` / `ankleBand`), an elastic
+stretched between the legs (`legBand`), a ball at the knees or heels (`ball`), and a bar
+across the hips (`hipLoad`). The full field reference is in the header of `demos.js`.
+
+Loop timing defaults to the voice cadence (`CUES[id].beat × frames.length`) so the figure
+moves in step with the spoken cues; isometric holds (wall sit, Copenhagen, ball squeeze)
+set `cycle` explicitly. Readers who prefer less motion get the starting position and
+nothing moves — the component honours `prefers-reduced-motion`.
 
 ## About the "Analyse IA"
 
