@@ -21,7 +21,15 @@ grouped by date and reference the commit they landed in.
   - `viewBox()` in `src/lib/pose.js` accounts for the new equipment so each demo still
     frames itself, and `scene: 'none'` is now supported for a demo with no floor.
   - Isometric holds (wall sit, Copenhagen, ball squeeze) set `cycle` explicitly; the rest
-    inherit the voice cadence, falling back to a 1500 ms beat where no `CUES` entry exists.
+    inherit the voice cadence.
+
+- **Voice-coach cues for the whole catalogue** — `src/data/cues.js` covers all 45 exercises
+  instead of the original 10, so the lower-body movements are coached by name and rhythm
+  rather than falling back to a generic "Allez / Continue" at a default 1500 ms beat.
+  - Because `beat` also drives the animated demo's tempo, each exercise now moves at a
+    speed matched to it: explosive work is fast (kettlebell swing, 900 ms), eccentric work
+    is slow (nordic curl 2400 ms, GHR and pistol squat 2200 ms), and isometric holds get a
+    four-phrase reminder loop (wall sit, Copenhagen, ball squeeze).
 
 - Documentation: `CHANGELOG.md` (this file) and `CLAUDE.md`.
 

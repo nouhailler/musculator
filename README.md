@@ -86,8 +86,10 @@ across the hips (`hipLoad`). The full field reference is in the header of `demos
 
 Loop timing defaults to the voice cadence (`CUES[id].beat × frames.length`) so the figure
 moves in step with the spoken cues; isometric holds (wall sit, Copenhagen, ball squeeze)
-set `cycle` explicitly. Readers who prefer less motion get the starting position and
-nothing moves — the component honours `prefers-reduced-motion`.
+set `cycle` explicitly. Every exercise has its own cue pair and tempo in `src/data/cues.js`,
+so explosive work moves fast and eccentric work moves slowly, in speech and animation
+alike. Readers who prefer less motion get the starting position and nothing moves — the
+component honours `prefers-reduced-motion`.
 
 ## About the "Analyse IA"
 

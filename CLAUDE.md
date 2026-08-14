@@ -117,9 +117,13 @@ a new kind of equipment means touching three places — the renderer, `viewBox()
 `lib/pose.js` so the crop includes it, and the header comment in `demos.js`.
 
 Omit `cycle` to inherit the voice cadence (`CUES[id].beat × frames.length`) and stay in step
-with the spoken cues; isometric holds set it explicitly since they have no rep tempo. Note
-that only the original 10 exercises have `CUES` entries, so everything else falls back to a
-1500 ms beat.
+with the spoken cues; isometric holds set it explicitly since they have no rep tempo.
+
+This makes `data/cues.js` do double duty: `beat` is both the gap between spoken cues and the
+demo's tempo. A rep exercise therefore wants a two-entry `seq` matching its two keyframes —
+one cue per phase — while a hold can carry a longer `seq` of reminders because its demo sets
+`cycle` itself. `say()` cancels whatever is still speaking, so a cue longer than one beat is
+cut off by the next: keep them to three words.
 
 ### "Analyse IA"
 
