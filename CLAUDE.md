@@ -84,7 +84,14 @@ tooling:
   the library filter matches it literally.
 - Every muscle id needs at least one zone in `overlays/BodyMap.jsx` or it can't be selected.
 
-`exercises.js` carries two fields only the 35 lower-body entries use: `pattern` (one of the 7
+Every entry carries `sollicitation` and `surcharge`, which the sheet's "Muscle ciblé" block
+renders. They answer different questions from the fields around them and should not drift
+into each other: `sollicitation` is the *mechanism* (contraction regime, where in the range
+tension peaks) while `depart`/`mouvement` are the how-to, and `surcharge` is the *overload*
+failure mode for that muscle or its tendon while `conseils` are per-rep execution cues. Both
+are user-facing prose and stay training advice — nothing there diagnoses or treats.
+
+`exercises.js` also carries two fields only the 35 lower-body entries use: `pattern` (one of the 7
 `PATTERNS`) and `optionnel` (calves / advanced-audience entries). Filter through
 `coreExercises()` / `groupByPattern()` / `exercisesByPattern()` rather than by hand — the
 untagged upper-body and core exercises must land in the trailing `UNTAGGED_GROUP` so a

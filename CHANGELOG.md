@@ -31,6 +31,18 @@ grouped by date and reference the commit they landed in.
     is slow (nordic curl 2400 ms, GHR and pistol squat 2200 ms), and isometric holds get a
     four-phrase reminder loop (wall sit, Copenhagen, ball squeeze).
 
+- **"Muscle ciblé" block on every exercise sheet** — each of the 45 exercises gained two
+  fields in `src/data/exercises.js`, rendered as a new section between the technical
+  description and the setup steps:
+  - `sollicitation` — how the primary muscle is actually loaded by *this* movement: the
+    contraction regime (eccentric / concentric / isometric) and where in the range the
+    tension peaks. Previously the sheet named the muscle but never explained the mechanism.
+  - `surcharge` — the overload failure mode specific to the movement, plus a concrete
+    guardrail, shown in a distinct warning block. Complements `conseils`, which are per-rep
+    execution cues rather than dosage advice.
+  - The standalone "Muscles secondaires" line is absorbed into the new block as "Aussi
+    sollicités"; no information was dropped.
+
 - Documentation: `CHANGELOG.md` (this file) and `CLAUDE.md`.
 
 ### Changed

@@ -63,10 +63,6 @@ export default function ExerciseDetail({ exId, onBack }) {
           <Tag variant="neutral">{ex.niveau}</Tag>
           <Tag variant="outline" icon="barbell">{ex.mat.join(' · ')}</Tag>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--color-neutral-400)', marginBottom: 16 }}>
-          Muscles secondaires : <span style={{ color: 'var(--color-neutral-200)' }}>{ex.secondaires.join(' · ')}</span>
-        </div>
-
         <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
           <div className="stat-box"><div className="stat-value">{ex.series}</div><div className="stat-label">séries</div></div>
           <div className="stat-box"><div className="stat-value">{ex.reps}</div><div className="stat-label">répétitions</div></div>
@@ -75,6 +71,25 @@ export default function ExerciseDetail({ exId, onBack }) {
 
         <h6 style={{ color: 'var(--color-neutral-400)', marginBottom: 6 }}>Description technique</h6>
         <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--color-neutral-200)', marginBottom: 16 }}>{ex.desc}</p>
+
+        <h6 style={{ color: 'var(--color-neutral-400)', marginBottom: 8 }}>Muscle ciblé</h6>
+        <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', padding: 13, marginBottom: 18 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7 }}>
+            <Icon name="target" weight="fill" size={16} color="var(--color-accent-200)" />
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-accent-100)' }}>{ex.primaire}</span>
+          </div>
+          <p style={{ fontSize: 12, lineHeight: 1.55, color: 'var(--color-neutral-200)', margin: '0 0 9px' }}>{ex.sollicitation}</p>
+          <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', marginBottom: 11 }}>
+            Aussi sollicités : <span style={{ color: 'var(--color-neutral-200)' }}>{ex.secondaires.join(' · ')}</span>
+          </div>
+          <div style={{ display: 'flex', gap: 9, padding: '9px 10px', borderRadius: 'var(--radius-md)', background: 'var(--color-neutral-900)', border: '1px solid color-mix(in srgb,#f0a35e 30%,transparent)' }}>
+            <Icon name="warning-circle" weight="fill" size={15} color="#f0a35e" style={{ flex: 'none', marginTop: 1 }} />
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: '#f0a35e', marginBottom: 3 }}>Éviter la surcharge</div>
+              <div style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--color-neutral-200)' }}>{ex.surcharge}</div>
+            </div>
+          </div>
+        </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 18 }}>
           <InfoRow icon="flag" title="Position de départ" body={ex.depart} />

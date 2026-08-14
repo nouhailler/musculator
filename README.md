@@ -42,7 +42,9 @@ in the script if your Playwright browsers live elsewhere.
   and save custom sessions (exercises, series, reps, charge, rest, order).
 - **Bibliothèque** — searchable exercise catalogue (45 exercises) grouped by movement
   pattern, with full technique sheets (setup, movement, breathing, common mistakes, safety
-  tips, easier/harder variants) and an animated demo of every movement.
+  tips, easier/harder variants), an animated demo of every movement, and a "Muscle ciblé"
+  block explaining how the target muscle is actually loaded and what to watch so it isn't
+  overworked.
 - **Cartographie musculaire** — front/back muscle map over 13 muscle zones; sollicitation
   level and recovery state are derived from your real session history, not fixed demo
   numbers.
