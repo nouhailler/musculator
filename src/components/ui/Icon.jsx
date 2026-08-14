@@ -5,7 +5,7 @@
 import {
   ArrowBendDownLeft, ArrowBendUpRight, ArrowCircleRight, ArrowCounterClockwise,
   ArrowFatLinesDown, ArrowLeft, ArrowsDownUp, ArrowsIn, ArrowsInLineHorizontal, ArrowsOut,
-  Barcode, CaretLeft, Copy, Cookie, ForkKnife, Leaf, Sun, SunHorizon,
+  Barcode, CaretLeft, Copy, Cookie, ForkKnife, Leaf, List, Question, Sun, SunHorizon,
   Barbell, Books, CalendarBlank, CaretDown, CaretRight, CaretUp, ChartLineUp, Check,
   CheckCircle, CheckFat, Circle, CircleNotch, Clock, ClockCounterClockwise, CloudSlash,
   CrownSimple, Drop, Fire, Flag, FlagCheckered, Flame, FloppyDisk, GearSix, Heartbeat,
@@ -25,7 +25,8 @@ const REGISTRY = {
   'arrows-in-line-horizontal': ArrowsInLineHorizontal, 'arrows-out': ArrowsOut,
   barbell: Barbell, barcode: Barcode, books: Books, 'calendar-blank': CalendarBlank,
   'caret-down': CaretDown, 'caret-left': CaretLeft, cookie: Cookie, copy: Copy,
-  'fork-knife': ForkKnife, leaf: Leaf, sun: Sun, 'sun-horizon': SunHorizon,
+  'fork-knife': ForkKnife, leaf: Leaf, list: List, question: Question,
+  sun: Sun, 'sun-horizon': SunHorizon,
   'caret-right': CaretRight, 'caret-up': CaretUp, 'chart-line-up': ChartLineUp, check: Check,
   'check-circle': CheckCircle, 'check-fat': CheckFat, circle: Circle,
   'circle-notch': CircleNotch,

@@ -31,6 +31,17 @@ grouped by date and reference the commit they landed in.
     is slow (nordic curl 2400 ms, GHR and pistol squat 2200 ms), and isometric holds get a
     four-phrase reminder loop (wall sit, Copenhagen, ball squeeze).
 
+- **Global top bar with a menu and contextual help** — every screen gains a slim bar
+  carrying a hamburger menu on the left and a `?` on the right.
+  - The drawer surfaces what was previously reachable from one button in one place only:
+    profile & settings, muscle map, workout builder — plus the voice-coach toggle and the
+    medical disclaimer. It mirrors the tab navigation with fuller labels.
+  - Help is contextual: it keys off the open overlay, falling back to the current tab, so it
+    always describes what is actually on screen. Content is in `src/data/help.js`, one entry
+    per screen; the `?` is dimmed where no entry exists.
+  - Both close on backdrop click and on Escape. The bar hides itself during a running
+    workout, where the session owns the screen and a stray menu tap would cost a set.
+
 - **Nutrition module** — a sixth tab bringing Nutritor's nutrition features into Musculator:
   barcode scanning, food search, a day/meal journal, a live macro dashboard, and a daily
   score linking nutrition to training. No training feature changed.

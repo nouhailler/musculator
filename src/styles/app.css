@@ -20,7 +20,8 @@
 .screen {
   position: absolute;
   inset: 0;
-  padding: calc(14px + env(safe-area-inset-top)) 18px calc(92px + env(safe-area-inset-bottom));
+  /* 46px clears the global TopBar, which floats above the screen. */
+  padding: calc(52px + env(safe-area-inset-top)) 18px calc(92px + env(safe-area-inset-bottom));
 }
 
 .overlay {
@@ -28,6 +29,8 @@
   inset: 0;
   z-index: 56;
   background: var(--color-bg);
+  /* Same TopBar clearance as .screen — overlays sit under it too. */
+  padding-top: calc(40px + env(safe-area-inset-top));
   padding-bottom: env(safe-area-inset-bottom);
 }
 .overlay-header {

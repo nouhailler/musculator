@@ -32,6 +32,12 @@ in the script if your Playwright browsers live elsewhere.
 
 ## What's implemented
 
+Every screen carries a slim top bar: a **menu** on the left and a contextual **help** button
+on the right. The menu reaches the screens that otherwise hide behind a single button
+somewhere (profile & settings, muscle map, workout builder) plus the voice toggle and the
+medical disclaimer. The help sheet describes whatever is on screen — the overlay when one is
+open, the tab underneath otherwise — and its content lives in `src/data/help.js`.
+
 - **Accueil** — today's progress ring, week streak, one-tap "Commencer une séance", quick
   tips, recommended programs, medical disclaimer.
 - **Exercice seul** — a big "Faire cet exercice maintenant" button on any exercise sheet

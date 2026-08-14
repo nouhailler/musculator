@@ -52,6 +52,7 @@ function initialState() {
   return {
     ...persisted,
     tab: 'home', view: null,
+    menuOpen: false, helpOpen: false,
     selExId: 'pompes', selProgId: 'fullbody',
     bodySide: 'front', selMuscleId: 'pecs',
     libSearch: '', libLevel: 'Tous', libMat: 'Tous', libOptionnels: false,
@@ -154,11 +155,11 @@ function reducer(state, action) {
       return { ...state, ...action.payload };
 
     case 'GO_TAB':
-      return { ...state, tab: action.tab, view: null };
+      return { ...state, tab: action.tab, view: null, helpOpen: false };
     case 'OPEN_VIEW':
-      return { ...state, view: action.view };
+      return { ...state, view: action.view, helpOpen: false };
     case 'CLOSE_OVERLAY':
-      return { ...state, view: null };
+      return { ...state, view: null, helpOpen: false };
 
     case 'ACCEPT_DISCLAIMER':
       return { ...state, disclaimerAcked: true };
@@ -171,6 +172,11 @@ function reducer(state, action) {
     // --- Nutrition ---------------------------------------------------------
     case 'IMPORT_NUTRI_LOG':
       return { ...state, nutriLog: mergeLog(state.nutriLog, action.log) };
+
+    case 'SET_MENU':
+      return { ...state, menuOpen: action.open };
+    case 'SET_HELP':
+      return { ...state, helpOpen: action.open };
 
     case 'SET_NUTRI_DATE':
       return { ...state, nutriDate: action.dateKey };
@@ -494,6 +500,10 @@ export function AppProvider({ children }) {
     goTab: (tab) => dispatch({ type: 'GO_TAB', tab }),
     openView: (view) => dispatch({ type: 'OPEN_VIEW', view }),
     closeOverlay: () => dispatch({ type: 'CLOSE_OVERLAY' }),
+    openMenu: () => dispatch({ type: 'SET_MENU', open: true }),
+    closeMenu: () => dispatch({ type: 'SET_MENU', open: false }),
+    openHelp: () => dispatch({ type: 'SET_HELP', open: true }),
+    closeHelp: () => dispatch({ type: 'SET_HELP', open: false }),
     acceptDisclaimer: () => dispatch({ type: 'ACCEPT_DISCLAIMER' }),
     showDisclaimer: () => dispatch({ type: 'SHOW_DISCLAIMER' }),
     toggleVoice: () => dispatch({ type: 'TOGGLE_VOICE' }),

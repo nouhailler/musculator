@@ -50,10 +50,19 @@ touching both `loadPersisted()` and the persist effect in `store.jsx`.
 
 ### Navigation
 
-No router. `state.tab` picks one of 5 tab screens, `state.view` pushes a full-screen overlay
+No router. `state.tab` picks one of 6 tab screens, `state.view` pushes a full-screen overlay
 on top. `App.jsx` maps both. Note that `workout` and `complete` are handled by their own
 conditionals rather than through the `OVERLAYS` map, because they render outside the normal
 overlay chrome.
+
+`TopBar` floats above both with the menu and the contextual-help button. It is **not** part
+of the flow: `.screen` and `.overlay` carry matching top padding in `app.css` to clear it, so
+changing the bar's height means changing that padding too. It hides itself during a workout —
+that view owns the screen, and a stray menu tap there would cost the user a set.
+
+**Contextual help keys off `state.view || state.tab`**, so it follows the overlay when one is
+open. Content lives in `src/data/help.js`; a screen with no entry gets a dimmed `?` rather
+than an empty sheet. Adding a screen means adding its help entry — nothing enforces it.
 
 ### The guided session
 
