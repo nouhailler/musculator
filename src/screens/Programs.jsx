@@ -1,4 +1,4 @@
-import { useApp } from '../state/store.jsx';
+import { useApp } from '../state/context.js';
 import { PROGRAMS } from '../data/programs.js';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';

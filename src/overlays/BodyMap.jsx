@@ -1,4 +1,4 @@
-import { useApp } from '../state/store.jsx';
+import { useApp } from '../state/context.js';
 import { MUSCLES } from '../data/muscles.js';
 import { exById } from '../data/exercises.js';
 import { computeMuscleStats, recoveryInfo, solicitationLabel, solicitationColor } from '../lib/muscleStats.js';

@@ -1,4 +1,4 @@
-import { useApp } from './state/store.jsx';
+import { useApp } from './state/context.js';
 import OfflineBanner from './components/OfflineBanner.jsx';
 import DisclaimerModal from './components/DisclaimerModal.jsx';
 import TabBar from './components/TabBar.jsx';

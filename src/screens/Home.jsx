@@ -1,4 +1,4 @@
-import { useApp, useDerived, allPrograms } from '../state/store.jsx';
+import { useApp, useDerived, allPrograms } from '../state/context.js';
 import { progById } from '../data/programs.js';
 import { shortMin } from '../lib/format.js';
 import Icon from '../components/ui/Icon.jsx';

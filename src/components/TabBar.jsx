@@ -1,4 +1,4 @@
-import { useApp } from '../state/store.jsx';
+import { useApp } from '../state/context.js';
 import Icon from './ui/Icon.jsx';
 
 const TABS = [

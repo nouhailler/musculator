@@ -1,4 +1,4 @@
-import { useApp } from '../state/store.jsx';
+import { useApp } from '../state/context.js';
 import { Field, TextInput, TextArea, RangeInput } from '../components/ui/Field.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';
 import { SecondaryButton, PrimaryButton } from '../components/ui/Button.jsx';

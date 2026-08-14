@@ -1,9 +1,8 @@
-import { createContext, useContext, useEffect, useMemo, useReducer, useRef } from 'react';
-import { PROGRAMS, progById } from '../data/programs.js';
+import { useEffect, useMemo, useReducer, useRef } from 'react';
+import { progById } from '../data/programs.js';
 import { exById } from '../data/exercises.js';
-import { BADGE_DEFS } from '../data/badges.js';
 import { dateKey, fmt, nowHM, startOfWeekKey } from '../lib/format.js';
-import { computeStreak, sessionsPerWeek } from '../lib/streak.js';
+import { AppContext } from './context.js';
 import { effRepos, effSeries, baseReps, baseCharge } from '../lib/workout.js';
 import { generateAnalysis } from '../lib/analysis.js';
 import { startCadence, stopSpeaking, say } from '../lib/voice.js';
@@ -271,7 +270,6 @@ function reducer(state, action) {
   }
 }
 
-const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
@@ -377,8 +375,8 @@ export function AppProvider({ children }) {
       dispatch({ type: 'TOGGLE_BIG' });
       try {
         const el = document.documentElement;
-        if (willOpen) el.requestFullscreen && el.requestFullscreen().catch(() => {});
-        else if (document.fullscreenElement) document.exitFullscreen && document.exitFullscreen();
+        if (willOpen) el.requestFullscreen?.().catch(() => {});
+        else if (document.fullscreenElement) document.exitFullscreen?.();
       } catch {
         // fullscreen not available — big mode still works as a layout-only view
       }
@@ -411,40 +409,3 @@ export function AppProvider({ children }) {
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 
-export function useApp() {
-  const ctx = useContext(AppContext);
-  if (!ctx) throw new Error('useApp must be used within AppProvider');
-  return ctx;
-}
-
-// ---- Derived selectors (kept outside the reducer; cheap to recompute) ----
-
-export function useDerived() {
-  const { state } = useApp();
-  return useMemo(() => {
-    const today = dateKey();
-    const weekStart = startOfWeekKey();
-    const journalToday = state.sessionLog.filter((s) => s.dateKey === today);
-    const weekSessions = state.sessionLog.filter((s) => s.dateKey >= weekStart);
-    const weekTimeSec = weekSessions.reduce((a, s) => a + s.elapsedSec, 0);
-    const weekKcal = weekSessions.reduce((a, s) => a + s.kcal, 0);
-    const streak = computeStreak(state.sessionLog);
-    const totalSessions = state.sessionLog.length;
-    const hasEarlySession = state.sessionLog.some((s) => s.heure < '08:00');
-    const hasHiit = state.sessionLog.some((s) => s.programId === 'hiit');
-    const badges = BADGE_DEFS.map((b) => ({
-      ...b,
-      unlocked: b.check({ totalSessions, streak, hasEarlySession, hasHiit }),
-    }));
-    const history = state.sessionLog.slice(0, 20);
-    const weekly = sessionsPerWeek(state.sessionLog, 6);
-    return {
-      today, weekStart, journalToday, weekSessions, weekTimeSec, weekKcal,
-      streak, totalSessions, badges, history, weekly,
-    };
-  }, [state.sessionLog]);
-}
-
-export function allPrograms(customWorkouts) {
-  return PROGRAMS.concat(customWorkouts);
-}

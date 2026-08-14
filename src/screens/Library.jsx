@@ -1,4 +1,4 @@
-import { useApp } from '../state/store.jsx';
+import { useApp } from '../state/context.js';
 import { EXERCISES } from '../data/exercises.js';
 import Icon from '../components/ui/Icon.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';

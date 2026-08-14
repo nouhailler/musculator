@@ -1,4 +1,4 @@
-import { useApp, useDerived } from '../state/store.jsx';
+import { useApp, useDerived } from '../state/context.js';
 import Icon from '../components/ui/Icon.jsx';
 import { PrimaryButton } from '../components/ui/Button.jsx';
 

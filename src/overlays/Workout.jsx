@@ -1,4 +1,4 @@
-import { useApp, allPrograms } from '../state/store.jsx';
+import { useApp, allPrograms } from '../state/context.js';
 import { progById } from '../data/programs.js';
 import { exById } from '../data/exercises.js';
 import { CUES } from '../data/cues.js';

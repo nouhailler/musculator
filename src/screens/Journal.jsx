@@ -1,4 +1,4 @@
-import { useApp, useDerived } from '../state/store.jsx';
+import { useApp, useDerived } from '../state/context.js';
 import { exById } from '../data/exercises.js';
 import { fmt, todayLabel } from '../lib/format.js';
 import Icon from '../components/ui/Icon.jsx';

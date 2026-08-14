@@ -39,7 +39,7 @@ export function sayQueue(text, rate = 1.05) {
 }
 
 export function stopSpeaking() {
-  try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch { /* ignore */ }
+  try { window.speechSynthesis?.cancel(); } catch { /* ignore */ }
 }
 
 // Runs the per-exercise spoken cadence ("En bas — En haut", encouragements
