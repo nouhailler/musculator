@@ -63,6 +63,13 @@ immediately unless a workout is active and unpaused. The workout state machine
 reducer — `FINISH_SET` is the interesting case: it either advances the set, advances the
 exercise, or finishes the session and appends a `sessionLog` entry.
 
+**Never resolve the running workout's program with `progById`.** A solo exercise (the
+"Faire cet exercice maintenant" button) runs on an ad-hoc program built by `soloProgram()`
+that is deliberately never saved, so `progById` would silently fall back to `PROGRAMS[0]`
+and the session would run as Full Body Maison. Use `workoutProgram(state)` in the store, or
+`w.solo || progById(...)` in a component. A solo run also has no set target: `FINISH_SET`
+always leads into a rest, and only `FINISH_SOLO` ends and logs it.
+
 Per-exercise series/reps/charge/rest resolve through `src/lib/workout.js`, which layers a
 custom workout's `custom[exId]` overrides on top of the catalogue defaults. Always go through
 `effSeries`/`effRepos`/`curReps`/`curCharge` rather than reading `exById(id).series` directly.

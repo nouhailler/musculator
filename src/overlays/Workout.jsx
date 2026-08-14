@@ -15,7 +15,8 @@ export default function Workout() {
   const w = state.workout;
   if (!w) return null;
 
-  const program = progById(w.progId, allPrograms(state.customWorkouts));
+  const isSolo = !!w.solo;
+  const program = w.solo || progById(w.progId, allPrograms(state.customWorkouts));
   const curId = program.exos[Math.min(w.index, program.exos.length - 1)];
   const curBase = exById(curId);
   const cp = (program.isCustom && program.custom && program.custom[curId]) ? program.custom[curId] : null;
@@ -24,7 +25,9 @@ export default function Workout() {
   const cueHint = cue ? `« ${cue.seq.join(' — ')} »` : '';
   const nextId = program.exos[Math.min(w.index + 1, program.exos.length - 1)];
   const nextName = exById(nextId).nom;
-  const stepLabel = `Exercice ${w.index + 1} / ${program.exos.length}`;
+  const stepLabel = isSolo
+    ? (w.soloSets > 0 ? `${w.soloSets} série${w.soloSets > 1 ? 's' : ''} faite${w.soloSets > 1 ? 's' : ''}` : 'Exercice seul')
+    : `Exercice ${w.index + 1} / ${program.exos.length}`;
   const progressPct = Math.round((w.doneIds.length / program.exos.length) * 100);
   const isLast = w.index >= program.exos.length - 1;
 
@@ -33,7 +36,9 @@ export default function Workout() {
   const charge = getCurCharge(program, w, curId);
   const reps = getCurReps(program, w, curId);
   const note = w.notes[curId] || '';
-  const finishSetLabel = setNum < seriesTotal ? 'Série terminée' : (isLast ? 'Terminer la séance' : 'Exercice terminé');
+  const finishSetLabel = isSolo
+    ? 'Série terminée'
+    : (setNum < seriesTotal ? 'Série terminée' : (isLast ? 'Terminer la séance' : 'Exercice terminé'));
   const restKindLabel = w.restKind === 'series' ? 'Repos entre séries' : 'Repos — exercice suivant';
   const restNext = w.restKind === 'series' ? `Série ${w.set + 1} · ${wCur.nom}` : nextName;
 
@@ -53,9 +58,11 @@ export default function Workout() {
           <IconCircleButton icon={w.paused ? 'play' : 'pause'} onClick={actions.togglePause} title="Pause" />
         </div>
       </div>
-      <div style={{ height: 4, background: 'var(--color-neutral-800)', margin: '0 16px', borderRadius: 2, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${progressPct}%`, background: 'var(--color-accent)', borderRadius: 2, transition: 'width .4s ease' }} />
-      </div>
+      {!isSolo && (
+        <div style={{ height: 4, background: 'var(--color-neutral-800)', margin: '0 16px', borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ height: '100%', width: `${progressPct}%`, background: 'var(--color-accent)', borderRadius: 2, transition: 'width .4s ease' }} />
+        </div>
+      )}
       <div style={{ padding: '4px 16px 0', display: 'flex', justifyContent: 'flex-end', fontSize: 11, color: 'var(--color-neutral-500)' }}>Total : {fmt(w.elapsed)}</div>
 
       {w.phase === 'exercise' && !w.bigMode && (
@@ -71,7 +78,7 @@ export default function Workout() {
           <h2 style={{ margin: '0 0 4px', textAlign: 'center' }}>{wCur.nom}</h2>
           <div style={{ fontSize: 13, color: 'var(--color-accent-300)', marginBottom: 8 }}>{wCur.muscle}</div>
           <div style={{ fontSize: 13, fontWeight: 600, fontFamily: 'var(--font-heading)', color: 'var(--color-accent-100)', background: 'var(--color-accent-800)', border: '1px solid var(--color-accent)', borderRadius: 999, padding: '5px 16px', marginBottom: 14 }}>
-            Série {setNum} / {seriesTotal}
+            {isSolo ? `Série ${w.set}` : `Série ${setNum} / ${seriesTotal}`}
           </div>
 
           <div style={{ width: '100%', maxWidth: 340, display: 'flex', alignItems: 'center', gap: 12, background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', padding: '12px 14px', marginBottom: 10 }}>
@@ -117,6 +124,11 @@ export default function Workout() {
 
       {w.phase === 'exercise' && !w.bigMode && (
         <div style={{ padding: '10px 18px calc(22px + env(safe-area-inset-bottom))', display: 'flex', flexDirection: 'column', gap: 9 }}>
+          {isSolo && (
+            <SecondaryButton icon="check-fat" onClick={actions.finishSolo} style={{ width: '100%', padding: 11, justifyContent: 'center' }}>
+              Terminer et enregistrer
+            </SecondaryButton>
+          )}
           <SecondaryButton icon="arrows-out" onClick={actions.toggleBig} style={{ width: '100%', padding: 11 }}>Mode plein écran (gros boutons)</SecondaryButton>
           <button type="button" onClick={actions.finishSet} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: 16, fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 16, color: 'var(--color-accent-100)', background: 'var(--color-accent-800)', border: '1px solid var(--color-accent)', borderRadius: 'var(--radius-lg)', cursor: 'pointer' }}>
             {finishSetLabel}<Icon name="check-circle" weight="fill" size={22} />
@@ -126,11 +138,12 @@ export default function Workout() {
 
       {w.phase === 'exercise' && w.bigMode && (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '6px 16px 18px', textAlign: 'center' }}>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2 }}>
+          <div style={{ display: 'flex', justifyContent: isSolo ? 'space-between' : 'flex-end', marginBottom: 2 }}>
+            {isSolo && <GhostButton icon="check-fat" onClick={actions.finishSolo} style={{ padding: '8px 12px' }}>Terminer</GhostButton>}
             <GhostButton icon="arrows-in" onClick={actions.toggleBig} style={{ padding: '8px 12px' }}>Quitter plein écran</GhostButton>
           </div>
           <div style={{ fontSize: 'clamp(26px,7vw,40px)', fontWeight: 600, fontFamily: 'var(--font-heading)', lineHeight: 1.05, marginBottom: 4 }}>{wCur.nom}</div>
-          <div style={{ fontSize: 20, fontWeight: 600, color: 'var(--color-accent-200)', marginBottom: 14 }}>Série {setNum} / {seriesTotal}</div>
+          <div style={{ fontSize: 20, fontWeight: 600, color: 'var(--color-accent-200)', marginBottom: 14 }}>{isSolo ? `Série ${w.set}` : `Série ${setNum} / ${seriesTotal}`}</div>
           <div style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
             <button type="button" onClick={() => actions.openEdit('reps')} style={{ flex: 1, background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', padding: '16px 8px', cursor: 'pointer', color: 'var(--color-text)' }}>
               <div style={{ fontSize: 46, fontWeight: 600, fontFamily: 'var(--font-heading)', lineHeight: 1 }}>{reps}</div>
@@ -170,6 +183,13 @@ export default function Workout() {
               Passer<Icon name="skip-forward" weight="fill" size={16} />
             </button>
           </div>
+          {isSolo && (
+            <div style={{ width: '100%', maxWidth: 320, marginBottom: 12 }}>
+              <SecondaryButton icon="check-fat" onClick={actions.finishSolo} style={{ width: '100%', padding: 12, justifyContent: 'center' }}>
+                Terminer et enregistrer
+              </SecondaryButton>
+            </div>
+          )}
           <GhostButton icon="arrows-out" onClick={actions.toggleBig} style={{ padding: 9 }}>Mode plein écran</GhostButton>
         </div>
       )}

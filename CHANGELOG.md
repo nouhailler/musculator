@@ -31,6 +31,18 @@ grouped by date and reference the commit they landed in.
     is slow (nordic curl 2400 ms, GHR and pistol squat 2200 ms), and isometric holds get a
     four-phrase reminder loop (wall sit, Copenhagen, ball squeeze).
 
+- **Solo exercise runs** — a full-width "Faire cet exercice maintenant" button on every
+  exercise sheet starts a session containing just that exercise, for when there is no time
+  for a full workout.
+  - Open-ended by design: there is no set target, the counter just climbs, and a "Terminer
+    et enregistrer" action is offered mid-exercise, during the rest, and in big-button mode.
+  - Runs through the existing workout machinery — timer, rest, voice coach — via
+    `soloProgram()` in `src/data/programs.js`, an ad-hoc program carried on the workout
+    state. It is deliberately never saved, so a quick set leaves no custom program behind;
+    `workoutProgram()` in the store resolves the running program instead of `progById`.
+  - Logged like any session, with the exercise in `exerciseIds` so it counts towards the
+    muscle map and the badges. Leaving before completing a single set writes nothing.
+
 - **"Muscle ciblé" block on every exercise sheet** — each of the 45 exercises gained two
   fields in `src/data/exercises.js`, rendered as a new section between the technical
   description and the setup steps:
@@ -50,6 +62,12 @@ grouped by date and reference the commit they landed in.
 - The voice coach announces an exercise without the clarifying alias some names carry in
   parentheses — "Coquillage, c'est parti !" rather than "Coquillage (clamshell), c'est
   parti !". Affects the 10 names that have one; the displayed name is unchanged.
+
+### Fixed
+
+- A session's logged `series` count now honours a custom workout's per-exercise overrides
+  instead of the catalogue defaults, which under-reported it.
+
 
 ## 2026-08-14
 

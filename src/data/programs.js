@@ -10,3 +10,34 @@ export const PROGRAMS = [
 
 export const progById = (id, customWorkouts = []) =>
   PROGRAMS.concat(customWorkouts).find((p) => p.id === id) || PROGRAMS[0];
+
+/**
+ * An ad-hoc, unsaved program wrapping a single exercise, so a one-off set can
+ * run through the exact same workout machinery as a full session — timer, rest,
+ * voice coach, journal entry.
+ *
+ * It deliberately never enters PROGRAMS or customWorkouts: a quick set at the
+ * office should not leave a saved program behind. That means progById() cannot
+ * find it, so it travels on the workout state itself and callers must resolve
+ * the running program through there rather than by id.
+ *
+ * `custom` reuses the custom-workout override shape, which is what lets
+ * effSeries/effRepos/baseReps/baseCharge keep working untouched.
+ */
+export function soloProgram(ex) {
+  return {
+    id: `solo-${ex.id}`,
+    nom: ex.nom,
+    obj: 'Exercice seul',
+    niveau: ex.niveau,
+    lieu: ex.lieu,
+    duree: Math.max(3, Math.round((ex.series * (ex.repos + 40)) / 60)),
+    kcal: 0,
+    mat: ex.mat,
+    icon: ex.icon,
+    exos: [ex.id],
+    custom: { [ex.id]: { series: ex.series, reps: ex.reps, charge: ex.charge || 'Poids du corps', repos: ex.repos } },
+    isCustom: true,
+    isSolo: true,
+  };
+}

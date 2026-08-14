@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useReducer, useRef } from 'react';
-import { progById } from '../data/programs.js';
+import { progById, soloProgram } from '../data/programs.js';
 import { exById } from '../data/exercises.js';
 import { dateKey, fmt, nowHM, startOfWeekKey } from '../lib/format.js';
 import { AppContext } from './context.js';
@@ -51,17 +51,27 @@ function initialState() {
   };
 }
 
-function newWorkoutState(progId) {
+function newWorkoutState(progId, solo = null) {
   return {
-    progId, index: 0, set: 1, phase: 'exercise', rest: 0, restKind: 'exercise',
+    progId, solo, soloSets: 0,
+    index: 0, set: 1, phase: 'exercise', rest: 0, restKind: 'exercise',
     elapsed: 0, stopwatch: 0, swRunning: true, paused: false, bigMode: false,
     doneIds: [], charge: {}, reps: {}, notes: {}, edit: null, editVal: '',
   };
 }
 
+// The program a running workout is following. A solo exercise carries its
+// ad-hoc program on the workout itself precisely because that program is never
+// saved, so it cannot be looked up by id.
+function workoutProgram(state) {
+  const w = state.workout;
+  if (!w) return null;
+  return w.solo || progById(w.progId, state.customWorkouts);
+}
+
 function buildSessionEntry(state, doneIds) {
   const w = state.workout;
-  const program = progById(w.progId, state.customWorkouts);
+  const program = workoutProgram(state);
   const exObjs = program.exos.map(exById);
   const kcal = Math.round((w.elapsed / 60) * KCAL_PER_MIN);
   return {
@@ -72,7 +82,10 @@ function buildSessionEntry(state, doneIds) {
     heure: nowHM(),
     elapsedSec: w.elapsed,
     kcal,
-    series: exObjs.reduce((a, e) => a + e.series, 0),
+    // A solo run is open-ended, so its count is what was actually performed.
+    // A program's is its prescription — through effSeries, so a custom
+    // workout's overrides are counted rather than the catalogue defaults.
+    series: w.solo ? w.soloSets : program.exos.reduce((a, id) => a + effSeries(program, id), 0),
     exerciseIds: [...doneIds],
     muscles: [...new Set(exObjs.map((e) => e.muscle.split(' · ')[0]))],
   };
@@ -174,6 +187,29 @@ function reducer(state, action) {
     case 'START_WORKOUT':
       return { ...state, view: 'workout', workout: newWorkoutState(action.progId) };
 
+    case 'START_SOLO': {
+      const prog = soloProgram(exById(action.exId));
+      return { ...state, view: 'workout', workout: newWorkoutState(prog.id, prog) };
+    }
+
+    case 'FINISH_SOLO': {
+      const w = state.workout;
+      if (!w || !w.solo) return state;
+      // Not a single set done — leave without writing a session nobody performed.
+      if (w.soloSets === 0) return { ...state, view: null, tab: 'home', workout: null };
+      // The muscle map and the badges read exerciseIds, so the one exercise has
+      // to be in there for a solo run to count towards them like any session.
+      const entry = buildSessionEntry(state, [w.solo.exos[0]]);
+      return {
+        ...state,
+        view: 'complete',
+        workout: null,
+        completeSummary: { time: fmt(w.elapsed), exos: 1, kcal: entry.kcal, sets: w.soloSets, soloNom: w.solo.nom },
+        sessionLog: [entry, ...state.sessionLog],
+        analysis: null, analysisError: '',
+      };
+    }
+
     case 'TICK': {
       if (state.view !== 'workout' || !state.workout || state.workout.paused) return state;
       const w = state.workout;
@@ -194,8 +230,19 @@ function reducer(state, action) {
 
     case 'FINISH_SET': {
       const w = state.workout; if (!w) return state;
-      const program = progById(w.progId, state.customWorkouts);
+      const program = workoutProgram(state);
       const curId = program.exos[w.index];
+      // A solo exercise has no set target: it runs until the user stops it, so
+      // every finished set simply leads into a rest and is counted.
+      if (w.solo) {
+        return {
+          ...state,
+          workout: {
+            ...w, soloSets: w.soloSets + 1, phase: 'rest', rest: effRepos(program, curId),
+            restKind: 'series', stopwatch: 0, swRunning: false,
+          },
+        };
+      }
       const total = effSeries(program, curId);
       if (w.set < total) {
         return { ...state, workout: { ...w, phase: 'rest', rest: effRepos(program, curId), restKind: 'series', stopwatch: 0, swRunning: false } };
@@ -232,7 +279,7 @@ function reducer(state, action) {
 
     case 'OPEN_EDIT': {
       const w = state.workout; if (!w) return state;
-      const program = progById(w.progId, state.customWorkouts);
+      const program = workoutProgram(state);
       const curId = program.exos[w.index];
       let val = '';
       if (action.kind === 'charge') val = (w.charge[curId] != null && w.charge[curId] !== '') ? w.charge[curId] : baseCharge(program, curId);
@@ -244,7 +291,7 @@ function reducer(state, action) {
       return { ...state, workout: { ...state.workout, editVal: action.value } };
     case 'SAVE_EDIT': {
       const w = state.workout; if (!w || !w.edit) return state;
-      const program = progById(w.progId, state.customWorkouts);
+      const program = workoutProgram(state);
       const curId = program.exos[w.index];
       if (w.edit === 'charge') return { ...state, workout: { ...w, charge: { ...w.charge, [curId]: w.editVal }, edit: null } };
       if (w.edit === 'reps') return { ...state, workout: { ...w, reps: { ...w.reps, [curId]: w.editVal }, edit: null } };
@@ -316,7 +363,7 @@ export function AppProvider({ children }) {
     const active = state.view === 'workout' && w && w.phase === 'exercise' && !w.paused && state.voiceOn;
     if (cadenceStopRef.current) { cadenceStopRef.current(); cadenceStopRef.current = null; }
     if (active) {
-      const program = progById(w.progId, state.customWorkouts);
+      const program = workoutProgram(state);
       const curId = program.exos[w.index];
       const ex = exById(curId);
       cadenceStopRef.current = startCadence(curId, ex.nom);
@@ -364,6 +411,8 @@ export function AppProvider({ children }) {
     saveWorkout: () => dispatch({ type: 'SAVE_WORKOUT' }),
 
     startWorkout: (progId) => dispatch({ type: 'START_WORKOUT', progId }),
+    startSolo: (exId) => dispatch({ type: 'START_SOLO', exId }),
+    finishSolo: () => dispatch({ type: 'FINISH_SOLO' }),
     finishSet: () => dispatch({ type: 'FINISH_SET' }),
     skipRest: () => dispatch({ type: 'SKIP_REST' }),
     addRest: () => dispatch({ type: 'ADD_REST' }),

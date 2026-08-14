@@ -5,7 +5,7 @@ import { demoFor } from '../data/demos.js';
 import ExerciseDemo from '../components/ExerciseDemo.jsx';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
-import { SecondaryButton } from '../components/ui/Button.jsx';
+import { PrimaryButton, SecondaryButton } from '../components/ui/Button.jsx';
 
 function InfoRow({ icon, title, body }) {
   return (
@@ -68,6 +68,20 @@ export default function ExerciseDetail({ exId, onBack }) {
           <div className="stat-box"><div className="stat-value">{ex.reps}</div><div className="stat-label">répétitions</div></div>
           <div className="stat-box"><div className="stat-value">{ex.repos} s</div><div className="stat-label">repos</div></div>
         </div>
+
+        {/* Hidden while a workout is running: this same sheet is reused as the
+            in-session "voir la fiche" peek, where starting another one would
+            throw away the session in progress. */}
+        {!state.workout && (
+          <div style={{ marginBottom: 18 }}>
+            <PrimaryButton icon="play-circle" size="lg" onClick={() => actions.startSolo(ex.id)}>
+              Faire cet exercice maintenant
+            </PrimaryButton>
+            <div style={{ fontSize: 11, color: 'var(--color-neutral-500)', textAlign: 'center', marginTop: 7, lineHeight: 1.5 }}>
+              Sans monter une séance : autant de séries que tu veux, enregistrées dans le journal.
+            </div>
+          </div>
+        )}
 
         <h6 style={{ color: 'var(--color-neutral-400)', marginBottom: 6 }}>Description technique</h6>
         <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--color-neutral-200)', marginBottom: 16 }}>{ex.desc}</p>

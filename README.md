@@ -34,6 +34,10 @@ in the script if your Playwright browsers live elsewhere.
 
 - **Accueil** — today's progress ring, week streak, one-tap "Commencer une séance", quick
   tips, recommended programs, medical disclaimer.
+- **Exercice seul** — a big "Faire cet exercice maintenant" button on any exercise sheet
+  starts a one-exercise session straight away: no program to build, as many sets as you
+  want, logged in the journal like any other session. Meant for a quick set during a break
+  rather than a full workout.
 - **Séance guidée** — exercise/rest phases, per-set stopwatch, rest countdown (+15s/skip),
   editable reps/charge/notes per exercise, a fullscreen "big buttons" mode for a phone
   propped up next to you, an animated demo of the current exercise, and a French voice coach
