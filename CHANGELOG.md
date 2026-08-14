@@ -33,6 +33,12 @@ grouped by date and reference the commit they landed in.
 
 - Documentation: `CHANGELOG.md` (this file) and `CLAUDE.md`.
 
+### Changed
+
+- The voice coach announces an exercise without the clarifying alias some names carry in
+  parentheses — "Coquillage, c'est parti !" rather than "Coquillage (clamshell), c'est
+  parti !". Affects the 10 names that have one; the displayed name is unchanged.
+
 ## 2026-08-14
 
 ### Added

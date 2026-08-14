@@ -42,12 +42,20 @@ export function stopSpeaking() {
   try { window.speechSynthesis?.cancel(); } catch { /* ignore */ }
 }
 
+// Several exercises carry a clarifying alias in parentheses — "Gainage
+// (planche)", "Coquillage (clamshell)" — which reads well on the card but is
+// clumsy said out loud. The coach announces the name without it; the displayed
+// name is untouched. Falls back to the full name if nothing would be left.
+export function spokenName(nom) {
+  return (nom || '').replace(/\s*\([^)]*\)/g, '').trim() || nom;
+}
+
 // Runs the per-exercise spoken cadence ("En bas — En haut", encouragements
 // every 9 beats…) until stopped. Returns a stop() function.
 export function startCadence(exerciseId, exerciseNom) {
   const c = CUES[exerciseId] || { beat: 1500, seq: ['Allez', 'Continue'] };
   stopSpeaking();
-  sayQueue(`${exerciseNom}, c'est parti !`);
+  sayQueue(`${spokenName(exerciseNom)}, c'est parti !`);
   let i = -1;
   const timer = setInterval(() => {
     i++;
