@@ -31,6 +31,16 @@ grouped by date and reference the commit they landed in.
     is slow (nordic curl 2400 ms, GHR and pistol squat 2200 ms), and isometric holds get a
     four-phrase reminder loop (wall sit, Copenhagen, ball squeeze).
 
+- **Closing a workout offers to save it** — the × used to discard everything silently.
+  It now asks, showing what is at stake ("Tu as déjà fait 3 séries en 4:12"), with
+  "Enregistrer et quitter", "Quitter sans enregistrer" and "Reprendre la séance". The clock
+  and the rest countdown freeze while the choice is open, and resuming restores the paused
+  state it found. With no set completed there is nothing to save, so it leaves at once
+  without asking.
+  - A partially completed session is logged from what was actually performed — its sets and
+    only the exercises touched — and the summary reads "Séance enregistrée / Arrêtée en
+    cours de route" rather than claiming it was finished.
+
 - **Solo exercise runs** — a full-width "Faire cet exercice maintenant" button on every
   exercise sheet starts a session containing just that exercise, for when there is no time
   for a full workout.

@@ -42,6 +42,8 @@ in the script if your Playwright browsers live elsewhere.
   editable reps/charge/notes per exercise, a fullscreen "big buttons" mode for a phone
   propped up next to you, an animated demo of the current exercise, and a French voice coach
   (Web Speech API) that calls out reps in rhythm and encouragement, per exercise.
+- **Sortie de séance** — closing a session offers to save what you have already done rather
+  than discarding it; a partial session is logged from the sets actually performed.
 - **Programmes** — filterable by duration/level/equipment, plus a workout builder to compose
   and save custom sessions (exercises, series, reps, charge, rest, order).
 - **Bibliothèque** — searchable exercise catalogue (45 exercises) grouped by movement

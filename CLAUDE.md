@@ -70,6 +70,12 @@ and the session would run as Full Body Maison. Use `workoutProgram(state)` in th
 `w.solo || progById(...)` in a component. A solo run also has no set target: `FINISH_SET`
 always leads into a rest, and only `FINISH_SOLO` ends and logs it.
 
+**`w.setsByEx` is the record of what was performed**, written in `FINISH_SET` — the single
+place a set is ever counted. Everything downstream reads it rather than the program's
+prescription, because a session can end early: `finishWorkout()` is the one exit that logs a
+run and shows the summary, and it takes a `partial` flag for a run stopped by the ×. Don't
+reintroduce a prescription-based count; for a completed program the two agree anyway.
+
 Per-exercise series/reps/charge/rest resolve through `src/lib/workout.js`, which layers a
 custom workout's `custom[exId]` overrides on top of the catalogue defaults. Always go through
 `effSeries`/`effRepos`/`curReps`/`curCharge` rather than reading `exById(id).series` directly.

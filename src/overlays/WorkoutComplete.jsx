@@ -13,15 +13,19 @@ export default function WorkoutComplete() {
       <div style={{ width: 96, height: 96, borderRadius: '50%', background: 'var(--color-accent-800)', border: '1px solid var(--color-accent)', display: 'grid', placeItems: 'center', marginBottom: 20, animation: 'mPulse 2s ease-in-out infinite', boxShadow: '0 0 40px -6px var(--color-accent)' }}>
         <Icon name="trophy" weight="fill" size={48} color="var(--color-accent-100)" />
       </div>
-      <h2 style={{ margin: '0 0 4px', textAlign: 'center' }}>{c.soloNom ? 'Exercice terminé !' : 'Séance terminée !'}</h2>
-      <div style={{ fontSize: 13, color: 'var(--color-neutral-300)', textAlign: 'center', marginBottom: 24 }}>
-        {c.soloNom ? `${c.soloNom} — enregistré dans ton journal` : 'Bravo — tu construis du muscle 💪'}
+      <h2 style={{ margin: '0 0 4px', textAlign: 'center' }}>
+        {c.soloNom ? 'Exercice terminé !' : (c.partial ? 'Séance enregistrée' : 'Séance terminée !')}
+      </h2>
+      <div style={{ fontSize: 13, color: 'var(--color-neutral-300)', textAlign: 'center', marginBottom: 24, maxWidth: 300, lineHeight: 1.5 }}>
+        {c.soloNom
+          ? `${c.soloNom} — enregistré dans ton journal`
+          : (c.partial ? 'Arrêtée en cours de route — seul le travail réellement fait est compté.' : 'Bravo — tu construis du muscle 💪')}
       </div>
       <div style={{ display: 'flex', gap: 10, width: '100%', maxWidth: 320, marginBottom: 14 }}>
         <div className="stat-box" style={{ padding: '13px 4px' }}><div className="stat-value" style={{ fontSize: 20 }}>{c.time}</div><div className="stat-label">durée</div></div>
         <div className="stat-box" style={{ padding: '13px 4px' }}>
-          <div className="stat-value" style={{ fontSize: 20 }}>{c.soloNom ? c.sets : c.exos}</div>
-          <div className="stat-label">{c.soloNom ? (c.sets > 1 ? 'séries' : 'série') : 'exercices'}</div>
+          <div className="stat-value" style={{ fontSize: 20 }}>{c.soloNom || c.partial ? c.sets : c.exos}</div>
+          <div className="stat-label">{c.soloNom || c.partial ? (c.sets > 1 ? 'séries' : 'série') : 'exercices'}</div>
         </div>
         <div className="stat-box" style={{ padding: '13px 4px' }}><div className="stat-value" style={{ fontSize: 20 }}>{c.kcal}</div><div className="stat-label">kcal</div></div>
       </div>

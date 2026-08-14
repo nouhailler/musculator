@@ -7,7 +7,7 @@ import ExerciseDemo from '../components/ExerciseDemo.jsx';
 import { effSeries, curCharge as getCurCharge, curReps as getCurReps } from '../lib/workout.js';
 import { fmt } from '../lib/format.js';
 import Icon from '../components/ui/Icon.jsx';
-import { IconCircleButton, SecondaryButton, GhostButton } from '../components/ui/Button.jsx';
+import { PrimaryButton, IconCircleButton, SecondaryButton, GhostButton } from '../components/ui/Button.jsx';
 import ExerciseDetail from './ExerciseDetail.jsx';
 
 export default function Workout() {
@@ -16,6 +16,7 @@ export default function Workout() {
   if (!w) return null;
 
   const isSolo = !!w.solo;
+  const doneSets = Object.values(w.setsByEx).reduce((a, n) => a + n, 0);
   const program = w.solo || progById(w.progId, allPrograms(state.customWorkouts));
   const curId = program.exos[Math.min(w.index, program.exos.length - 1)];
   const curBase = exById(curId);
@@ -26,7 +27,7 @@ export default function Workout() {
   const nextId = program.exos[Math.min(w.index + 1, program.exos.length - 1)];
   const nextName = exById(nextId).nom;
   const stepLabel = isSolo
-    ? (w.soloSets > 0 ? `${w.soloSets} série${w.soloSets > 1 ? 's' : ''} faite${w.soloSets > 1 ? 's' : ''}` : 'Exercice seul')
+    ? (doneSets > 0 ? `${doneSets} série${doneSets > 1 ? 's' : ''} faite${doneSets > 1 ? 's' : ''}` : 'Exercice seul')
     : `Exercice ${w.index + 1} / ${program.exos.length}`;
   const progressPct = Math.round((w.doneIds.length / program.exos.length) * 100);
   const isLast = w.index >= program.exos.length - 1;
@@ -47,7 +48,7 @@ export default function Workout() {
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 58, background: 'var(--color-bg)', display: 'flex', flexDirection: 'column', paddingTop: 'calc(10px + env(safe-area-inset-top))' }}>
       <div style={{ padding: '6px 16px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <IconCircleButton icon="x" onClick={actions.quitWorkout} title="Quitter" />
+        <IconCircleButton icon="x" onClick={actions.requestQuit} title="Quitter" />
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 12, color: 'var(--color-neutral-400)' }}>{program.nom}</div>
           <div style={{ fontSize: 13, fontWeight: 600, fontFamily: 'var(--font-heading)' }}>{stepLabel}</div>
@@ -221,6 +222,24 @@ export default function Workout() {
             <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
               <SecondaryButton onClick={actions.cancelEdit} style={{ flex: 1, padding: 14, fontSize: 15, justifyContent: 'center' }}>Annuler</SecondaryButton>
               <button type="button" onClick={actions.saveEdit} style={{ flex: 1, padding: 14, fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 15, color: 'var(--color-accent-100)', background: 'var(--color-accent-800)', border: '1px solid var(--color-accent)', borderRadius: 'var(--radius-md)', cursor: 'pointer' }}>Enregistrer</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {w.quitAsk && (
+        <div className="sheet-backdrop">
+          <div className="sheet">
+            <div style={{ fontSize: 16, fontWeight: 600, fontFamily: 'var(--font-heading)', marginBottom: 6 }}>Quitter la séance ?</div>
+            <div style={{ fontSize: 13, lineHeight: 1.55, color: 'var(--color-neutral-300)', marginBottom: 16 }}>
+              Tu as déjà fait {doneSets} série{doneSets > 1 ? 's' : ''} en {fmt(w.elapsed)}. Tu peux enregistrer ce travail dans ton journal avant de partir.
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+              <PrimaryButton icon="check-fat" onClick={actions.saveAndQuit}>Enregistrer et quitter</PrimaryButton>
+              <SecondaryButton icon="trash" onClick={actions.quitWorkout} style={{ width: '100%', padding: 12, justifyContent: 'center' }}>
+                Quitter sans enregistrer
+              </SecondaryButton>
+              <GhostButton onClick={actions.cancelQuit} style={{ padding: 10, justifyContent: 'center' }}>Reprendre la séance</GhostButton>
             </div>
           </div>
         </div>

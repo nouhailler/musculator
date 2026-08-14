@@ -53,7 +53,7 @@ function initialState() {
 
 function newWorkoutState(progId, solo = null) {
   return {
-    progId, solo, soloSets: 0,
+    progId, solo, setsByEx: {}, quitAsk: false, wasPaused: false,
     index: 0, set: 1, phase: 'exercise', rest: 0, restKind: 'exercise',
     elapsed: 0, stopwatch: 0, swRunning: true, paused: false, bigMode: false,
     doneIds: [], charge: {}, reps: {}, notes: {}, edit: null, editVal: '',
@@ -69,7 +69,13 @@ function workoutProgram(state) {
   return w.solo || progById(w.progId, state.customWorkouts);
 }
 
-function buildSessionEntry(state, doneIds) {
+// Sets actually completed, per exercise. Every finished set passes through
+// FINISH_SET exactly once, so this is the truth about what was performed — and
+// a session stopped part-way has to be logged from it rather than from the
+// program's prescription.
+const totalSets = (w) => Object.values(w.setsByEx).reduce((a, n) => a + n, 0);
+
+function buildSessionEntry(state) {
   const w = state.workout;
   const program = workoutProgram(state);
   const exObjs = program.exos.map(exById);
@@ -82,12 +88,34 @@ function buildSessionEntry(state, doneIds) {
     heure: nowHM(),
     elapsedSec: w.elapsed,
     kcal,
-    // A solo run is open-ended, so its count is what was actually performed.
-    // A program's is its prescription — through effSeries, so a custom
-    // workout's overrides are counted rather than the catalogue defaults.
-    series: w.solo ? w.soloSets : program.exos.reduce((a, id) => a + effSeries(program, id), 0),
-    exerciseIds: [...doneIds],
+    // Always what was performed, never the prescription: for a completed
+    // program the two agree, and for one stopped early only this is true.
+    series: totalSets(w),
+    exerciseIds: Object.keys(w.setsByEx),
     muscles: [...new Set(exObjs.map((e) => e.muscle.split(' · ')[0]))],
+  };
+}
+
+// Ends a workout, writes it to the journal and shows the summary. `partial` is
+// a run stopped before its end — logged all the same, from what was done.
+function finishWorkout(state, w, partial = false) {
+  const scoped = { ...state, workout: w };
+  const program = workoutProgram(scoped);
+  const entry = buildSessionEntry(scoped);
+  return {
+    ...state,
+    view: 'complete',
+    workout: null,
+    completeSummary: {
+      time: fmt(w.elapsed),
+      exos: entry.exerciseIds.length || program.exos.length,
+      kcal: entry.kcal,
+      sets: totalSets(w),
+      soloNom: w.solo ? w.solo.nom : null,
+      partial,
+    },
+    sessionLog: [entry, ...state.sessionLog],
+    analysis: null, analysisError: '',
   };
 }
 
@@ -196,18 +224,26 @@ function reducer(state, action) {
       const w = state.workout;
       if (!w || !w.solo) return state;
       // Not a single set done — leave without writing a session nobody performed.
-      if (w.soloSets === 0) return { ...state, view: null, tab: 'home', workout: null };
-      // The muscle map and the badges read exerciseIds, so the one exercise has
-      // to be in there for a solo run to count towards them like any session.
-      const entry = buildSessionEntry(state, [w.solo.exos[0]]);
-      return {
-        ...state,
-        view: 'complete',
-        workout: null,
-        completeSummary: { time: fmt(w.elapsed), exos: 1, kcal: entry.kcal, sets: w.soloSets, soloNom: w.solo.nom },
-        sessionLog: [entry, ...state.sessionLog],
-        analysis: null, analysisError: '',
-      };
+      if (totalSets(w) === 0) return { ...state, view: null, tab: 'home', workout: null };
+      return finishWorkout(state, w);
+    }
+
+    // Closing a workout asks rather than discards: stopping early is normal,
+    // and the sets already done are worth keeping.
+    case 'REQUEST_QUIT': {
+      const w = state.workout; if (!w) return state;
+      if (totalSets(w) === 0) return { ...state, view: null, tab: 'home', workout: null };
+      // Freeze the clock and the rest countdown while the choice is open.
+      return { ...state, workout: { ...w, quitAsk: true, wasPaused: w.paused, paused: true } };
+    }
+    case 'CANCEL_QUIT': {
+      const w = state.workout; if (!w) return state;
+      return { ...state, workout: { ...w, quitAsk: false, paused: w.wasPaused } };
+    }
+    case 'SAVE_AND_QUIT': {
+      const w = state.workout; if (!w) return state;
+      // A solo run ended this way is simply finished; a program is partial.
+      return finishWorkout(state, { ...w, quitAsk: false }, !w.solo);
     }
 
     case 'TICK': {
@@ -232,34 +268,22 @@ function reducer(state, action) {
       const w = state.workout; if (!w) return state;
       const program = workoutProgram(state);
       const curId = program.exos[w.index];
+      const setsByEx = { ...w.setsByEx, [curId]: (w.setsByEx[curId] || 0) + 1 };
+      const rest = effRepos(program, curId);
       // A solo exercise has no set target: it runs until the user stops it, so
-      // every finished set simply leads into a rest and is counted.
+      // every finished set simply leads into a rest.
       if (w.solo) {
-        return {
-          ...state,
-          workout: {
-            ...w, soloSets: w.soloSets + 1, phase: 'rest', rest: effRepos(program, curId),
-            restKind: 'series', stopwatch: 0, swRunning: false,
-          },
-        };
+        return { ...state, workout: { ...w, setsByEx, phase: 'rest', rest, restKind: 'series', stopwatch: 0, swRunning: false } };
       }
       const total = effSeries(program, curId);
       if (w.set < total) {
-        return { ...state, workout: { ...w, phase: 'rest', rest: effRepos(program, curId), restKind: 'series', stopwatch: 0, swRunning: false } };
+        return { ...state, workout: { ...w, setsByEx, phase: 'rest', rest, restKind: 'series', stopwatch: 0, swRunning: false } };
       }
       const doneIds = [...w.doneIds, curId];
       if (w.index >= program.exos.length - 1) {
-        const entry = buildSessionEntry({ ...state, workout: w }, doneIds);
-        return {
-          ...state,
-          view: 'complete',
-          workout: null,
-          completeSummary: { time: fmt(w.elapsed), exos: program.exos.length, kcal: entry.kcal },
-          sessionLog: [entry, ...state.sessionLog],
-          analysis: null, analysisError: '',
-        };
+        return finishWorkout(state, { ...w, setsByEx, doneIds });
       }
-      return { ...state, workout: { ...w, doneIds, phase: 'rest', rest: effRepos(program, curId), restKind: 'exercise', stopwatch: 0, swRunning: false } };
+      return { ...state, workout: { ...w, setsByEx, doneIds, phase: 'rest', rest, restKind: 'exercise', stopwatch: 0, swRunning: false } };
     }
     case 'SKIP_REST': {
       const w = state.workout; if (!w) return state;
@@ -413,6 +437,9 @@ export function AppProvider({ children }) {
     startWorkout: (progId) => dispatch({ type: 'START_WORKOUT', progId }),
     startSolo: (exId) => dispatch({ type: 'START_SOLO', exId }),
     finishSolo: () => dispatch({ type: 'FINISH_SOLO' }),
+    requestQuit: () => dispatch({ type: 'REQUEST_QUIT' }),
+    cancelQuit: () => dispatch({ type: 'CANCEL_QUIT' }),
+    saveAndQuit: () => dispatch({ type: 'SAVE_AND_QUIT' }),
     finishSet: () => dispatch({ type: 'FINISH_SET' }),
     skipRest: () => dispatch({ type: 'SKIP_REST' }),
     addRest: () => dispatch({ type: 'ADD_REST' }),
