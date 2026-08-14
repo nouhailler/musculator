@@ -41,7 +41,7 @@ function initialState() {
     tab: 'home', view: null,
     selExId: 'pompes', selProgId: 'fullbody',
     bodySide: 'front', selMuscleId: 'pecs',
-    libSearch: '', libLevel: 'Tous', libMat: 'Tous',
+    libSearch: '', libLevel: 'Tous', libMat: 'Tous', libOptionnels: false,
     fLevel: 'Tous', fEquip: 'Tous', fDur: 'Toutes',
     builder: { name: '', duree: 30, objectif: 'Prise de masse', exos: [], pickerOpen: false },
     workout: null,

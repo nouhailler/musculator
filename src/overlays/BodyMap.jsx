@@ -23,6 +23,9 @@ function BodyOutline() {
   );
 }
 
+// Zones are painted in order, so a zone listed later sits on top of the ones
+// before it — that is how the adductor strips and the gluteus-medius corners
+// carve their own clickable area out of the larger quads and glutes zones.
 const FRONT_ZONES = [
   { id: 'epaules', rect: { x: 60, y: 52, w: 80, h: 15, rx: 7 } },
   { id: 'pecs', rect: { x: 74, y: 65, w: 52, h: 24, rx: 9 } },
@@ -31,6 +34,8 @@ const FRONT_ZONES = [
   { id: 'abdos', rect: { x: 80, y: 93, w: 40, h: 44, rx: 9 } },
   { id: 'quads', rect: { x: 77, y: 168, w: 19, h: 72, rx: 9 } },
   { id: 'quads', rect: { x: 104, y: 168, w: 19, h: 72, rx: 9 } },
+  { id: 'adducteurs', rect: { x: 88, y: 174, w: 8, h: 52, rx: 4 } },
+  { id: 'adducteurs', rect: { x: 104, y: 174, w: 8, h: 52, rx: 4 } },
 ];
 
 const BACK_ZONES = [
@@ -39,6 +44,8 @@ const BACK_ZONES = [
   { id: 'triceps', rect: { x: 50, y: 70, w: 16, h: 30, rx: 8 } },
   { id: 'triceps', rect: { x: 134, y: 70, w: 16, h: 30, rx: 8 } },
   { id: 'fessiers', rect: { x: 76, y: 140, w: 48, h: 24, rx: 10 } },
+  { id: 'moyen-fessier', rect: { x: 76, y: 140, w: 13, h: 23, rx: 7 } },
+  { id: 'moyen-fessier', rect: { x: 111, y: 140, w: 13, h: 23, rx: 7 } },
   { id: 'ischios', rect: { x: 77, y: 168, w: 19, h: 56, rx: 9 } },
   { id: 'ischios', rect: { x: 104, y: 168, w: 19, h: 56, rx: 9 } },
   { id: 'mollets', rect: { x: 77, y: 258, w: 19, h: 52, rx: 9 } },

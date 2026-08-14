@@ -46,11 +46,15 @@ export default function ExerciseDetail({ exId, onBack }) {
             <Icon name={ex.icon} weight="fill" size={64} color="var(--color-accent-100)" style={{ animation: 'mPulse 2.4s ease-in-out infinite' }} />
           </>
         )}
-        <button type="button" onClick={() => hasDemo && setDemoPaused((p) => !p)} disabled={!hasDemo}
-          style={{ position: 'absolute', bottom: 12, left: 12, background: 'rgba(0,0,0,.5)', backdropFilter: 'blur(4px)', border: 'none', color: 'var(--color-text)', padding: '5px 10px', borderRadius: 999, fontSize: 11, display: 'flex', alignItems: 'center', gap: 5, cursor: hasDemo ? 'pointer' : 'default' }}>
-          <Icon name={hasDemo && !demoPaused ? 'pause' : 'play'} weight="fill" size={12} />
-          {demoPaused ? 'Démo en pause' : 'Démo animée'}
-        </button>
+        {/* Only exercises with a demo in src/data/demos.js get the badge — the
+            rest fall back to the icon, and claiming an animation there would lie. */}
+        {hasDemo && (
+          <button type="button" onClick={() => setDemoPaused((p) => !p)}
+            style={{ position: 'absolute', bottom: 12, left: 12, background: 'rgba(0,0,0,.5)', backdropFilter: 'blur(4px)', border: 'none', color: 'var(--color-text)', padding: '5px 10px', borderRadius: 999, fontSize: 11, display: 'flex', alignItems: 'center', gap: 5, cursor: 'pointer' }}>
+            <Icon name={demoPaused ? 'play' : 'pause'} weight="fill" size={12} />
+            {demoPaused ? 'Démo en pause' : 'Démo animée'}
+          </button>
+        )}
       </div>
       <div style={{ padding: '16px 18px 0' }}>
         <h3 style={{ margin: '0 0 4px' }}>{ex.nom}</h3>

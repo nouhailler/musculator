@@ -1,5 +1,5 @@
 import { useApp } from '../state/context.js';
-import { EXERCISES, exById } from '../data/exercises.js';
+import { exById, exercisesByPattern } from '../data/exercises.js';
 import Icon from '../components/ui/Icon.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';
 import { Field, TextInput } from '../components/ui/Field.jsx';
@@ -88,16 +88,23 @@ export default function Builder() {
           </div>
           <div style={{ padding: '14px 18px 0' }}>
             <h4 style={{ margin: '0 0 12px' }}>Choisir un exercice</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-              {EXERCISES.map((e) => (
-                <button key={e.id} type="button" onClick={() => actions.builderAddExo(e.id)} className="row-card">
-                  <div style={{ width: 40, height: 40, flex: 'none', borderRadius: 8, background: 'var(--color-accent-900)', display: 'grid', placeItems: 'center', color: 'var(--color-accent-200)' }}><Icon name={e.icon} weight="fill" size={22} /></div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600 }}>{e.nom}</div>
-                    <div style={{ fontSize: 11, color: 'var(--color-neutral-400)' }}>{e.muscle}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {exercisesByPattern().map((g) => (
+                <div key={g.pattern}>
+                  <h6 style={{ color: 'var(--color-accent-200)', marginBottom: 8 }}>{g.pattern}</h6>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+                    {g.exos.map((e) => (
+                      <button key={e.id} type="button" onClick={() => actions.builderAddExo(e.id)} className="row-card">
+                        <div style={{ width: 40, height: 40, flex: 'none', borderRadius: 8, background: 'var(--color-accent-900)', display: 'grid', placeItems: 'center', color: 'var(--color-accent-200)' }}><Icon name={e.icon} weight="fill" size={22} /></div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 14, fontWeight: 600 }}>{e.nom}</div>
+                          <div style={{ fontSize: 11, color: 'var(--color-neutral-400)' }}>{e.muscle}</div>
+                        </div>
+                        <Icon name="plus" size={16} color="var(--color-accent-200)" />
+                      </button>
+                    ))}
                   </div>
-                  <Icon name="plus" size={16} color="var(--color-accent-200)" />
-                </button>
+                </div>
               ))}
             </div>
           </div>
