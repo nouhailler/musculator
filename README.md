@@ -51,6 +51,10 @@ in the script if your Playwright browsers live elsewhere.
   tips, easier/harder variants), an animated demo of every movement, and a "Muscle ciblé"
   block explaining how the target muscle is actually loaded and what to watch so it isn't
   overworked.
+- **Nutrition** — barcode scanning and food search (Open Food Facts + a bundled offline
+  generic table), a day/meal food journal, a live macro dashboard against targets derived
+  from your profile, and the **Score Musculation Quotidien** tying the two together. Can
+  import a Nutritor journal CSV.
 - **Cartographie musculaire** — front/back muscle map over 13 muscle zones; sollicitation
   level and recovery state are derived from your real session history, not fixed demo
   numbers.
@@ -98,6 +102,37 @@ set `cycle` explicitly. Every exercise has its own cue pair and tempo in `src/da
 so explosive work moves fast and eccentric work moves slowly, in speech and animation
 alike. Readers who prefer less motion get the starting position and nothing moves — the
 component honours `prefers-reduced-motion`.
+
+## Nutrition module
+
+Three food sources behind one shape (`src/lib/food.js`), so a scanned product, a generic and
+a hand-typed food are interchangeable:
+
+- **Open Food Facts** — barcode lookup and text search. The retry/timeout policy and the
+  relevance ranking are ported from Nutritor's `openFoodFacts.ts`. Every fetched product is
+  cached in `foodCache` so it can be re-added with no network.
+- **CIQUAL** (`src/data/ciqual.js`) — 3 167 generic French foods bundled with the app, so
+  search works fully offline and covers foods that have no barcode. It also carries the
+  micronutrients OFF usually lacks, which is what makes the score's third component work.
+- **Manual entry** — always available, for home-made food.
+
+### Score Musculation Quotidien (/100)
+
+`src/lib/dailyScore.js`, weighted from `src/data/nutrition.js`:
+
+| Composante | Poids | Règle |
+|---|---|---|
+| Protéines | 40 | `min(consommé / cible, 1) × 40` |
+| Calories | 40 | plein dans une bande de ±10 %, puis décroissant avec l'écart relatif |
+| Micronutriments | 20 | part des micronutriments **renseignés** ayant atteint leur seuil |
+
+A micronutrient nobody logged data for is *unknown*, not zero. Below half the list known, the
+component is reported as "données insuffisantes" and **its weight leaves the denominator** —
+the day is scored out of 80 rather than punished for Open Food Facts' gaps.
+
+Targets come from the training profile the app already collects (Mifflin-St Jeor scaled by
+the weekly training frequency), shifted by a nutrition goal that is deliberately separate
+from the training objective — you can train for force while cutting.
 
 ## About the "Analyse IA"
 

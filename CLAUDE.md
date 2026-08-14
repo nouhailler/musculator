@@ -43,8 +43,8 @@ The split between the two files in `src/state/` is load-bearing:
 are recomputed by `useDerived()` (memoized on `state.sessionLog`). Don't add computed fields
 to reducer state; add them to `useDerived` or to a `lib/` helper.
 
-**Persistence covers 6 slices only** — `profile`, `customWorkouts`, `sessionLog`,
-`disclaimerAcked`, `voiceOn`, `openrouter`, under the key `musculator:v1`. Everything else (current tab,
+**Persistence covers 8 slices only** — `profile`, `customWorkouts`, `sessionLog`,
+`disclaimerAcked`, `voiceOn`, `openrouter`, `nutriLog`, `foodCache`, under the key `musculator:v1`. Everything else (current tab,
 filters, in-progress workout) is deliberately ephemeral. Adding a durable field means
 touching both `loadPersisted()` and the persist effect in `store.jsx`.
 
@@ -149,6 +149,28 @@ demo's tempo. A rep exercise therefore wants a two-entry `seq` matching its two 
 one cue per phase — while a hold can carry a longer `seq` of reminders because its demo sets
 `cycle` itself. `say()` cancels whatever is still speaking, so a cue longer than one beat is
 cut off by the next: keep them to three words.
+
+### Nutrition
+
+Three food sources normalise onto one shape in `lib/food.js` — `{ id, source, nom, per100:
+{ kcal, proteines, glucides, lipides, micros } }` — so nothing downstream branches on where a
+food came from. Two invariants matter:
+
+- **A missing micronutrient is unknown, never zero.** `per100.micros` is sparse on purpose,
+  and `dailyScore` drops the component's weight from the denominator when too few are known.
+  Defaulting a micronutrient to 0 would silently punish users for Open Food Facts' gaps —
+  spot-checking four popular products returned 0, 0, 1 and 3 of the six the score reads.
+- **CIQUAL rows can carry macros with `kcal: 0`** (968 of 3 167). `fromCiqual` derives the
+  energy with the Atwater factors in that case; treating 0 as a real value shows a 0 kcal
+  lentil and wrecks the calorie half of the score.
+
+Every tunable number — score weights, micronutrient references, protein g/kg, calorie
+tolerance, activity multipliers — lives in `data/nutrition.js`. Don't scatter them back into
+the maths or the UI.
+
+`lib/off.js` cannot send a `User-Agent`: it is a forbidden header name and browsers drop it
+silently (verified). It identifies the app with OFF's `app_name`/`app_version` query
+parameters instead. If this is ever reused from React Native, send a real header there.
 
 ### "Analyse IA"
 

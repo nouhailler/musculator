@@ -1,4 +1,5 @@
 import { useApp } from '../state/context.js';
+import { GOALS, DEFAULT_GOAL } from '../data/nutrition.js';
 import { Field, TextInput, TextArea, RangeInput } from '../components/ui/Field.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';
 import { SecondaryButton, PrimaryButton } from '../components/ui/Button.jsx';
@@ -8,6 +9,7 @@ const SEXE_OPTS = ['Homme', 'Femme', 'Autre'];
 const OBJ_OPTS = ['Prise de masse', 'Force', 'Tonus', 'Endurance'];
 const ZONE_OPTS = ['Pectoraux', 'Dos', 'Jambes', 'Épaules', 'Bras', 'Abdos'];
 const EXP_OPTS = ['Débutant', 'Intermédiaire', 'Avancé'];
+const NUTRI_GOAL_OPTS = GOALS.map((g) => g.label);
 
 export default function Profile() {
   const { state, actions } = useApp();
@@ -54,6 +56,17 @@ export default function Profile() {
           <RangeInput min={1} max={7} value={p.frequence} onChange={set('frequence')} />
         </Field>
 
+        {/* Nutrition goal is separate from the training objective above: you can
+            train for force while cutting. Both live on the same profile so the
+            targets have a single source. */}
+        <Field label="Objectif nutrition" style={{ marginBottom: 6 }} />
+        <PillGroup
+          options={NUTRI_GOAL_OPTS}
+          value={(GOALS.find((g) => g.key === (p.objectifNutrition || DEFAULT_GOAL)) || GOALS[1]).label}
+          onChange={(label) => actions.setProfileField('objectifNutrition', GOALS.find((g) => g.label === label)?.key || DEFAULT_GOAL)}
+          style={{ marginBottom: 16 }}
+        />
+
         <Field label="Contraintes / blessures (optionnel)" style={{ marginBottom: 18 }}>
           <TextArea value={p.contraintes} onChange={set('contraintes')} placeholder="ex. genou sensible, éviter les sauts" />
         </Field>
@@ -61,6 +74,33 @@ export default function Profile() {
         <PrimaryButton icon="check" onClick={actions.saveProfile}>Enregistrer</PrimaryButton>
 
         <div style={{ height: 1, background: 'var(--color-divider)', margin: '26px 0 20px' }} />
+
+        <h5 style={{ margin: '0 0 4px' }}>Importer depuis Nutritor</h5>
+        <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 12px', lineHeight: 1.55 }}>
+          Reprends ton historique de repas depuis un export CSV de journal Nutritor. Les jours déjà
+          renseignés ici sont complétés, jamais remplacés.
+        </p>
+        <label
+          htmlFor="nutritor-csv"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
+            padding: 11, borderRadius: 'var(--radius-md)', background: 'var(--color-surface)',
+            border: '1px solid var(--color-divider)', color: 'var(--color-text)', fontSize: 13, marginBottom: 10 }}
+        >
+          <Icon name="arrow-fat-lines-down" size={16} />Choisir un fichier CSV
+        </label>
+        <input
+          id="nutritor-csv" type="file" accept=".csv,text/csv" style={{ display: 'none' }}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            file.text().then(actions.importNutritorCSV);
+            e.target.value = '';
+          }}
+        />
+        {state.importError && <div style={{ fontSize: 12, color: '#f0a35e', marginBottom: 12, lineHeight: 1.5 }}>{state.importError}</div>}
+        {state.importStatus && <div style={{ fontSize: 12, color: '#5fd08a', marginBottom: 12, lineHeight: 1.5 }}>{state.importStatus}</div>}
+
+        <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
 
         <h5 style={{ margin: '0 0 4px' }}>Analyse IA — OpenRouter</h5>
         <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 14px', lineHeight: 1.55 }}>

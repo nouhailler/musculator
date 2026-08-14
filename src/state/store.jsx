@@ -7,6 +7,8 @@ import { effRepos, effSeries, baseReps, baseCharge } from '../lib/workout.js';
 import { generateAnalysis } from '../lib/analysis.js';
 import { fetchFreeModels, checkKey, requestAnalysis } from '../lib/openrouter.js';
 import { startCadence, stopSpeaking, say } from '../lib/voice.js';
+import { MEALS } from '../data/nutrition.js';
+import { mergeLog, parseNutritorCSV } from '../lib/importNutritor.js';
 
 const STORAGE_KEY = 'musculator:v1';
 const KCAL_PER_MIN = 9;
@@ -14,6 +16,7 @@ const KCAL_PER_MIN = 9;
 const defaultProfile = {
   prenom: '', sexe: 'Homme', age: '', poids: '', taille: '', poidsCible: '',
   experience: 'Débutant', objectif: 'Prise de masse', zones: [], frequence: 4, contraintes: '',
+  objectifNutrition: 'maintien',
 };
 
 function loadPersisted() {
@@ -31,6 +34,10 @@ function loadPersisted() {
         key: typeof p.openrouter?.key === 'string' ? p.openrouter.key : '',
         model: typeof p.openrouter?.model === 'string' ? p.openrouter.model : '',
       },
+      // { [dateKey]: { [mealKey]: entry[] } }
+      nutriLog: (p.nutriLog && typeof p.nutriLog === 'object') ? p.nutriLog : {},
+      // Every food ever fetched, kept so it can be re-added with no network.
+      foodCache: (p.foodCache && typeof p.foodCache === 'object') ? p.foodCache : {},
     };
   } catch {
     return null;
@@ -40,7 +47,7 @@ function loadPersisted() {
 function initialState() {
   const persisted = loadPersisted() || {
     profile: defaultProfile, customWorkouts: [], sessionLog: [], disclaimerAcked: false, voiceOn: true,
-    openrouter: { key: '', model: '' },
+    openrouter: { key: '', model: '' }, nutriLog: {}, foodCache: {},
   };
   return {
     ...persisted,
@@ -56,6 +63,10 @@ function initialState() {
     analysisSource: null,
     // Transient model-picker state: fetched live, never persisted.
     orModels: [], orLoading: false, orError: '', orStatus: '',
+    // Nutrition: the day being viewed, plus transient search state.
+    nutriDate: dateKey(), nutriMeal: MEALS[0].key,
+    foodQuery: '', foodResults: [], foodLoading: false, foodError: '', foodPending: null,
+    importStatus: '', importError: '',
     online: typeof navigator !== 'undefined' ? navigator.onLine : true,
   };
 }
@@ -156,6 +167,57 @@ function reducer(state, action) {
 
     case 'SET_OPENROUTER':
       return { ...state, openrouter: { ...state.openrouter, ...action.patch }, orStatus: '', orError: '' };
+
+    // --- Nutrition ---------------------------------------------------------
+    case 'IMPORT_NUTRI_LOG':
+      return { ...state, nutriLog: mergeLog(state.nutriLog, action.log) };
+
+    case 'SET_NUTRI_DATE':
+      return { ...state, nutriDate: action.dateKey };
+
+    case 'ADD_FOOD_ENTRY': {
+      const { dateKey: d, meal, entry } = action;
+      const day = state.nutriLog[d] || {};
+      return {
+        ...state,
+        // Cached on the way in, so the same food can be re-added offline later.
+        foodCache: { ...state.foodCache, [entry.food.id]: entry.food },
+        nutriLog: { ...state.nutriLog, [d]: { ...day, [meal]: [...(day[meal] || []), entry] } },
+      };
+    }
+
+    case 'UPDATE_FOOD_ENTRY': {
+      const { dateKey: d, meal, id, grammes } = action;
+      const day = state.nutriLog[d] || {};
+      return {
+        ...state,
+        nutriLog: {
+          ...state.nutriLog,
+          [d]: { ...day, [meal]: (day[meal] || []).map((e) => (e.id === id ? { ...e, grammes } : e)) },
+        },
+      };
+    }
+
+    case 'REMOVE_FOOD_ENTRY': {
+      const { dateKey: d, meal, id } = action;
+      const day = state.nutriLog[d] || {};
+      return {
+        ...state,
+        nutriLog: { ...state.nutriLog, [d]: { ...day, [meal]: (day[meal] || []).filter((e) => e.id !== id) } },
+      };
+    }
+
+    case 'DUPLICATE_MEAL': {
+      const { from, meal, to } = action;
+      const source = state.nutriLog[from]?.[meal] || [];
+      if (!source.length) return state;
+      const day = state.nutriLog[to] || {};
+      const copies = source.map((e, i) => ({ ...e, id: `fe-${Date.now()}-${i}` }));
+      return {
+        ...state,
+        nutriLog: { ...state.nutriLog, [to]: { ...day, [meal]: [...(day[meal] || []), ...copies] } },
+      };
+    }
 
     case 'TOGGLE_VOICE':
       return { ...state, voiceOn: !state.voiceOn };
@@ -378,11 +440,14 @@ export function AppProvider({ children }) {
         disclaimerAcked: state.disclaimerAcked,
         voiceOn: state.voiceOn,
         openrouter: state.openrouter,
+        nutriLog: state.nutriLog,
+        foodCache: state.foodCache,
       }));
     } catch {
       // storage unavailable (private mode / quota) — app still works, just without persistence
     }
-  }, [state.profile, state.customWorkouts, state.sessionLog, state.disclaimerAcked, state.voiceOn, state.openrouter]);
+  }, [state.profile, state.customWorkouts, state.sessionLog, state.disclaimerAcked, state.voiceOn,
+      state.openrouter, state.nutriLog, state.foodCache]);
 
   // 1s workout ticker.
   useEffect(() => {
@@ -488,6 +553,30 @@ export function AppProvider({ children }) {
 
     setOpenRouter: (patch) => dispatch({ type: 'SET_OPENROUTER', patch }),
 
+    setNutriDate: (d) => dispatch({ type: 'SET_NUTRI_DATE', dateKey: d }),
+    // Nutritor journal CSV → nutriLog. Merged, never replacing: an import must
+    // not silently wipe days already logged here.
+    importNutritorCSV: (text) => {
+      try {
+        const { log, count, days, skipped } = parseNutritorCSV(text);
+        dispatch({ type: 'IMPORT_NUTRI_LOG', log });
+        const extra = skipped ? ` ${skipped} ligne${skipped > 1 ? 's' : ''} ignorée${skipped > 1 ? 's' : ''}.` : '';
+        dispatch({ type: 'PATCH', payload: { importStatus: `${count} aliments importés sur ${days} jour${days > 1 ? 's' : ''}.${extra}`, importError: '' } });
+      } catch (e) {
+        dispatch({ type: 'PATCH', payload: { importError: e.message, importStatus: '' } });
+      }
+    },
+    openFoodSearch: (meal) => dispatch({ type: 'PATCH', payload: { view: 'foodSearch', nutriMeal: meal, foodQuery: '', foodResults: [], foodError: '' } }),
+    addFoodEntry: (meal, food, grammes) => dispatch({
+      type: 'ADD_FOOD_ENTRY',
+      dateKey: state.nutriDate,
+      meal,
+      entry: { id: `fe-${Date.now()}`, food, grammes: Math.max(1, Math.round(Number(grammes) || 0)) },
+    }),
+    updateFoodEntry: (meal, id, grammes) => dispatch({ type: 'UPDATE_FOOD_ENTRY', dateKey: state.nutriDate, meal, id, grammes: Math.max(1, Math.round(Number(grammes) || 0)) }),
+    removeFoodEntry: (meal, id) => dispatch({ type: 'REMOVE_FOOD_ENTRY', dateKey: state.nutriDate, meal, id }),
+    duplicateMeal: (meal, from) => dispatch({ type: 'DUPLICATE_MEAL', from, meal, to: state.nutriDate }),
+
     // Loads the free line-up live; also validates the key when one is set, so
     // the settings screen can report both in a single action.
     loadOpenRouterModels: async () => {
@@ -533,7 +622,7 @@ export function AppProvider({ children }) {
         dispatch({ type: 'PATCH', payload: { analysisError: `${e.message || 'Appel OpenRouter impossible.'} Analyse locale utilisée à la place.` } });
       }
     },
-  }), [state.workout, state.sessionLog, state.profile, state.openrouter]);
+  }), [state.workout, state.sessionLog, state.profile, state.openrouter, state.nutriDate]);
 
   const value = useMemo(() => ({ state, actions }), [state, actions]);
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -5,6 +5,7 @@ const TABS = [
   { key: 'home', label: 'Accueil', icon: 'house' },
   { key: 'programs', label: 'Programmes', icon: 'list-checks' },
   { key: 'library', label: 'Exos', icon: 'books' },
+  { key: 'nutrition', label: 'Nutrition', icon: 'fork-knife' },
   { key: 'journal', label: 'Journal', icon: 'notebook' },
   { key: 'progress', label: 'Progrès', icon: 'chart-line-up' },
 ];

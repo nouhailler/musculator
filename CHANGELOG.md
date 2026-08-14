@@ -31,6 +31,22 @@ grouped by date and reference the commit they landed in.
     is slow (nordic curl 2400 ms, GHR and pistol squat 2200 ms), and isometric holds get a
     four-phrase reminder loop (wall sit, Copenhagen, ball squeeze).
 
+- **Nutrition module** — a sixth tab bringing Nutritor's nutrition features into Musculator:
+  barcode scanning, food search, a day/meal journal, a live macro dashboard, and a daily
+  score linking nutrition to training. No training feature changed.
+  - **Sources** — Open Food Facts (barcode + search, logic ported from Nutritor's
+    `openFoodFacts.ts`: retry/back-off, relevance ranking, cache-on-failure) and a bundled
+    CIQUAL table of 3 167 generic French foods for fully offline search. Manual entry is
+    always available. Every fetched food is cached for offline re-use.
+  - **Score Musculation Quotidien /100** — protéines 40 / calories 40 / micronutriments 20,
+    all weights in `src/data/nutrition.js`. Unknown micronutrients drop their weight from the
+    denominator rather than scoring zero.
+  - **Targets** derive from the existing training profile, plus one new `objectifNutrition`
+    field; there is no second profile to fill in.
+  - `nutriLog` and `foodCache` join the persisted slices.
+  - Optional: imports a Nutritor journal CSV, merging into existing days rather than
+    replacing them.
+
 - **Optional OpenRouter backend for the "Analyse IA"** — a new section in *Mon profil &
   objectifs* takes an OpenRouter API key and lets you pick a free model; that model then
   writes the journal's analysis instead of the on-device engine.
