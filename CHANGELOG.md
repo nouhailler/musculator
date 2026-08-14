@@ -1,0 +1,78 @@
+# Changelog
+
+All notable changes to Musculator are documented here.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+This project has no released versions yet (`package.json` is at `0.0.0`), so entries are
+grouped by date and reference the commit they landed in.
+
+## [Unreleased]
+
+### Added
+
+- Documentation: `CHANGELOG.md` (this file) and `CLAUDE.md`.
+
+## 2026-08-14
+
+### Added
+
+- **Lower-body exercise catalogue** (`e2fba3f`) — 35 thigh/glute exercises on top of the
+  original 10, bringing the catalogue to 45. Introduces two schema fields on
+  `src/data/exercises.js`: `pattern` (one of 7 movement patterns) and `optionnel` (calves
+  and advanced-audience entries, hidden by default).
+  - New helpers: `coreExercises()`, `groupByPattern()`, `exercisesByPattern()`,
+    plus the `PATTERNS` and `UNTAGGED_GROUP` exports.
+  - **Bibliothèque** now groups results by movement pattern and gained an "Optionnels"
+    toggle; untagged upper-body/core exercises land in a trailing "Haut du corps & core"
+    group so no filtered result is ever silently dropped.
+  - **Muscle map** extended from 9 to 13 zones: added `adducteurs`, `moyen-fessier`,
+    `ischios`, `mollets`, and reworked `fessiers`/`quads` exercise lists.
+  - The builder's exercise picker and the exercise sheet's "similaires" list pick up the
+    new catalogue.
+  - Default selected exercise for the library/detail view changed accordingly.
+
+- **Animated exercise demos** (`d128aed`) — replaced the "Démo animée" placeholder with a
+  real animated stick figure, shown in the exercise sheet and during a guided session.
+  - `src/data/demos.js` — keyframe poses for 10 exercises plus the shared `SKELETON`
+    proportions and scene props (ground, mat, bar, dip bars, resistance band, dumbbells).
+  - `src/lib/pose.js` — React-free forward kinematics, pose interpolation, cubic easing,
+    and per-exercise viewBox framing so each movement fills its frame.
+  - `src/components/ExerciseDemo.jsx` — imperative SVG renderer; a running demo never
+    re-renders the React tree above it. Loop timing defaults to the voice cadence
+    (`CUES[id].beat × frames.length`) so the figure moves in step with the spoken cues.
+  - Exercises without a demo entry render nothing and show no "démo" badge.
+
+### Changed
+
+- **Lint cleanup** (`f9559c9`) — optional chaining across all screens/overlays, and
+  `src/state/store.jsx` split so it only exports the `AppProvider` component: the context,
+  `useApp`, `useDerived` and `allPrograms` moved to `src/state/context.js` to satisfy React
+  Fast Refresh. Enabled `react/only-export-components` in `.oxlintrc.json`.
+
+## 2026-08-13
+
+### Added
+
+- **Initial implementation** (`7735fe5`) — the Musculator PWA, built from the Claude Design
+  prototype handoff.
+  - 5 tab screens (Accueil, Programmes, Bibliothèque, Journal, Progrès) and 7 full-screen
+    overlays (exercise sheet, program detail, muscle map, profile, builder, workout,
+    workout complete).
+  - Guided session engine: exercise/rest phases, per-set stopwatch, rest countdown with
+    +15s and skip, editable reps/charge/notes, fullscreen "big buttons" mode.
+  - French voice coach over the Web Speech API, with per-exercise cadence cues and
+    encouragement.
+  - Workout builder for custom sessions, persisted alongside the profile and session log.
+  - Muscle map whose sollicitation and recovery state are derived from the real session
+    log (`src/lib/muscleStats.js`) rather than the prototype's hard-coded demo numbers.
+  - Badges that unlock from real usage (`src/data/badges.js` + `useDerived`).
+  - Local "Analyse IA" (`src/lib/analysis.js`) computing the shape a real LLM response
+    would fill, with no backend or API key.
+  - Single Context + reducer store persisted to `localStorage` under `musculator:v1`.
+  - PWA setup: `vite-plugin-pwa` with autoUpdate, offline precaching, generated icons
+    (`scripts/gen-icons.mjs`), real online/offline detection.
+  - Nocturne design tokens ported from the handoff (`src/styles/tokens.css`).
+  - Playwright smoke script (`scripts/smoke.mjs`).
+
+- **Claude Design handoff** (`0ea3ab9`) — the exported prototype (`project/`) and the
+  original design conversation (`chats/`) this app was built from.
