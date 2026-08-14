@@ -31,6 +31,20 @@ grouped by date and reference the commit they landed in.
     is slow (nordic curl 2400 ms, GHR and pistol squat 2200 ms), and isometric holds get a
     four-phrase reminder loop (wall sit, Copenhagen, ball squeeze).
 
+- **Optional OpenRouter backend for the "Analyse IA"** — a new section in *Mon profil &
+  objectifs* takes an OpenRouter API key and lets you pick a free model; that model then
+  writes the journal's analysis instead of the on-device engine.
+  - The free model list is **fetched live** from OpenRouter's public `/models` endpoint
+    rather than hard-coded, because the free line-up changes constantly. Free is decided
+    from the price (`prompt` and `completion` both zero), not the `:free` id suffix, and
+    text-only output is required so zero-priced audio models are excluded.
+  - The key is validated against `/key` when the list is loaded, so a bad key is reported in
+    settings rather than at analysis time.
+  - Any failure — bad key, rate limit, off-format JSON — falls back to the on-device engine
+    and tells the user; leaving OpenRouter unconfigured keeps the previous behaviour exactly.
+  - `openrouter: { key, model }` joins the persisted state slices.
+  - Registers the `circle` icon slug, which was imported but never mapped.
+
 - **Partial sessions are shown as such** — the journal marks a session that was stopped
   early with an amber accent and "Séance partielle — arrêtée après 1 exercice sur 3", and
   the progress history labels it too instead of showing the same completion tick as a

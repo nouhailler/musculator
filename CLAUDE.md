@@ -43,8 +43,8 @@ The split between the two files in `src/state/` is load-bearing:
 are recomputed by `useDerived()` (memoized on `state.sessionLog`). Don't add computed fields
 to reducer state; add them to `useDerived` or to a `lib/` helper.
 
-**Persistence covers 5 slices only** — `profile`, `customWorkouts`, `sessionLog`,
-`disclaimerAcked`, `voiceOn`, under the key `musculator:v1`. Everything else (current tab,
+**Persistence covers 6 slices only** — `profile`, `customWorkouts`, `sessionLog`,
+`disclaimerAcked`, `voiceOn`, `openrouter`, under the key `musculator:v1`. Everything else (current tab,
 filters, in-progress workout) is deliberately ephemeral. Adding a durable field means
 touching both `loadPersisted()` and the persist effect in `store.jsx`.
 
@@ -152,10 +152,23 @@ cut off by the next: keep them to three words.
 
 ### "Analyse IA"
 
-`src/lib/analysis.js` is a local heuristic, not a model call — this build has no backend or
-API key. It returns the exact shape a real LLM response was designed to fill
-(`resume/energie/tonus/progression/aFaire/ameliorer`). Replacing the body of
-`generateAnalysis()` with a backend request is the whole migration; no caller changes.
+Two engines behind one shape (`resume/energie/tonus/progression/aFaire/ameliorer`), chosen
+in `runAnalysis`: `src/lib/analysis.js` computes it on-device, and `src/lib/openrouter.js`
+asks a user-configured OpenRouter model instead when both a key and a model are set. Any
+OpenRouter failure falls back to the local engine and surfaces the reason — **never leave
+the user with no analysis**, and never let a model's output reach the UI unvalidated
+(`parseAnalysis` extracts the outermost JSON object and coerces every field, because models
+differ in how well they honour "JSON only").
+
+Two things about the OpenRouter integration are deliberate:
+
+- **The free model list is fetched, not hard-coded.** OpenRouter's free line-up changes
+  constantly, so any baked-in list rots. `fetchFreeModels()` decides "free" from the price
+  rather than the `:free` id suffix, and requires text-only output — several zero-priced
+  entries are audio/music models that cannot answer a chat completion.
+- **The key is stored in `localStorage` and sent from the browser.** There is no backend to
+  hold it, so it is readable by anything with access to the device. The settings screen says
+  so plainly; don't quietly drop that warning.
 
 ## Conventions
 

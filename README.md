@@ -101,12 +101,23 @@ component honours `prefers-reduced-motion`.
 
 ## About the "Analyse IA"
 
-The original design called for a live LLM (OpenRouter). This build ships without a backend
-or API key, so `src/lib/analysis.js` computes a structured, personalized-looking analysis
-directly from your profile and session log instead of calling a model. The output shape
-(`resume/energie/tonus/progression/aFaire/ameliorer`) is exactly what a real model call would
-need to fill in — swapping `generateAnalysis()` for a backend request is the only change
-required to wire up a real model later; no caller needs to change.
+Two engines, same output shape (`resume/energie/tonus/progression/aFaire/ameliorer`), so
+nothing downstream can tell which one answered:
+
+- **On-device (default).** `src/lib/analysis.js` computes a structured, personalized
+  analysis from your profile and session log. No key, no network, works offline.
+- **OpenRouter (optional).** Add your own key and pick a free model under *Mon profil &
+  objectifs → Analyse IA*, and that model writes the analysis instead. The free line-up is
+  fetched live from OpenRouter — free is decided from the price, not the `:free` id suffix —
+  so the list never goes stale, and audio/music models are filtered out since they cannot
+  answer a chat completion.
+
+If an OpenRouter call fails for any reason — bad key, rate limit, malformed JSON — the app
+falls back to the on-device engine and says so rather than leaving you with nothing.
+
+**About the key:** there is no backend, so the key is stored in `localStorage` on the device
+and sent straight from the browser to OpenRouter. Anyone with access to the device can read
+it. Use a key you are willing to expose that way, and set a spend limit on it.
 
 ## Project layout
 

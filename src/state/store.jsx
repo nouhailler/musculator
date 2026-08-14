@@ -5,6 +5,7 @@ import { dateKey, fmt, nowHM, startOfWeekKey } from '../lib/format.js';
 import { AppContext } from './context.js';
 import { effRepos, effSeries, baseReps, baseCharge } from '../lib/workout.js';
 import { generateAnalysis } from '../lib/analysis.js';
+import { fetchFreeModels, checkKey, requestAnalysis } from '../lib/openrouter.js';
 import { startCadence, stopSpeaking, say } from '../lib/voice.js';
 
 const STORAGE_KEY = 'musculator:v1';
@@ -26,6 +27,10 @@ function loadPersisted() {
       sessionLog: Array.isArray(p.sessionLog) ? p.sessionLog : [],
       disclaimerAcked: !!p.disclaimerAcked,
       voiceOn: p.voiceOn !== false,
+      openrouter: {
+        key: typeof p.openrouter?.key === 'string' ? p.openrouter.key : '',
+        model: typeof p.openrouter?.model === 'string' ? p.openrouter.model : '',
+      },
     };
   } catch {
     return null;
@@ -35,6 +40,7 @@ function loadPersisted() {
 function initialState() {
   const persisted = loadPersisted() || {
     profile: defaultProfile, customWorkouts: [], sessionLog: [], disclaimerAcked: false, voiceOn: true,
+    openrouter: { key: '', model: '' },
   };
   return {
     ...persisted,
@@ -47,6 +53,9 @@ function initialState() {
     workout: null,
     completeSummary: null,
     analysis: null, analysisLoading: false, analysisError: '',
+    analysisSource: null,
+    // Transient model-picker state: fetched live, never persisted.
+    orModels: [], orLoading: false, orError: '', orStatus: '',
     online: typeof navigator !== 'undefined' ? navigator.onLine : true,
   };
 }
@@ -144,6 +153,9 @@ function reducer(state, action) {
       return { ...state, disclaimerAcked: true };
     case 'SHOW_DISCLAIMER':
       return { ...state, disclaimerAcked: false };
+
+    case 'SET_OPENROUTER':
+      return { ...state, openrouter: { ...state.openrouter, ...action.patch }, orStatus: '', orError: '' };
 
     case 'TOGGLE_VOICE':
       return { ...state, voiceOn: !state.voiceOn };
@@ -343,7 +355,7 @@ function reducer(state, action) {
     case 'ANALYSIS_ERROR':
       return { ...state, analysisLoading: false, analysisError: action.message };
     case 'ANALYSIS_DONE':
-      return { ...state, analysisLoading: false, analysis: action.analysis };
+      return { ...state, analysisLoading: false, analysis: action.analysis, analysisSource: action.source };
 
     default:
       return state;
@@ -365,11 +377,12 @@ export function AppProvider({ children }) {
         sessionLog: state.sessionLog,
         disclaimerAcked: state.disclaimerAcked,
         voiceOn: state.voiceOn,
+        openrouter: state.openrouter,
       }));
     } catch {
       // storage unavailable (private mode / quota) — app still works, just without persistence
     }
-  }, [state.profile, state.customWorkouts, state.sessionLog, state.disclaimerAcked, state.voiceOn]);
+  }, [state.profile, state.customWorkouts, state.sessionLog, state.disclaimerAcked, state.voiceOn, state.openrouter]);
 
   // 1s workout ticker.
   useEffect(() => {
@@ -473,7 +486,26 @@ export function AppProvider({ children }) {
     quitWorkout: () => { stopSpeaking(); dispatch({ type: 'QUIT_WORKOUT' }); },
     finishHome: () => dispatch({ type: 'FINISH_HOME' }),
 
-    runAnalysis: () => {
+    setOpenRouter: (patch) => dispatch({ type: 'SET_OPENROUTER', patch }),
+
+    // Loads the free line-up live; also validates the key when one is set, so
+    // the settings screen can report both in a single action.
+    loadOpenRouterModels: async () => {
+      dispatch({ type: 'PATCH', payload: { orLoading: true, orError: '', orStatus: '' } });
+      try {
+        const models = await fetchFreeModels();
+        let status = `${models.length} modèles gratuits disponibles.`;
+        if (state.openrouter.key) {
+          await checkKey(state.openrouter.key);
+          status = `Clé valide — ${models.length} modèles gratuits disponibles.`;
+        }
+        dispatch({ type: 'PATCH', payload: { orModels: models, orLoading: false, orStatus: status } });
+      } catch (e) {
+        dispatch({ type: 'PATCH', payload: { orLoading: false, orError: e.message || 'Échec de la connexion à OpenRouter.' } });
+      }
+    },
+
+    runAnalysis: async () => {
       const today = dateKey();
       const entries = state.sessionLog.filter((s) => s.dateKey === today);
       if (entries.length === 0) {
@@ -483,12 +515,25 @@ export function AppProvider({ children }) {
       dispatch({ type: 'ANALYSIS_START' });
       const weekStart = startOfWeekKey();
       const weekCount = state.sessionLog.filter((s) => s.dateKey >= weekStart).length;
-      setTimeout(() => {
-        const result = generateAnalysis(state.profile, entries, weekCount);
-        dispatch({ type: 'ANALYSIS_DONE', analysis: result });
-      }, 900);
+      const local = () => generateAnalysis(state.profile, entries, weekCount);
+      const { key, model } = state.openrouter;
+
+      if (!key || !model) {
+        // Unconfigured: the on-device engine, exactly as before.
+        setTimeout(() => dispatch({ type: 'ANALYSIS_DONE', analysis: local(), source: 'local' }), 900);
+        return;
+      }
+      try {
+        const analysis = await requestAnalysis({ key, model, profile: state.profile, entries, weekCount });
+        dispatch({ type: 'ANALYSIS_DONE', analysis, source: 'openrouter' });
+      } catch (e) {
+        // A model that is unreachable, rate-limited or off-format must not
+        // leave the user with nothing — fall back and say what happened.
+        dispatch({ type: 'ANALYSIS_DONE', analysis: local(), source: 'local' });
+        dispatch({ type: 'PATCH', payload: { analysisError: `${e.message || 'Appel OpenRouter impossible.'} Analyse locale utilisée à la place.` } });
+      }
     },
-  }), [state.workout, state.sessionLog, state.profile]);
+  }), [state.workout, state.sessionLog, state.profile, state.openrouter]);
 
   const value = useMemo(() => ({ state, actions }), [state, actions]);
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
