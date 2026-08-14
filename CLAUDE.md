@@ -70,6 +70,11 @@ and the session would run as Full Body Maison. Use `workoutProgram(state)` in th
 `w.solo || progById(...)` in a component. A solo run also has no set target: `FINISH_SET`
 always leads into a rest, and only `FINISH_SOLO` ends and logs it.
 
+Session entries are append-only and persist across upgrades, so **anything read from a
+`sessionLog` entry must tolerate its absence** — `partial` and `exosTotal` postdate the
+first entries and are simply falsy on older ones, which is why the journal treats a missing
+flag as a complete session rather than as unknown.
+
 **`w.setsByEx` is the record of what was performed**, written in `FINISH_SET` — the single
 place a set is ever counted. Everything downstream reads it rather than the program's
 prescription, because a session can end early: `finishWorkout()` is the one exit that logs a

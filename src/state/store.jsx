@@ -75,10 +75,14 @@ function workoutProgram(state) {
 // program's prescription.
 const totalSets = (w) => Object.values(w.setsByEx).reduce((a, n) => a + n, 0);
 
-function buildSessionEntry(state) {
+function buildSessionEntry(state, partial = false) {
   const w = state.workout;
   const program = workoutProgram(state);
-  const exObjs = program.exos.map(exById);
+  const doneIds = Object.keys(w.setsByEx);
+  // Derived from what was performed, not from the program: a session stopped
+  // after its first exercise must not claim the muscles of the ones it never
+  // reached. For a completed program the two lists are the same.
+  const exObjs = doneIds.map(exById);
   const kcal = Math.round((w.elapsed / 60) * KCAL_PER_MIN);
   return {
     id: `s-${Date.now()}`,
@@ -91,7 +95,12 @@ function buildSessionEntry(state) {
     // Always what was performed, never the prescription: for a completed
     // program the two agree, and for one stopped early only this is true.
     series: totalSets(w),
-    exerciseIds: Object.keys(w.setsByEx),
+    exerciseIds: doneIds,
+    // Kept on the entry, not just on the ephemeral summary: the journal has to
+    // be able to tell a session stopped early from one seen through, and
+    // `exosTotal` is what makes "2 exercices sur 3" possible later.
+    partial,
+    exosTotal: program.exos.length,
     muscles: [...new Set(exObjs.map((e) => e.muscle.split(' · ')[0]))],
   };
 }
@@ -101,7 +110,7 @@ function buildSessionEntry(state) {
 function finishWorkout(state, w, partial = false) {
   const scoped = { ...state, workout: w };
   const program = workoutProgram(scoped);
-  const entry = buildSessionEntry(scoped);
+  const entry = buildSessionEntry(scoped, partial);
   return {
     ...state,
     view: 'complete',

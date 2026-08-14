@@ -97,15 +97,27 @@ export default function Journal() {
       )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {journalToday.map((j) => (
-          <div key={j.id} style={{ background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 13 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+          <div key={j.id} style={{
+            background: 'var(--color-surface)',
+            border: `1px solid ${j.partial ? 'color-mix(in srgb,#f0a35e 34%,transparent)' : 'var(--color-divider)'}`,
+            borderLeft: j.partial ? '3px solid #f0a35e' : undefined,
+            borderRadius: 'var(--radius-md)', padding: 13,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: j.partial ? 5 : 8 }}>
               <div style={{ fontSize: 14, fontWeight: 600 }}>{j.programNom}</div>
               <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>{j.heure}</span>
             </div>
+            {/* Older entries predate the flag, so they simply read as complete. */}
+            {j.partial && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#f0a35e', marginBottom: 8 }}>
+                <Icon name="warning-circle" weight="fill" size={13} style={{ flex: 'none' }} />
+                Séance partielle{j.exosTotal ? ` — arrêtée après ${j.exerciseIds.length} exercice${j.exerciseIds.length > 1 ? 's' : ''} sur ${j.exosTotal}` : ' — arrêtée en cours'}
+              </div>
+            )}
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 9 }}>
               <Tag variant="neutral" icon="clock">{fmt(j.elapsedSec)}</Tag>
               <Tag variant="neutral" icon="flame">{j.kcal} kcal</Tag>
-              <Tag variant="neutral">{j.series} séries</Tag>
+              <Tag variant="neutral">{j.series} série{j.series > 1 ? 's' : ''}</Tag>
             </div>
             <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', lineHeight: 1.5 }}>{j.exerciseIds.map((id) => exById(id).nom).join(' · ')}</div>
             <div style={{ fontSize: 11, color: 'var(--color-accent-300)', marginTop: 4 }}>Muscles : {j.muscles.join(' · ')}</div>

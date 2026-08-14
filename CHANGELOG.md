@@ -31,6 +31,12 @@ grouped by date and reference the commit they landed in.
     is slow (nordic curl 2400 ms, GHR and pistol squat 2200 ms), and isometric holds get a
     four-phrase reminder loop (wall sit, Copenhagen, ball squeeze).
 
+- **Partial sessions are shown as such** — the journal marks a session that was stopped
+  early with an amber accent and "Séance partielle — arrêtée après 1 exercice sur 3", and
+  the progress history labels it too instead of showing the same completion tick as a
+  session seen through. `partial` and `exosTotal` are stored on the entry rather than only
+  on the ephemeral summary; entries written before the flag existed simply read as complete.
+
 - **Closing a workout offers to save it** — the × used to discard everything silently.
   It now asks, showing what is at stake ("Tu as déjà fait 3 séries en 4:12"), with
   "Enregistrer et quitter", "Quitter sans enregistrer" and "Reprendre la séance". The clock
@@ -77,6 +83,11 @@ grouped by date and reference the commit they landed in.
 
 - A session's logged `series` count now honours a custom workout's per-exercise overrides
   instead of the catalogue defaults, which under-reported it.
+
+- A session's logged `muscles` came from the whole program rather than the exercises
+  actually performed, so a session stopped early claimed muscles it never worked.
+
+- The journal's session card read "1 séries".
 
 
 ## 2026-08-14
