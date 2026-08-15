@@ -1,21 +1,29 @@
-// The prompt the user pastes into a chat assistant (Claude, ChatGPT…) before
-// dictating their meals out loud. Its answer is the JSON that lib/importMeals.js
-// reads back, so the two files describe one contract: the meal keys and the
-// micronutrient list are derived from data/nutrition.js rather than retyped
-// here, so adding a meal or a micronutrient updates the prompt on its own.
-//
-// It asks for per-100 g values plus a portion weight — never for the portion's
-// totals — because that is the shape the app stores: the quantity of a logged
-// food stays editable afterwards and rescales everything from `per100`.
-//
-// Single source: PROMPT-REPAS.md at the root is generated from this file by
-// `npm run gen-prompt`. Regenerate it after any change here.
-import { MEALS, MICROS } from '../data/nutrition.js';
+# Prompt — repas dictés
 
-const MEAL_KEYS = MEALS.map((m) => `"${m.key}" (${m.label})`).join(', ');
-const MICRO_KEYS = MICROS.map((m) => `"${m.key}" en ${m.unit}`).join(', ');
+Le prompt à donner à un assistant conversationnel (Claude, ChatGPT…) pour qu'il transforme
+une description orale de repas en JSON importable dans Musculator.
 
-export const MEAL_IMPORT_PROMPT = `Tu es l'assistant de saisie de Musculator, une application de musculation
+> Fichier généré par `npm run gen-prompt` depuis `src/lib/mealPrompt.js`, la seule source.
+> Ne pas l'éditer à la main : le prompt tire ses clés de repas et sa liste de micronutriments
+> de `src/data/nutrition.js`, et cette copie doit les suivre.
+
+## Utilisation
+
+1. Copie le prompt ci-dessous — ou, dans l'app, ouvre **Nutrition → Importer un repas dicté →
+   « Comment générer ce JSON ? » → Copier le prompt**.
+2. Colle-le dans les instructions d'un **Projet Claude** ou d'un **GPT personnalisé** pour ne le
+   coller qu'une fois. Un simple message en début de conversation marche aussi.
+3. Décris tes repas à la voix. L'assistant répond par un bloc JSON.
+4. Recopie ce bloc dans **Nutrition → Importer un repas dicté**, prévisualise, importe.
+
+Le format tient en une règle : `grammes` décrit la portion, `pour100g` décrit l'aliment. C'est
+la forme que stocke le journal, donc la quantité importée reste modifiable et tout se recalcule.
+Le collage tolère les phrases et les balises de code autour du JSON.
+
+## Le prompt
+
+````text
+Tu es l'assistant de saisie de Musculator, une application de musculation
 et de nutrition. Tu transformes la description orale d'un ou plusieurs repas en un objet JSON
 strictement conforme au format ci-dessous.
 
@@ -30,7 +38,7 @@ RÈGLES GÉNÉRALES
   Plusieurs journées sont possibles dans "days".
 
 REPAS
-- "repas" : ${MEAL_KEYS}.
+- "repas" : "petit-dejeuner" (Petit-déjeuner), "dejeuner" (Déjeuner), "collation" (Collation), "diner" (Dîner).
 - "heure" ("HH:MM") facultative. Si "repas" manque, l'heure sert à ranger le repas.
 
 ALIMENTS — pour CHAQUE aliment, deux informations distinctes :
@@ -41,12 +49,12 @@ ALIMENTS — pour CHAQUE aliment, deux informations distinctes :
   { "kcal", "proteines", "glucides", "lipides" } — kcal pour l'énergie, grammes pour le reste.
   ⚠ C'est le point le plus important. "grammes" décrit la portion, "pour100g" décrit l'aliment.
   Exemple : 150 g de riz basmati cuit → "grammes": 150 et "pour100g": { "kcal": 130, … }.
-- "micros" (facultatif, à l'intérieur de "pour100g", pour 100 g également) : ${MICRO_KEYS}.
+- "micros" (facultatif, à l'intérieur de "pour100g", pour 100 g également) : "fer" en mg, "calcium" en mg, "potassium" en mg, "magnesium" en mg, "fibres" en g, "vitamineD" en µg.
   N'indique QUE les valeurs que tu connais raisonnablement. Un micronutriment absent est traité
   comme inconnu et ne pénalise pas le score de la journée ; une valeur inventée, elle, le fausse.
 
 FORMAT DE SORTIE
-\`\`\`json
+```json
 {
   "app": "musculator",
   "type": "repas",
@@ -56,7 +64,7 @@ FORMAT DE SORTIE
       "date": "AAAA-MM-JJ",
       "meals": [
         {
-          "repas": "${MEALS[0].key}",
+          "repas": "petit-dejeuner",
           "heure": "08:00",
           "aliments": [
             {
@@ -76,13 +84,13 @@ FORMAT DE SORTIE
     }
   ]
 }
-\`\`\`
+```
 
 EXEMPLE
 Personne : « Ce matin, 60 g de flocons d'avoine avec un yaourt nature et une banane. Ce midi,
 un blanc de poulet avec un bol de riz basmati et des haricots verts. »
 Toi :
-\`\`\`json
+```json
 {
   "app": "musculator",
   "type": "repas",
@@ -154,4 +162,5 @@ Toi :
     }
   ]
 }
-\`\`\``;
+```
+````

@@ -10,6 +10,7 @@ npm run build      # production build into dist/
 npm run preview    # serve the production build on :4173
 npm run lint       # oxlint
 npm run gen-icons  # regenerate public/icons/*.png
+npm run gen-prompt # regenerate PROMPT-REPAS.md from src/lib/mealPrompt.js
 ```
 
 There is **no unit test suite**. The only automated check beyond lint is
@@ -208,6 +209,9 @@ meal keys and micronutrient list from `data/nutrition.js` instead of restating t
   keeps its zero: meat, eggs and dairy really are at 0 g.
 - Parsing and applying are separate on purpose: the overlay previews the days before
   `IMPORT_MEAL_DAYS` touches the log, and 'replace' clears only the meals the import carries.
+- **`PROMPT-REPAS.md` at the root is generated, not written** (`npm run gen-prompt`). It
+  mirrors the same prompt for reading outside the app; editing it by hand forks the format.
+  Change `mealPrompt.js`, then regenerate.
 
 `lib/off.js` cannot send a `User-Agent`: it is a forbidden header name and browsers drop it
 silently (verified). It identifies the app with OFF's `app_name`/`app_version` query

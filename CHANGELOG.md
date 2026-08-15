@@ -32,6 +32,9 @@ grouped by date and reference the commit they landed in.
     except fibre, which is genuinely zero in meat, eggs and dairy.
   - Imported foods land in `foodCache` under a deterministic id, so a food dictated twice
     reuses one cache entry and stays re-addable offline.
+  - `PROMPT-REPAS.md` at the root carries the same prompt for reading outside the app,
+    generated from `src/lib/mealPrompt.js` by `npm run gen-prompt` rather than copied, since
+    the prompt interpolates data that would otherwise drift out of it.
 
 - **Animated demos for the whole catalogue** — the 35 lower-body exercises that previously
   fell back to a pulsing icon now have a real animated demonstration, so every one of the

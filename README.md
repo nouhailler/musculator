@@ -17,6 +17,7 @@ npm run build     # production build in dist/
 npm run preview   # serve the production build locally
 npm run lint       # oxlint
 npm run gen-icons  # regenerate public/icons/*.png from scripts/gen-icons.mjs
+npm run gen-prompt # regenerate PROMPT-REPAS.md from src/lib/mealPrompt.js
 ```
 
 There's also a Playwright smoke script that walks the main flows and drops screenshots in
@@ -123,6 +124,13 @@ a hand-typed food are interchangeable:
   It is loaded as a separate chunk the first time food search opens — it is bigger than the
   rest of the app — but is precached, so offline search still works.
 - **Manual entry** — always available, for home-made food.
+
+A fourth way in skips typing altogether: describe a meal out loud to Claude or ChatGPT and
+paste back the JSON they answer with (*Nutrition → Importer un repas dicté*). The prompt to
+give them ships with the app and is mirrored at [`PROMPT-REPAS.md`](PROMPT-REPAS.md). It asks
+for a portion weight plus per-100 g values — the shape the log stores — so an imported
+quantity stays editable and rescales like a scanned product. Nothing is written before a
+preview showing what was parsed and what had to be guessed.
 
 Barcode scanning uses the native `BarcodeDetector` where it exists (Chrome/Edge on Android)
 and falls back to `@zxing/browser` elsewhere, which covers iOS Safari and Firefox. zxing is
