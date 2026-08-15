@@ -44,8 +44,9 @@ The split between the two files in `src/state/` is load-bearing:
 are recomputed by `useDerived()` (memoized on `state.sessionLog`). Don't add computed fields
 to reducer state; add them to `useDerived` or to a `lib/` helper.
 
-**Persistence covers 9 slices only** — `profile`, `customWorkouts`, `sessionLog`,
-`disclaimerAcked`, `voiceOn`, `openrouter`, `nutriLog`, `foodCache`, `theme`, under the key `musculator:v1`. Everything else (current tab,
+**Persistence covers 11 slices only** — `profile`, `customWorkouts`, `sessionLog`,
+`disclaimerAcked`, `voiceOn`, `openrouter`, `nutriLog`, `foodCache`, `theme`, `dayNotes`,
+`analysisLog`, under the key `musculator:v1`. Everything else (current tab,
 filters, in-progress workout) is deliberately ephemeral. Adding a durable field means
 touching both `loadPersisted()` and the persist effect in `store.jsx`.
 
@@ -80,10 +81,20 @@ and the session would run as Full Body Maison. Use `workoutProgram(state)` in th
 `w.solo || progById(...)` in a component. A solo run also has no set target: `FINISH_SET`
 always leads into a rest, and only `FINISH_SOLO` ends and logs it.
 
-Session entries are append-only and persist across upgrades, so **anything read from a
-`sessionLog` entry must tolerate its absence** — `partial` and `exosTotal` postdate the
-first entries and are simply falsy on older ones, which is why the journal treats a missing
-flag as a complete session rather than as unknown.
+Session entries persist across upgrades, so **anything read from a `sessionLog` entry must
+tolerate its absence** — `partial` and `exosTotal` postdate the first entries and are simply
+falsy on older ones, which is why the journal treats a missing flag as a complete session
+rather than as unknown. `manual` is the same kind of postdating field: only entries created
+by `ADD_MANUAL_SESSION` carry it, so its absence must read as "not manual" rather than as
+unknown. The log is no longer strictly append-only — `DELETE_SESSION` on the Journal screen
+removes an entry by id — but nothing else in the reducer mutates or reorders an existing one.
+
+**A session logged after the fact never touches the workout state machine.** The Journal's
+"Ajouter une séance" form dispatches `ADD_MANUAL_SESSION`, built by `buildManualSessionEntry`
+in `store.jsx`. There is no per-set tracking to draw a series count from outside a live
+workout, so a picked program is assumed completed as prescribed (`series` sums `effSeries`
+over every exercise) and a free-form entry carries no exercises and `series: 0` — the journal
+card hides the séries tag rather than show a fabricated zero.
 
 **`w.setsByEx` is the record of what was performed**, written in `FINISH_SET` — the single
 place a set is ever counted. Everything downstream reads it rather than the program's
@@ -232,6 +243,14 @@ OpenRouter failure falls back to the local engine and surfaces the reason — **
 the user with no analysis**, and never let a model's output reach the UI unvalidated
 (`parseAnalysis` extracts the outermost JSON object and coerces every field, because models
 differ in how well they honour "JSON only").
+
+**A result is cached per day in `analysisLog` and survives a reload** — `initialState()`
+seeds `state.analysis`/`analysisSource` from `analysisLog[dateKey()]` at startup, so the
+Journal doesn't need a fresh (and for OpenRouter, billed) call just to redisplay what it
+already showed. `ANALYSIS_DONE` writes the cache; the only place it is evicted is
+`withStaleAnalysisFor()`, called from both `finishWorkout()` and `ADD_MANUAL_SESSION` —
+a session logged for that day makes the standing analysis stale, so it is dropped rather
+than left to describe a day that has since changed.
 
 Two things about the OpenRouter integration are deliberate:
 

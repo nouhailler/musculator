@@ -10,6 +10,29 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Journal du jour, cinq additions** — the daily journal now does more than recap the
+  sessions the workout flow itself logged.
+  - **Alimentation du jour**: a card summing today's `nutriLog` (via the same `totals()`
+    macro helper the Nutrition tab uses) next to the training stats — kcal, protein, carbs,
+    fat, with a link into the Nutrition tab for the detail. It deliberately does not compute
+    a "net" balance against training kcal burned: that would read as a full calorie balance
+    when it is missing resting energy expenditure, so the two numbers are shown side by side
+    with a line saying so instead.
+  - **Delete a session**: a trash icon on each journal card removes that entry outright
+    (`DELETE_SESSION`). The session log is no longer strictly append-only, though nothing
+    else in the reducer mutates or reorders an existing entry.
+  - **Log a session after the fact**: "Ajouter une séance" builds a `sessionLog` entry
+    without going through the workout state machine — pick a program (assumed completed as
+    prescribed) or leave it free-form. Free-form entries carry no exercises and `series: 0`;
+    the journal card hides the séries tag rather than show a fabricated zero.
+  - **Notes du jour**: a free-text field per day (`dayNotes`, a new persisted slice),
+    independent of the session log — ressenti, courbatures, sommeil.
+  - **AI analysis cached per day**: `analysisLog` (new persisted slice) keeps the last
+    analysis for each day, so reopening the Journal doesn't force a recompute — free on the
+    local engine, but a real saved request against a configured OpenRouter model. Logging a
+    new session for that day (live or added after the fact) evicts the cached entry, since it
+    would otherwise describe a day that has since changed.
+
 - **Light theme** — *Mon profil & objectifs → Apparence* now offers Sombre, Clair or Système.
   Dark stays the default, so an existing install only changes when its owner asks it to;
   Système follows the OS setting live, including a phone that flips at sunset.
