@@ -32,6 +32,12 @@ const FRONT_ZONES = [
   { id: 'biceps', rect: { x: 50, y: 70, w: 16, h: 30, rx: 8 } },
   { id: 'biceps', rect: { x: 134, y: 70, w: 16, h: 30, rx: 8 } },
   { id: 'abdos', rect: { x: 80, y: 93, w: 40, h: 44, rx: 9 } },
+  // Les obliques bordent la sangle abdominale, les avant-bras prolongent les
+  // biceps : deux bandes étroites, découpées à côté des zones existantes.
+  { id: 'obliques', rect: { x: 70, y: 95, w: 9, h: 40, rx: 4 } },
+  { id: 'obliques', rect: { x: 121, y: 95, w: 9, h: 40, rx: 4 } },
+  { id: 'avant-bras', rect: { x: 46, y: 102, w: 15, h: 28, rx: 7 } },
+  { id: 'avant-bras', rect: { x: 139, y: 102, w: 15, h: 28, rx: 7 } },
   { id: 'quads', rect: { x: 77, y: 168, w: 19, h: 72, rx: 9 } },
   { id: 'quads', rect: { x: 104, y: 168, w: 19, h: 72, rx: 9 } },
   { id: 'adducteurs', rect: { x: 88, y: 174, w: 8, h: 52, rx: 4 } },
@@ -43,6 +49,7 @@ const BACK_ZONES = [
   { id: 'dos', rect: { x: 76, y: 72, w: 48, h: 42, rx: 9 } },
   { id: 'triceps', rect: { x: 50, y: 70, w: 16, h: 30, rx: 8 } },
   { id: 'triceps', rect: { x: 134, y: 70, w: 16, h: 30, rx: 8 } },
+  { id: 'lombaires', rect: { x: 82, y: 116, w: 36, h: 22, rx: 8 } },
   { id: 'fessiers', rect: { x: 76, y: 140, w: 48, h: 24, rx: 10 } },
   { id: 'moyen-fessier', rect: { x: 76, y: 140, w: 13, h: 23, rx: 7 } },
   { id: 'moyen-fessier', rect: { x: 111, y: 140, w: 13, h: 23, rx: 7 } },

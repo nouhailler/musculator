@@ -577,6 +577,480 @@ export const DEMOS = {
     ],
   },
 
+
+  // --- Pectoraux ------------------------------------------------------------
+  // Les pompes inclinées/déclinées réutilisent la planche des pompes, posée
+  // sur un bloc côté mains ou côté pieds.
+  // Mains posées sur le bloc, pieds au sol : angles résolus en cinématique
+  // inverse (scripts/solve-pose.mjs) depuis « main ici, pied là ».
+  'pompes-inclinees': {
+    scene: 'ground',
+    props: [{ kind: 'block', x: 74, y: 72, w: 24 }],
+    frames: [
+      { hip: [44, 80], torso: -32, arm: [103.8, -31.8], leg: [182, 138.6], foot: 0 },
+      { hip: [47, 85], torso: -24, arm: [44.3, -117.8], leg: [193.3, 147.1], foot: 0 },
+    ],
+  },
+  // L'inverse : mains au sol, pieds sur le bloc.
+  'pompes-declinees': {
+    scene: 'ground',
+    props: [{ kind: 'block', x: 22, y: 74, w: 24 }],
+    frames: [
+      { hip: [50, 80], torso: -34, arm: [96.2, 63.3], leg: [-141.4, 165.6], foot: 0 },
+      { hip: [53, 86], torso: -20, arm: [156.4, 36.3], leg: [-146.3, -168.8], foot: 0 },
+    ],
+  },
+  // Allongé sur un banc bas : les bras poussent vers le haut du cadre.
+  'developpe-couche': {
+    scene: 'ground',
+    weights: true,
+    props: [{ kind: 'block', x: 50, y: 74, w: 44 }],
+    frames: [
+      // bas : coudes fléchis, haltères au niveau de la poitrine
+      { hip: [58, 74], torso: 178, arm: [-40, -140], armB: [-30, -150], leg: [28.3, 31.2], legB: [22, 38], foot: 0 },
+      // haut : bras tendus au-dessus de la poitrine
+      { hip: [58, 74], torso: 178, arm: [-88, -90], armB: [-80, -96], leg: [28.3, 31.2], legB: [22, 38], foot: 0 },
+    ],
+  },
+  'developpe-incline': {
+    scene: 'ground',
+    weights: true,
+    props: [{ kind: 'block', x: 52, y: 76, w: 40 }],
+    frames: [
+      { hip: [58, 76], torso: 200, arm: [-55, -145], armB: [-45, -155], leg: [30, 33], legB: [24, 40], foot: 0 },
+      { hip: [58, 76], torso: 200, arm: [-95, -88], armB: [-85, -94], leg: [30, 33], legB: [24, 40], foot: 0 },
+    ],
+  },
+  // Au sol : les bras s'ouvrent jusqu'au plancher puis se referment.
+  'ecartes-halteres': {
+    scene: 'mat',
+    weights: true,
+    frames: [
+      // ouvert : coudes au sol de part et d'autre
+      { hip: [56, 86], torso: 178, arm: [-10, 10], armB: [-170, -190], leg: [-40, 70], legB: [-48, 76], foot: 0 },
+      // fermé : haltères réunis au-dessus de la poitrine
+      { hip: [56, 86], torso: 178, arm: [-80, -85], armB: [-100, -95], leg: [-40, 70], legB: [-48, 76], foot: 0 },
+    ],
+  },
+  'pull-over': {
+    scene: 'mat',
+    weights: true,
+    frames: [
+      // au-dessus de la poitrine
+      { hip: [56, 86], torso: 178, arm: [-85, -88], armB: [-95, -92], leg: [-40, 70], legB: [-48, 76], foot: 0 },
+      // derrière la tête, bras presque tendus
+      { hip: [56, 86], torso: 178, arm: [-150, -160], armB: [-158, -168], leg: [-40, 70], legB: [-48, 76], foot: 0 },
+    ],
+  },
+
+  // --- Dos ------------------------------------------------------------------
+  // Buste penché : le tronc pointe vers l'avant-bas, les bras pendent sous
+  // l'épaule et remontent vers la hanche.
+  'rowing-halteres-un-bras': {
+    scene: 'ground',
+    weights: true,
+    props: [{ kind: 'block', x: 30, y: 66, w: 24 }],
+    frames: [
+      // bas : bras tendu vers le sol
+      { hip: [56, 66], torso: 200, arm: [88, 90], armB: [96, 92], leg: [92, 88], legB: [70, 110], foot: 0 },
+      // haut : coude tiré vers l'arrière, main à la hanche
+      { hip: [56, 66], torso: 200, arm: [30, 150], armB: [96, 92], leg: [92, 88], legB: [70, 110], foot: 0 },
+    ],
+  },
+  'rowing-halteres-buste-penche': {
+    scene: 'ground',
+    weights: true,
+    frames: [
+      { hip: [52, 62], torso: 205, arm: [88, 90], armB: [95, 84], leg: [88, 92], legB: [80, 100], foot: 0 },
+      { hip: [52, 62], torso: 205, arm: [25, 145], armB: [32, 138], leg: [88, 92], legB: [80, 100], foot: 0 },
+    ],
+  },
+  // Suspendu sous une barre basse : le corps est une planche, les bras montent.
+  'rowing-inverse': {
+    scene: 'bar',
+    frames: [
+      { hip: [50, 74], torso: 168, arm: [-70, -70], armB: [-76, -64], leg: [8, 4], legB: [2, 10], foot: -80 },
+      { hip: [50, 68], torso: 172, arm: [-120, -30], armB: [-126, -24], leg: [6, 2], legB: [0, 8], foot: -80 },
+    ],
+  },
+  'tirage-vertical-elastique': {
+    scene: 'ground',
+    band: [50, 8],
+    frames: [
+      { hip: [50, 58], torso: -92, arm: [-78, -84], armB: [-96, -88], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -92, arm: [-40, 150], armB: [-130, 30], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  'face-pull': {
+    scene: 'ground',
+    band: [90, 30],
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [-8, -4], armB: [-14, 2], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [-60, 20], armB: [-120, 160], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+
+  // --- Deltoïdes ------------------------------------------------------------
+  // Oiseau : buste penché à l'horizontale, bras qui s'écartent de part et
+  // d'autre — vu de face pour que l'écartement se lise.
+  'oiseau-halteres': {
+    scene: 'ground',
+    weights: true,
+    frames: [
+      { hip: [52, 62], torso: 200, arm: [88, 92], armB: [92, 88], leg: [88, 92], legB: [80, 100], foot: 0 },
+      { hip: [52, 62], torso: 200, arm: [10, 2], armB: [170, 178], leg: [88, 92], legB: [80, 100], foot: 0 },
+    ],
+  },
+  // Vu de face : bras rapprochés en V, puis grands ouverts en T. De profil,
+  // l'écartement se confondrait avec le tronc.
+  'oiseau-elastique': {
+    scene: 'ground',
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [58, 52], armB: [122, 128], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [2, -2], armB: [178, 182], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  'developpe-arnold': {
+    scene: 'ground',
+    weights: true,
+    frames: [
+      // devant la poitrine, coudes bas
+      { hip: [50, 58], torso: -90, arm: [140, 20], armB: [40, 160], leg: [96, 84], legB: [84, 96], foot: 0 },
+      // au-dessus de la tête, bras tendus
+      { hip: [50, 58], torso: -90, arm: [-70, -84], armB: [-110, -96], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  'elevation-frontale': {
+    scene: 'ground',
+    weights: true,
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [84, 80], armB: [96, 100], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [2, -4], armB: [10, 4], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+
+  // --- Biceps ---------------------------------------------------------------
+  'curl-marteau': {
+    scene: 'ground', weights: true,
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [80, 78], armB: [95, 97], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [85, -70], armB: [95, -60], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  // Dossier incliné : le buste est couché en arrière et les bras pendent
+  // derrière la ligne du corps.
+  'curl-incline': {
+    scene: 'ground', weights: true,
+    props: [{ kind: 'block', x: 44, y: 60, w: 26 }],
+    frames: [
+      { hip: [54, 60], torso: -140, arm: [95, 92], armB: [88, 100], leg: [30, 34], legB: [24, 40], foot: 0 },
+      { hip: [54, 60], torso: -140, arm: [95, -20], armB: [88, -30], leg: [30, 34], legB: [24, 40], foot: 0 },
+    ],
+  },
+  // Assis, buste penché, coude calé contre la cuisse.
+  'curl-concentration': {
+    scene: 'ground', weights: true,
+    props: [{ kind: 'block', x: 44, y: 70, w: 28 }],
+    frames: [
+      { hip: [48, 70], torso: -60, arm: [70, 88], armB: [140, 120], leg: [10, 80], legB: [4, 86], foot: 0 },
+      { hip: [48, 70], torso: -60, arm: [70, -40], armB: [140, 120], leg: [10, 80], legB: [4, 86], foot: 0 },
+    ],
+  },
+  'curl-elastique': {
+    scene: 'ground', band: [50, 90],
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [82, 80], armB: [96, 98], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [86, -68], armB: [96, -58], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  'curl-inverse': {
+    scene: 'ground', weights: true,
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [78, 76], armB: [94, 96], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [88, -66], armB: [96, -56], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+
+  // --- Triceps --------------------------------------------------------------
+  'extension-triceps-unilaterale': {
+    scene: 'ground', weights: true,
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [-60, -80], armB: [-20, 30], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [-60, 170], armB: [-20, 30], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  'extension-triceps-elastique': {
+    scene: 'ground', band: [50, 8],
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [95, -30], armB: [88, -40], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [92, 86], armB: [86, 80], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  'barre-au-front': {
+    scene: 'mat', weights: true,
+    frames: [
+      // bras tendus à la verticale
+      { hip: [56, 86], torso: 178, arm: [-88, -90], armB: [-96, -84], leg: [-40, 70], legB: [-48, 76], foot: 0 },
+      // avant-bras repliés vers le front
+      { hip: [56, 86], torso: 178, arm: [-88, 170], armB: [-96, 176], leg: [-40, 70], legB: [-48, 76], foot: 0 },
+    ],
+  },
+  'pompes-diamant': {
+    scene: 'ground',
+    frames: [
+      { hip: [46.8, 75.8], torso: -27, arm: [90, 90], leg: [165, 165], foot: 60 },
+      { hip: [49, 82.5], torso: -14, arm: [64, 140], leg: [177, 177], foot: 72 },
+    ],
+  },
+
+  // --- Core -----------------------------------------------------------------
+  // Planche latérale : appui sur un avant-bras, corps en ligne oblique.
+  'planche-laterale': {
+    scene: 'mat', cycle: 4000,
+    frames: [
+      { hip: [50, 74], torso: -166, arm: [80, 168], armB: [-80, -100], leg: [16, 12], legB: [20, 8], foot: -70 },
+      { hip: [50, 72], torso: -168, arm: [82, 170], armB: [-80, -100], leg: [14, 10], legB: [18, 6], foot: -70 },
+    ],
+  },
+  'russian-twist': {
+    scene: 'mat',
+    frames: [
+      // pivot d'un côté : les bras partent devant, buste incliné en arrière
+      { hip: [52, 82], torso: 210, arm: [-20, 10], armB: [-14, 16], leg: [-52, 48], legB: [-58, 54], foot: 0 },
+      // pivot de l'autre : les mains passent de l'autre côté du corps
+      { hip: [52, 82], torso: 210, arm: [-90, -60], armB: [-84, -54], leg: [-52, 48], legB: [-58, 54], foot: 0 },
+    ],
+  },
+  'dead-bug': {
+    scene: 'mat',
+    frames: [
+      // bras et genoux au-dessus du corps
+      { hip: [56, 86], torso: 178, arm: [-88, -90], armB: [-92, -86], leg: [-88, 0], legB: [-84, 4], foot: 0 },
+      // bras et jambe opposés qui s'éloignent
+      { hip: [56, 86], torso: 178, arm: [-160, -168], armB: [-92, -86], leg: [-88, 0], legB: [-20, -14], foot: 0 },
+    ],
+  },
+  // Quatre pattes : appui mains et genoux, membres opposés tendus.
+  'bird-dog': {
+    scene: 'mat',
+    frames: [
+      { hip: [56, 70], torso: 186, arm: [80, 84], armB: [86, 90], leg: [92, 4], legB: [96, 8], foot: 0 },
+      { hip: [56, 70], torso: 186, arm: [80, 84], armB: [172, 178], leg: [92, 4], legB: [8, 2], foot: 0 },
+    ],
+  },
+  'hollow-body': {
+    scene: 'mat', cycle: 3600,
+    frames: [
+      { hip: [56, 84], torso: 190, arm: [-170, -176], armB: [-166, -172], leg: [-16, -10], legB: [-20, -6], foot: 0 },
+      { hip: [56, 85], torso: 188, arm: [-172, -178], armB: [-168, -174], leg: [-14, -8], legB: [-18, -4], foot: 0 },
+    ],
+  },
+  'pallof-press': {
+    scene: 'ground', band: [12, 40],
+    frames: [
+      // mains contre la poitrine
+      { hip: [50, 58], torso: -90, arm: [150, 20], armB: [30, 160], leg: [96, 84], legB: [84, 96], foot: 0 },
+      // bras tendus devant, buste immobile
+      { hip: [50, 58], torso: -90, arm: [2, -2], armB: [6, 2], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  'bicycle': {
+    scene: 'mat',
+    frames: [
+      { hip: [56, 86], torso: 190, arm: [-30, 40], armB: [-40, 30], leg: [-80, -30], legB: [-20, -6], foot: 0 },
+      { hip: [56, 86], torso: 190, arm: [-40, 30], armB: [-30, 40], leg: [-20, -6], legB: [-80, -30], foot: 0 },
+    ],
+  },
+  'v-up': {
+    scene: 'mat',
+    frames: [
+      // à plat, bras derrière la tête
+      { hip: [56, 86], torso: 178, arm: [-176, 178], armB: [-172, 174], leg: [-6, -2], legB: [-10, 2], foot: 0 },
+      // en V : buste et jambes relevés, mains vers les pieds
+      { hip: [56, 86], torso: 214, arm: [-16, -20], armB: [-20, -24], leg: [-58, -54], legB: [-62, -50], foot: 0 },
+    ],
+  },
+
+  // --- Bas du corps : compléments -------------------------------------------
+  'cyclist-squat': {
+    scene: 'ground', props: [{ kind: 'block', x: 50, y: 86, w: 16 }],
+    frames: [
+      { hip: [50, 54], torso: -92, arm: [-4, 0], armB: [-10, 6], leg: [92, 88], legB: [86, 94], foot: 0 },
+      { hip: [50, 72], torso: -95, arm: [-4, 0], armB: [-10, 6], leg: [40, 132], legB: [34, 138], foot: 0 },
+    ],
+  },
+  'spanish-squat': {
+    scene: 'ground', band: [86, 74],
+    frames: [
+      { hip: [50, 58], torso: -92, arm: [-6, 2], armB: [-12, 8], leg: [92, 88], legB: [86, 94], foot: 0 },
+      { hip: [44, 72], torso: -80, arm: [-6, 2], armB: [-12, 8], leg: [30, 120], legB: [24, 126], foot: 0 },
+    ],
+  },
+  'reverse-nordic': {
+    scene: 'mat',
+    frames: [
+      // à genoux, corps vertical
+      { hip: [50, 62], torso: -90, arm: [88, 92], armB: [94, 86], leg: [88, 4], legB: [92, 8], foot: 0 },
+      // penché en arrière, genoux fléchis
+      { hip: [54, 68], torso: -128, arm: [86, 90], armB: [92, 84], leg: [110, 8], legB: [114, 12], foot: 0 },
+    ],
+  },
+  'pull-through': {
+    scene: 'ground', band: [14, 84],
+    frames: [
+      // bassin reculé, buste penché
+      { hip: [54, 62], torso: 208, arm: [130, 120], armB: [136, 126], leg: [78, 96], legB: [72, 102], foot: 0 },
+      // hanches tendues
+      { hip: [50, 58], torso: -92, arm: [100, 96], armB: [106, 102], leg: [92, 88], legB: [86, 94], foot: 0 },
+    ],
+  },
+  'hip-thrust-pause': {
+    scene: 'ground', props: [{ kind: 'block', x: 26, y: 72, w: 22 }],
+    frames: [
+      { hip: [52, 84], torso: 200, arm: [170, 176], armB: [176, 182], leg: [-30, 96], legB: [-60, -50], foot: 0 },
+      { hip: [52, 70], torso: 196, arm: [166, 172], armB: [172, 178], leg: [-10, 84], legB: [-30, -20], foot: 0 },
+    ],
+  },
+  'sliding-leg-curl': {
+    scene: 'mat',
+    frames: [
+      // talons près des fessiers, bassin haut
+      { hip: [50, 74], torso: 178, arm: [10, 6], armB: [16, 12], leg: [-4, 86], legB: [2, 92], foot: 0 },
+      // jambes tendues, bassin toujours haut
+      { hip: [50, 76], torso: 178, arm: [10, 6], armB: [16, 12], leg: [26, 30], legB: [32, 36], foot: 0 },
+    ],
+  },
+  'hamstring-walkout': {
+    scene: 'mat',
+    frames: [
+      { hip: [50, 74], torso: 178, arm: [8, 4], armB: [14, 10], leg: [4, 84], legB: [10, 90], foot: 0 },
+      { hip: [50, 76], torso: 178, arm: [8, 4], armB: [14, 10], leg: [20, 44], legB: [26, 50], foot: 0 },
+    ],
+  },
+  'copenhagen-dynamique': {
+    scene: 'mat', props: [{ kind: 'block', x: 74, y: 74, w: 20 }],
+    frames: [
+      { hip: [50, 82], torso: -160, arm: [80, 166], armB: [-80, -100], leg: [-8, -14], legB: [30, 40], foot: -70 },
+      { hip: [50, 72], torso: -170, arm: [84, 172], armB: [-80, -100], leg: [2, -2], legB: [40, 50], foot: -70 },
+    ],
+  },
+  'copenhagen-genou-flechi': {
+    scene: 'mat', cycle: 4000, props: [{ kind: 'block', x: 70, y: 78, w: 18 }],
+    frames: [
+      { hip: [50, 76], torso: -168, arm: [82, 170], armB: [-80, -100], leg: [-2, 60], legB: [30, 44], foot: -60 },
+      { hip: [50, 74], torso: -170, arm: [84, 172], armB: [-80, -100], leg: [0, 58], legB: [32, 42], foot: -60 },
+    ],
+  },
+  'adduction-debout-elastique': {
+    scene: 'ground', ankleBand: [90, 88],
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [88, 92], armB: [96, 100], leg: [70, 74], legB: [92, 88], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [88, 92], armB: [96, 100], leg: [98, 100], legB: [92, 88], foot: 0 },
+    ],
+  },
+  'mollets-unilateral': {
+    scene: 'ground',
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [80, 84], armB: [100, 96], leg: [90, 90], legB: [60, 130], foot: -10 },
+      { hip: [50, 50], torso: -90, arm: [80, 84], armB: [100, 96], leg: [90, 90], legB: [60, 130], foot: 60 },
+    ],
+  },
+  'mollets-marche': {
+    scene: 'ground', props: [{ kind: 'block', x: 62, y: 78, w: 22 }],
+    frames: [
+      { hip: [52, 50], torso: -90, arm: [80, 86], armB: [96, 92], leg: [90.1, 89.9], legB: [88, 92], foot: -35 },
+      { hip: [52, 40], torso: -90, arm: [80, 86], armB: [96, 92], leg: [90.1, 89.9], legB: [88, 92], foot: 55 },
+    ],
+  },
+  'tibialis-raise': {
+    scene: 'ground', props: [{ kind: 'wall', x: 26, top: 24 }],
+    frames: [
+      { hip: [40, 60], torso: -100, arm: [92, 96], armB: [98, 102], leg: [70, 78], legB: [66, 82], foot: 10 },
+      { hip: [40, 60], torso: -100, arm: [92, 96], armB: [98, 102], leg: [70, 78], legB: [66, 82], foot: -70 },
+    ],
+  },
+
+  // --- Avant-bras et grip ---------------------------------------------------
+  'farmer-walk': {
+    scene: 'ground', weights: true,
+    frames: [
+      { hip: [48, 58], torso: -90, arm: [78, 76], armB: [100, 102], leg: [70, 108], legB: [110, 72], foot: 0 },
+      { hip: [52, 58], torso: -90, arm: [80, 78], armB: [98, 100], leg: [110, 72], legB: [70, 108], foot: 0 },
+    ],
+  },
+  'dead-hang': {
+    scene: 'bar', cycle: 3600,
+    frames: [
+      { hip: [50, 62], torso: -92, arm: [-86, -90], armB: [-94, -88], leg: [88, 92], legB: [92, 88], foot: 20 },
+      { hip: [50, 64], torso: -90, arm: [-88, -92], armB: [-92, -86], leg: [90, 90], legB: [90, 90], foot: 20 },
+    ],
+  },
+  // Assis, avant-bras posés sur les cuisses : seul le poignet bouge.
+  'wrist-curl': {
+    scene: 'ground', weights: true,
+    props: [{ kind: 'block', x: 46, y: 72, w: 28 }],
+    frames: [
+      { hip: [44, 72], torso: -80, arm: [10, 60], armB: [16, 66], leg: [4, 86], legB: [-2, 92], foot: 0 },
+      { hip: [44, 72], torso: -80, arm: [10, -30], armB: [16, -24], leg: [4, 86], legB: [-2, 92], foot: 0 },
+    ],
+  },
+  'reverse-wrist-curl': {
+    scene: 'ground', weights: true,
+    props: [{ kind: 'block', x: 46, y: 72, w: 28 }],
+    frames: [
+      { hip: [44, 72], torso: -80, arm: [10, 40], armB: [16, 46], leg: [4, 86], legB: [-2, 92], foot: 0 },
+      { hip: [44, 72], torso: -80, arm: [10, -20], armB: [16, -14], leg: [4, 86], legB: [-2, 92], foot: 0 },
+    ],
+  },
+  'pinch-grip': {
+    scene: 'ground', weights: true, cycle: 3600,
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [76, 74], armB: [102, 104], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 59], torso: -90, arm: [78, 76], armB: [100, 102], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+
+  // --- Trapèzes -------------------------------------------------------------
+  // Le buste monte de quatre unités : ce sont les épaules qui haussent.
+  'shrugs': {
+    scene: 'ground', weights: true,
+    frames: [
+      { hip: [50, 58], torso: -86, arm: [76, 74], armB: [102, 104], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -94, arm: [72, 70], armB: [106, 108], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  // Allongé face au sol : les bras montent en Y devant la tête.
+  'y-raise': {
+    scene: 'mat',
+    frames: [
+      { hip: [58, 86], torso: 182, arm: [186, 190], armB: [178, 174], leg: [-2, 2], legB: [2, -2], foot: 0 },
+      { hip: [58, 86], torso: 182, arm: [200, 206], armB: [164, 158], leg: [-2, 2], legB: [2, -2], foot: 0 },
+    ],
+  },
+  'rowing-coudes-ouverts': {
+    scene: 'ground', weights: true,
+    frames: [
+      { hip: [52, 62], torso: 205, arm: [88, 90], armB: [95, 84], leg: [88, 92], legB: [80, 100], foot: 0 },
+      { hip: [52, 62], torso: 205, arm: [-10, 100], armB: [-4, 106], leg: [88, 92], legB: [80, 100], foot: 0 },
+    ],
+  },
+
+  // --- Lombaires ------------------------------------------------------------
+  // Sur le ventre : le tronc et les membres décollent de quelques centimètres.
+  'superman': {
+    scene: 'mat',
+    frames: [
+      { hip: [56, 86], torso: 182, arm: [186, 188], armB: [180, 178], leg: [-2, 2], legB: [2, -2], foot: 0 },
+      { hip: [56, 86], torso: 192, arm: [196, 198], armB: [190, 188], leg: [-14, -10], legB: [-10, -14], foot: 0 },
+    ],
+  },
+  'back-extension-sol': {
+    scene: 'mat',
+    frames: [
+      { hip: [56, 86], torso: 182, arm: [150, 120], armB: [156, 126], leg: [-2, 2], legB: [2, -2], foot: 0 },
+      { hip: [56, 86], torso: 196, arm: [164, 134], armB: [170, 140], leg: [-2, 2], legB: [2, -2], foot: 0 },
+    ],
+  },
 };
 
 export function demoFor(exId) {

@@ -63,6 +63,32 @@ grouped by date and reference the commit they landed in.
     one `OBJECTIFS` in `data/programs.js`, so a saved workout cannot carry an objective the
     profile is unable to express.
 
+- **The catalogue reaches 104 exercises**, from 49. Fifty-five additions, chosen from the gaps
+  a reading of the catalogue by muscle made obvious rather than from a wish list.
+  - **Chest** went from one exercise to seven (incline and decline push-ups, dumbbell bench
+    and incline press, flyes, pull-over, diamond push-ups); **back** from two to seven
+    (one-arm row, bent-over row, inverted row, band lat pulldown, face pull); **deltoids**
+    gained the rear head it lacked entirely (rear-delt flyes with dumbbells and band, Arnold
+    press, front raise); **biceps** and **triceps** four more each.
+  - **Core gained rotation, anti-rotation and lateral flexion** — side plank, Russian twist,
+    dead bug, bird dog, hollow body, Pallof press, bicycle, V-up — where it had only flexion
+    and anterior stability.
+  - **Three families the catalogue could not express at all** now exist, each with a new
+    muscle and its zone on the body map: grip and forearms (farmer walk, dead hang, wrist
+    curls, pinch grip), spinal erectors (superman, floor back extension), and the trapezius
+    (shrugs, Y-raise, wide-elbow row). Obliques got their own zone too.
+  - Lower body filled in around what was already dense: cyclist and Spanish squats, reverse
+    Nordic, band pull-through, paused single-leg hip thrust, sliding leg curl, hamstring
+    walkout, two Copenhagen progressions, standing band adduction, and three calf entries
+    including the tibialis raise nothing covered.
+  - `scripts/solve-pose.mjs` was written along the way: two-link inverse kinematics that
+    turns "the hand is on the bench, the foot is on the floor" into the angles a frame
+    stores. Guessing them does not converge, and the first two chest demos proved it — their
+    hands hovered fifteen units above the block they were supposed to rest on.
+  - The validator earned its place immediately: it caught four forward references to
+    exercises in later batches, a demo whose two keyframes were nearly identical, and a
+    linker that silently skipped every multi-line muscle entry.
+
 - **Four exercises, and a validator to make adding them safe** — the catalogue grows from 45
   to 49.
   - `npm run check-catalogue` enforces the invariants CLAUDE.md documents and nothing

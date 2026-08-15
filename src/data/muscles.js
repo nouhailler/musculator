@@ -12,39 +12,34 @@
 // Every id here must exist in data/exercises.js, and every muscle id must have
 // at least one zone in overlays/BodyMap.jsx, otherwise it can't be selected.
 export const MUSCLES = [
-  { id: 'epaules', nom: 'Épaules (deltoïdes)', region: 'front', exos: ['developpe', 'elevations-laterales', 'pompes'] },
-  { id: 'pecs', nom: 'Pectoraux', region: 'front', exos: ['pompes', 'dips', 'developpe'] },
-  { id: 'biceps', nom: 'Biceps', region: 'front', exos: ['curl-biceps', 'tractions', 'rowing'] },
-  { id: 'abdos', nom: 'Abdominaux', region: 'front', exos: ['abdos', 'releve-jambes', 'gainage', 'mountain', 'copenhagen'] },
+  { id: 'epaules', nom: 'Épaules (deltoïdes)', region: 'front', exos: ['oiseau-halteres', 'oiseau-elastique', 'developpe-arnold', 'elevation-frontale', 'face-pull', 'developpe', 'elevations-laterales', 'pompes'] },
+  { id: 'pecs', nom: 'Pectoraux', region: 'front', exos: ['pompes-diamant', 'pompes-inclinees', 'pompes-declinees', 'developpe-couche', 'developpe-incline', 'ecartes-halteres', 'pull-over', 'pompes', 'dips', 'developpe'] },
+  { id: 'biceps', nom: 'Biceps', region: 'front', exos: ['curl-marteau', 'curl-incline', 'curl-concentration', 'curl-elastique', 'curl-inverse', 'rowing-halteres-un-bras', 'rowing-inverse', 'curl-biceps', 'tractions', 'rowing'] },
+  { id: 'abdos', nom: 'Abdominaux', region: 'front', exos: ['dead-bug', 'hollow-body', 'bicycle', 'v-up', 'abdos', 'releve-jambes', 'gainage', 'mountain', 'copenhagen'] },
+  // Ajoutés quand le catalogue a couvert la rotation, la préhension et les
+  // érecteurs : trois familles qu'aucun exercice n'atteignait.
+  { id: 'obliques', nom: 'Obliques', region: 'front', exos: ['planche-laterale', 'russian-twist', 'pallof-press', 'bicycle', 'copenhagen'] },
+  { id: 'avant-bras', nom: 'Avant-bras (grip)', region: 'front', exos: ['farmer-walk', 'dead-hang', 'wrist-curl', 'reverse-wrist-curl', 'pinch-grip', 'curl-inverse', 'curl-marteau'] },
   {
     id: 'quads',
     nom: 'Quadriceps',
     region: 'front',
-    exos: [
-      'squats', 'front-squat', 'squat-talons-sureleves', 'sissy-squat', 'squat-sumo',
-      'wall-sit', 'leg-extension', 'fentes', 'fente-arriere', 'bulgarian-split-squat',
-      'step-up', 'pistol-squat',
-    ],
+    exos: ['cyclist-squat', 'spanish-squat', 'reverse-nordic', 'squats', 'front-squat', 'squat-talons-sureleves', 'sissy-squat', 'squat-sumo', 'wall-sit', 'leg-extension', 'fentes', 'fente-arriere', 'bulgarian-split-squat', 'step-up', 'pistol-squat'],
   },
   {
     id: 'adducteurs',
     nom: 'Adducteurs',
     region: 'front',
-    exos: ['adduction-sol', 'copenhagen', 'serrage-ballon', 'squat-sumo', 'fente-laterale', 'frog-pump'],
+    exos: ['copenhagen-dynamique', 'copenhagen-genou-flechi', 'adduction-debout-elastique', 'adduction-sol', 'copenhagen', 'serrage-ballon', 'squat-sumo', 'fente-laterale', 'frog-pump'],
   },
-  { id: 'trapezes', nom: 'Trapèzes', region: 'back', exos: ['tractions', 'rowing', 'developpe'] },
-  { id: 'dos', nom: 'Dos (grand dorsal)', region: 'back', exos: ['tractions', 'rowing'] },
-  { id: 'triceps', nom: 'Triceps', region: 'back', exos: ['dips', 'extension-triceps', 'pompes', 'developpe'] },
+  { id: 'trapezes', nom: 'Trapèzes', region: 'back', exos: ['shrugs', 'y-raise', 'rowing-coudes-ouverts', 'farmer-walk', 'oiseau-halteres', 'oiseau-elastique', 'face-pull', 'rowing-halteres-buste-penche', 'rowing-inverse', 'tractions', 'rowing', 'developpe'] },
+  { id: 'dos', nom: 'Dos (grand dorsal)', region: 'back', exos: ['dead-hang', 'oiseau-halteres', 'rowing-halteres-un-bras', 'rowing-halteres-buste-penche', 'rowing-inverse', 'tirage-vertical-elastique', 'pull-over', 'tractions', 'rowing'] },
+  { id: 'triceps', nom: 'Triceps', region: 'back', exos: ['extension-triceps-unilaterale', 'extension-triceps-elastique', 'barre-au-front', 'pompes-diamant', 'developpe-couche', 'pompes-inclinees', 'dips', 'extension-triceps', 'pompes', 'developpe'] },
   {
     id: 'fessiers',
     nom: 'Fessiers (grand fessier)',
     region: 'back',
-    exos: [
-      'hip-thrust', 'hip-thrust-unilateral', 'glute-bridge', 'glute-bridge-unilateral',
-      'frog-pump', 'kickback-elastique', 'squats', 'fentes', 'fente-arriere',
-      'fente-croisee', 'bulgarian-split-squat', 'step-up', 'rdl', 'kettlebell-swing',
-      'hyperextension-45',
-    ],
+    exos: ['pull-through', 'hip-thrust-pause', 'hip-thrust', 'hip-thrust-unilateral', 'glute-bridge', 'glute-bridge-unilateral', 'frog-pump', 'kickback-elastique', 'squats', 'fentes', 'fente-arriere', 'fente-croisee', 'bulgarian-split-squat', 'step-up', 'rdl', 'kettlebell-swing', 'hyperextension-45'],
   },
   {
     id: 'moyen-fessier',
@@ -56,12 +51,10 @@ export const MUSCLES = [
     id: 'ischios',
     nom: 'Ischio-jambiers',
     region: 'back',
-    exos: [
-      'rdl', 'rdl-unilateral', 'good-morning', 'curl-nordique', 'leg-curl-allonge',
-      'ghr', 'kettlebell-swing', 'hyperextension-45', 'fentes', 'squats',
-    ],
+    exos: ['sliding-leg-curl', 'hamstring-walkout', 'pull-through', 'rdl', 'rdl-unilateral', 'good-morning', 'curl-nordique', 'leg-curl-allonge', 'ghr', 'kettlebell-swing', 'hyperextension-45', 'fentes', 'squats'],
   },
-  { id: 'mollets', nom: 'Mollets', region: 'back', exos: ['mollets-debout', 'mollets-assis', 'fentes', 'step-up'] },
+  { id: 'mollets', nom: 'Mollets', region: 'back', exos: ['mollets-unilateral', 'mollets-marche', 'tibialis-raise', 'mollets-debout', 'mollets-assis', 'fentes', 'step-up'] },
+  { id: 'lombaires', nom: 'Lombaires (érecteurs)', region: 'back', exos: ['superman', 'back-extension-sol', 'y-raise', 'pull-through', 'bird-dog', 'good-morning', 'hyperextension-45'] },
 ];
 
 // ---------------------------------------------------------------------------

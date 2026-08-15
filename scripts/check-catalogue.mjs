@@ -17,6 +17,8 @@ const { MUSCLES, ZONES } = await import('../src/data/muscles.js');
 const { DEMOS } = await import('../src/data/demos.js');
 const { CUES } = await import('../src/data/cues.js');
 const { BADGE_DEFS } = await import('../src/data/badges.js');
+const { solve } = await import('../src/lib/pose.js');
+
 const { MEALS } = await import('../src/data/nutrition.js');
 
 const problems = [];
@@ -101,8 +103,27 @@ for (const [id, cue] of Object.entries(CUES)) {
 
 // --- Demos -----------------------------------------------------------------
 
+const points = (frame) => {
+  const j = solve(frame);
+  return [...j.neck, ...j.torso, ...j.arm, ...j.armB, ...j.leg, ...j.legB];
+};
+
 for (const [id, demo] of Object.entries(DEMOS)) {
   if (!Array.isArray(demo.frames) || !demo.frames.length) fail('empty demo', id);
+  // Two failure modes worth catching in a demo written in a batch: one where
+  // nothing moves (copy-pasted keyframes), and one where the figure floats
+  // above the floor it is supposed to be standing or lying on.
+  // An isometric hold is motionless on purpose, and says so by setting its own
+  // `cycle` — there is no rep tempo for it to borrow from the voice cadence.
+  if ((demo.frames || []).length >= 2 && demo.cycle == null) {
+    const [a, b] = [points(demo.frames[0]), points(demo.frames[1])];
+    const travel = a.reduce((sum, [x, y], i) => sum + Math.hypot(x - b[i][0], y - b[i][1]), 0);
+    if (travel < 8) fail('motionless demo', `"${id}" barely moves between its first two frames`);
+  }
+  // There is deliberately no "the figure must touch the floor" rule: contact
+  // is not the lowest point once props exist — a glute-ham raise hangs below
+  // the pad it kneels on — and the version that tried produced false alarms on
+  // two sound demos out of forty-nine. A check that cries wolf gets ignored.
   for (const f of demo.frames || []) {
     // A pose is `hip: [x, y]` plus one angle per joint (see demos.js).
     if (!Array.isArray(f.hip) || f.hip.length !== 2 || f.hip.some((n) => typeof n !== 'number')) {

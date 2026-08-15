@@ -83,6 +83,78 @@ export const CUES = {
   'extension-triceps': { beat: 1500, seq: ['Fléchis', 'Tends'] },
   'releve-jambes': { beat: 1600, seq: ['Lève', 'Contrôle'] },
 
+
+  // Pectoraux
+  'pompes-inclinees': { beat: 1400, seq: ['En bas', 'En haut'] },
+  'pompes-declinees': { beat: 1500, seq: ['En bas', 'En haut'] },
+  'developpe-couche': { beat: 1500, seq: ['Pousse', 'Descends'] },
+  'developpe-incline': { beat: 1500, seq: ['Pousse', 'Descends'] },
+  'ecartes-halteres': { beat: 1600, seq: ['Ouvre', 'Referme'] },
+  'pull-over': { beat: 1700, seq: ['Derrière', 'Ramène'] },
+
+  // Dos
+  'rowing-halteres-un-bras': { beat: 1500, seq: ['Tire', 'Descends'] },
+  'rowing-halteres-buste-penche': { beat: 1500, seq: ['Tire', 'Descends'] },
+  'rowing-inverse': { beat: 1500, seq: ['Tire', 'Descends'] },
+  'tirage-vertical-elastique': { beat: 1500, seq: ['Tire', 'Remonte'] },
+  'face-pull': { beat: 1600, seq: ['Ouvre', 'Reviens'] },
+
+  // Deltoïdes
+  'oiseau-halteres': { beat: 1500, seq: ['Écarte', 'Descends'] },
+  'oiseau-elastique': { beat: 1400, seq: ['Ouvre', 'Reviens'] },
+  'developpe-arnold': { beat: 1600, seq: ['Pousse', 'Descends'] },
+  'elevation-frontale': { beat: 1400, seq: ['Monte', 'Descends'] },
+
+  // Biceps
+  'curl-marteau': { beat: 1400, seq: ['Monte', 'Descends'] },
+  'curl-incline': { beat: 1500, seq: ['Monte', 'Descends'] },
+  'curl-concentration': { beat: 1500, seq: ['Serre', 'Descends'] },
+  'curl-elastique': { beat: 1300, seq: ['Monte', 'Résiste'] },
+  'curl-inverse': { beat: 1500, seq: ['Monte', 'Descends'] },
+  // Triceps
+  'extension-triceps-unilaterale': { beat: 1500, seq: ['Fléchis', 'Tends'] },
+  'extension-triceps-elastique': { beat: 1300, seq: ['Pousse', 'Remonte'] },
+  'barre-au-front': { beat: 1500, seq: ['Descends', 'Tends'] },
+  'pompes-diamant': { beat: 1600, seq: ['En bas', 'En haut'] },
+
+  // Core
+  'planche-laterale': { beat: 1800, seq: ['Bassin haut', 'Tiens', 'Respire'] },
+  'russian-twist': { beat: 1200, seq: ['À gauche', 'À droite'] },
+  'dead-bug': { beat: 1600, seq: ['Descends', 'Reviens'] },
+  'bird-dog': { beat: 1600, seq: ['Tends', 'Reviens'] },
+  'hollow-body': { beat: 1800, seq: ['Dos plaqué', 'Tiens', 'Respire'] },
+  'pallof-press': { beat: 1500, seq: ['Tends', 'Reviens'] },
+  'bicycle': { beat: 1100, seq: ['Coude genou', 'Alterne'] },
+  'v-up': { beat: 1700, seq: ['Monte', 'Descends'] },
+
+  // Bas du corps : compléments
+  'cyclist-squat': { beat: 1700, seq: ['Descends', 'Remonte'] },
+  'spanish-squat': { beat: 1600, seq: ['Descends', 'Remonte'] },
+  'reverse-nordic': { beat: 2200, seq: ['Retiens', 'Reviens'] },
+  'pull-through': { beat: 1500, seq: ['Pousse', 'Recule'] },
+  'hip-thrust-pause': { beat: 2000, seq: ['Monte', 'Tiens'] },
+  'sliding-leg-curl': { beat: 1800, seq: ['Tends', 'Ramène'] },
+  'hamstring-walkout': { beat: 1600, seq: ['Avance', 'Reviens'] },
+  'copenhagen-dynamique': { beat: 1800, seq: ['Monte', 'Descends'] },
+  'copenhagen-genou-flechi': { beat: 1800, seq: ['Bassin haut', 'Tiens', 'Respire'] },
+  'adduction-debout-elastique': { beat: 1400, seq: ['Ramène', 'Reviens'] },
+  'mollets-unilateral': { beat: 1400, seq: ['Monte', 'Descends'] },
+  'mollets-marche': { beat: 1500, seq: ['Monte', 'Étire'] },
+  'tibialis-raise': { beat: 1300, seq: ['Orteils haut', 'Descends'] },
+
+  // Avant-bras et grip
+  'farmer-walk': { beat: 1200, seq: ['Avance', 'Épaules basses'] },
+  'dead-hang': { beat: 1800, seq: ['Tiens', 'Respire', 'Épaules actives'] },
+  'wrist-curl': { beat: 1200, seq: ['Ferme', 'Déroule'] },
+  'reverse-wrist-curl': { beat: 1200, seq: ['Monte', 'Descends'] },
+  'pinch-grip': { beat: 1800, seq: ['Serre', 'Tiens', 'Respire'] },
+  // Trapèzes
+  'shrugs': { beat: 1300, seq: ['Hausse', 'Relâche'] },
+  'y-raise': { beat: 1500, seq: ['Monte', 'Descends'] },
+  'rowing-coudes-ouverts': { beat: 1500, seq: ['Tire', 'Descends'] },
+  // Lombaires
+  'superman': { beat: 1600, seq: ['Décolle', 'Repose'] },
+  'back-extension-sol': { beat: 1500, seq: ['Monte', 'Descends'] },
 };
 
 export const ENCOURAGEMENTS = [

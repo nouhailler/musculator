@@ -210,7 +210,9 @@ tooling:
   the library filter matches it literally.
 - Every muscle id needs at least one zone in `overlays/BodyMap.jsx` or it can't be selected.
 
-Adding an exercise is four files at once: the sheet in `exercises.js`, a demo in `demos.js`,
+`scripts/solve-pose.mjs` solves a pose from positions — "hand on the bench, foot on the
+floor" — instead of angles guessed by hand, which is the only way a pose that touches
+anything comes out right. Adding an exercise is four files at once: the sheet in `exercises.js`, a demo in `demos.js`,
 voice cues in `cues.js`, and the id in the right muscle's `exos` in `muscles.js`. A pose that
 stands still is worth drawing carefully — **seen from the side, a standing figure with arms
 along the body collapses into a single vertical line**, so the limbs are angled a few degrees
@@ -236,7 +238,7 @@ viewBox); `lib/pose.js` does forward kinematics, interpolation and per-exercise 
 framing and is kept React-free; `components/ExerciseDemo.jsx` mutates SVG nodes imperatively
 via refs so a running animation never re-renders the tree above it.
 
-All 49 exercises have a demo. `demoFor(id)` still returns `null` for an unknown id and both
+All 104 exercises have a demo. `demoFor(id)` still returns `null` for an unknown id and both
 call sites degrade to the icon, so that guard stays — but a new exercise without a `DEMOS`
 entry is a gap, not a supported state.
 
