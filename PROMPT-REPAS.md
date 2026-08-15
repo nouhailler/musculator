@@ -42,9 +42,12 @@ REPAS
 - "heure" ("HH:MM") facultative. Si "repas" manque, l'heure sert à ranger le repas.
 
 ALIMENTS — pour CHAQUE aliment, deux informations distinctes :
-- "grammes" : le poids réellement consommé, en grammes. Estime-le à partir de la description —
-  1 œuf ≈ 55 g, 1 tranche de pain ≈ 30 g, 1 bol de riz cuit ≈ 200 g, 1 yaourt ≈ 125 g,
-  1 cuillère à soupe d'huile ≈ 10 g, 1 poignée d'amandes ≈ 30 g. Pour un liquide, 1 ml = 1 g.
+- "grammes" : le poids réellement consommé, en grammes. TOUJOURS un poids, JAMAIS un nombre de
+  pièces : « 3 figues » s'écrit "grammes": 150, pas "quantity": 3. Convertis toi-même —
+  1 œuf ≈ 55 g, 1 figue ≈ 50 g, 1 kiwi ≈ 75 g, 1 tranche de pain ≈ 30 g, 1 bol de riz cuit
+  ≈ 200 g, 1 yaourt ≈ 125 g, 1 cuillère à soupe ≈ 15 g, 1 cuillère à café ≈ 5 g,
+  1 poignée d'amandes ≈ 30 g. Pour un liquide, 1 ml = 1 g. En cas de doute, estime : une
+  valeur approchée vaut mieux qu'une quantité absente, que l'application remplacera par 100 g.
 - "pour100g" : les valeurs nutritionnelles POUR 100 g de cet aliment, jamais celles de la portion :
   { "kcal", "proteines", "glucides", "lipides" } — kcal pour l'énergie, grammes pour le reste.
   ⚠ C'est le point le plus important. "grammes" décrit la portion, "pour100g" décrit l'aliment.
@@ -52,6 +55,13 @@ ALIMENTS — pour CHAQUE aliment, deux informations distinctes :
 - "micros" (facultatif, à l'intérieur de "pour100g", pour 100 g également) : "fer" en mg, "calcium" en mg, "potassium" en mg, "magnesium" en mg, "fibres" en g, "vitamineD" en µg.
   N'indique QUE les valeurs que tu connais raisonnablement. Un micronutriment absent est traité
   comme inconnu et ne pénalise pas le score de la journée ; une valeur inventée, elle, le fausse.
+
+SI TU NE CONNAIS PAS LA COMPOSITION d'un aliment, omets entièrement "pour100g" : Musculator le
+cherchera dans sa table CIQUAL (aliments génériques français). Donne un nom simple et au
+singulier pour l'y retrouver — « riz basmati cuit » plutôt que « du riz », « chocolat noir 70% »
+plutôt que « carrés de chocolat ». Ce n'est qu'un filet de sécurité : un aliment absent de la
+table est ignoré à l'import, et la table ne connaît ni marques ni recettes. Donne "pour100g"
+dès que tu peux, et toujours pour un produit de marque ou un plat composé.
 
 FORMAT DE SORTIE
 ```json

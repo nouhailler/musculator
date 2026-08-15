@@ -1,54 +1,20 @@
 import { useMemo, useState } from 'react';
-import { useApp, useDerived, allPrograms } from '../state/context.js';
+import { useApp, useDerived } from '../state/context.js';
 import { exById } from '../data/exercises.js';
 import { MEALS } from '../data/nutrition.js';
 import { totals } from '../lib/macros.js';
 import { fmt, todayLabel } from '../lib/format.js';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
-import { PrimaryButton, SecondaryButton, IconCircleButton } from '../components/ui/Button.jsx';
-import { Field, TextInput, TextArea } from '../components/ui/Field.jsx';
-import { PillGroup } from '../components/ui/Pill.jsx';
-
-const LIBRE = 'Libre';
-
-function AddSessionForm({ onClose }) {
-  const { state, actions } = useApp();
-  const progs = allPrograms(state.customWorkouts);
-  const [progNom, setProgNom] = useState(LIBRE);
-  const [customName, setCustomName] = useState('');
-  const [minutes, setMinutes] = useState(20);
-
-  const submit = () => {
-    const prog = progs.find((p) => p.nom === progNom);
-    actions.addManualSession(prog ? prog.id : null, customName, minutes);
-    onClose();
-  };
-
-  return (
-    <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 13, marginBottom: 10 }}>
-      <div className="section-label">Programme suivi</div>
-      <PillGroup options={[LIBRE, ...progs.map((p) => p.nom)]} value={progNom} onChange={setProgNom} style={{ marginBottom: 12 }} />
-      {progNom === LIBRE && (
-        <Field label="Description" style={{ marginBottom: 10 }}>
-          <TextInput value={customName} onChange={setCustomName} placeholder="ex. Course à pied, natation…" />
-        </Field>
-      )}
-      <Field label="Durée (min)" style={{ marginBottom: 12 }}>
-        <TextInput type="number" value={minutes} onChange={setMinutes} textAlign="center" />
-      </Field>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <SecondaryButton onClick={onClose} style={{ flex: 1, justifyContent: 'center' }}>Annuler</SecondaryButton>
-        <PrimaryButton icon="check-circle" onClick={submit} disabled={!(Number(minutes) > 0)} style={{ flex: 1 }}>Ajouter</PrimaryButton>
-      </div>
-    </div>
-  );
-}
+import { PrimaryButton, IconCircleButton } from '../components/ui/Button.jsx';
+import { TextArea } from '../components/ui/Field.jsx';
+import SessionForm, { DeleteSessionButton } from '../components/SessionForm.jsx';
 
 export default function Journal() {
   const { state, actions } = useApp();
   const { journalToday, today } = useDerived();
   const [addOpen, setAddOpen] = useState(false);
+  const [editId, setEditId] = useState(null);
 
   const dayTime = journalToday.reduce((a, j) => a + j.elapsedSec, 0);
   const dayKcal = journalToday.reduce((a, j) => a + j.kcal, 0);
@@ -167,14 +133,16 @@ export default function Journal() {
           </button>
         )}
       </div>
-      {addOpen && <AddSessionForm onClose={() => setAddOpen(false)} />}
+      {addOpen && <SessionForm onClose={() => setAddOpen(false)} />}
       {journalToday.length === 0 && (
         <div className="empty-state" style={{ padding: '24px 10px', background: 'var(--color-surface)', border: '1px dashed var(--color-divider)', borderRadius: 'var(--radius-md)' }}>
           <Icon name="moon" size={24} style={{ display: 'block', margin: '0 auto 8px' }} />Aucune séance encore aujourd'hui.<br />Lance-toi depuis l'accueil !
         </div>
       )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}>
-        {journalToday.map((j) => (
+        {journalToday.map((j) => (editId === j.id
+          ? <SessionForm key={j.id} session={j} onClose={() => setEditId(null)} />
+          : (
           <div key={j.id} style={{
             background: 'var(--color-surface)',
             border: `1px solid ${j.partial ? 'color-mix(in srgb,var(--color-warn) 34%,transparent)' : 'var(--color-divider)'}`,
@@ -183,9 +151,11 @@ export default function Journal() {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: j.partial || j.manual ? 5 : 8 }}>
               <div style={{ fontSize: 14, fontWeight: 600 }}>{j.programNom}</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>{j.heure}</span>
-                <IconCircleButton icon="trash" size={26} title="Supprimer cette séance" onClick={() => actions.deleteSession(j.id)} style={{ color: 'var(--color-neutral-500)' }} />
+                <IconCircleButton icon="pencil-simple" size={26} title="Modifier cette séance"
+                  onClick={() => setEditId(j.id)} style={{ color: 'var(--color-neutral-500)' }} />
+                <DeleteSessionButton id={j.id} />
               </div>
             </div>
             {/* Older entries predate the flag, so they simply read as complete. */}
@@ -213,7 +183,7 @@ export default function Journal() {
               </>
             )}
           </div>
-        ))}
+          )))}
       </div>
 
       <h6 style={{ color: 'var(--color-neutral-400)', marginBottom: 8 }}>Notes du jour</h6>

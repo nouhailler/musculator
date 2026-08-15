@@ -11,7 +11,12 @@ npm run preview    # serve the production build on :4173
 npm run lint       # oxlint
 npm run gen-icons  # regenerate public/icons/*.png
 npm run gen-prompt # regenerate PROMPT-REPAS.md from src/lib/mealPrompt.js
+npm run shots      # regenerate docs/screenshots/*.webp (needs a build served on :4173)
 ```
+
+`docs/screenshots/` is the README's gallery and is **generated** (`scripts/shots.mjs` seeds a
+fixed demo state, so the shots are reproducible and show populated screens). Re-run it when a
+screen it captures changes shape; don't hand-edit the images.
 
 There is **no unit test suite**. The only automated check beyond lint is
 `scripts/smoke.mjs`, a Playwright walkthrough that clicks through the main flows and writes
@@ -86,8 +91,24 @@ tolerate its absence** — `partial` and `exosTotal` postdate the first entries 
 falsy on older ones, which is why the journal treats a missing flag as a complete session
 rather than as unknown. `manual` is the same kind of postdating field: only entries created
 by `ADD_MANUAL_SESSION` carry it, so its absence must read as "not manual" rather than as
-unknown. The log is no longer strictly append-only — `DELETE_SESSION` on the Journal screen
-removes an entry by id — but nothing else in the reducer mutates or reorders an existing one.
+unknown. The log is no longer append-only: `DELETE_SESSION` removes an entry and
+`EDIT_SESSION` rewrites one.
+
+**What an edit may touch is deliberately narrow**: when, how long, and the label of a
+free-form entry. `exerciseIds`, `series`, `muscles` and `partial` are the record of what was
+actually performed and stay out of reach — rewriting them would turn the journal into a wish
+list, and everything downstream (muscle map, badges, analysis) reads them as fact. `kcal`
+does follow the duration, through the same `KCAL_PER_MIN` rule that produced it.
+
+**The log is kept sorted, newest first, by day then time** (`sortLog`, applied on add and
+edit). It used to be date-ordered for free because entries were only ever prepended as they
+happened; a session can now be logged for — or moved to — a past day, and `history` still
+reads the array in order.
+
+Deleting, adding or moving a session **evicts the cached analysis of every day it touches**
+(both ends of a date change) via `withStaleAnalysisFor`, which is variadic for exactly that.
+It only clears the live `state.analysis` when today is among them, since that copy is only
+ever today's.
 
 **A session logged after the fact never touches the workout state machine.** The Journal's
 "Ajouter une séance" form dispatches `ADD_MANUAL_SESSION`, built by `buildManualSessionEntry`
@@ -202,6 +223,13 @@ a food's `id` is what deduplicates that list, so ids have to stay stable and det
 per food rather than carrying a timestamp, and anything written into the cache shows up in
 the user's own list. `groupByInitial`/`searchCache` in `lib/food.js` own the ordering.
 
+**Daily targets are computed, then overridable.** `dailyTargets()` derives kcal and the three
+macros from the profile, and lets `profile.kcalCible / protCible / glucCible / lipCible`
+replace any of them — empty means "keep computing it". A manual calorie or protein target
+feeds the carb/fat split, so the plate stays coherent with what the user set. `autoTargets()`
+returns the pure calculation, which the profile screen shows as the field's placeholder so an
+override is always reversible. `targets.manuel` says which are set by hand.
+
 Every tunable number — score weights, micronutrient references, protein g/kg, calorie
 tolerance, activity multipliers — lives in `data/nutrition.js`. Don't scatter them back into
 the maths or the UI.
@@ -224,6 +252,20 @@ meal keys and micronutrient list from `data/nutrition.js` instead of restating t
   zero iron or calcium and a filled-in zero would be scored as a known value — the one thing
   the module's "unknown is never zero" rule exists to prevent. Fibre is the exception and
   keeps its zero: meat, eggs and dairy really are at 0 g.
+- **A food the assistant named but did not compose is resolved against CIQUAL**
+  (`lib/ciqualMatch.js`), which is why `parseMealsImport` is async. This is a different job
+  from `searchCiqual`: there, a human picks from a ranked list; here nobody picks, so a wrong
+  match is silently wrong data. `matchCiqual` therefore answers *confidently or not at all* —
+  every query token must appear in the candidate, and the candidate's **first** word must be
+  one the query named, which is what stops "Cookie aux pépites de chocolat" from answering
+  "pépites de chocolat". An unresolved food is dropped and **named in a warning** rather than
+  imported empty. A resolved one keeps the dictated wording as its label and carries
+  `ciqualNom`, which the preview shows — the table has no plain "chocolat noir" and cannot
+  tell cooked rice from raw, so the entry used has to be visible before the import lands.
+- **A bare `quantity` is never read as grams.** Models write `quantity_g` when they mean a
+  weight and `quantity` for a count of pieces ("quantity": 1 for one egg) or for prose
+  ("petite quantité"); reading that as grams logged one gram of egg. It falls back to 100 g
+  with a warning instead — wrong, but visibly wrong and one tap to fix.
 - Parsing and applying are separate on purpose: the overlay previews the days before
   `IMPORT_MEAL_DAYS` touches the log, and 'replace' clears only the meals the import carries.
 - **`PROMPT-REPAS.md` at the root is generated, not written** (`npm run gen-prompt`). It

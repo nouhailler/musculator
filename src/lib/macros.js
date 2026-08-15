@@ -11,15 +11,32 @@ const n = (v, fallback = null) => {
 };
 
 /**
- * Daily targets derived from the training profile the app already collects —
- * there is no second profile to fill in. Mifflin-St Jeor for the basal rate,
- * scaled by the weekly training frequency, then shifted by the nutrition goal.
+ * The targets a complete profile implies, before any manual override —
+ * Mifflin-St Jeor for the basal rate, scaled by the weekly training frequency,
+ * then shifted by the nutrition goal. Exported so the profile screen can show
+ * what the calculation says next to the field that overrides it.
+ */
+export function autoTargets(profile) {
+  const { auto } = resolveTargets(profile);
+  return auto;
+}
+
+/**
+ * Daily targets. Derived from the training profile the app already collects —
+ * there is no second profile to fill in — unless the profile carries an
+ * explicit target, which wins.
  *
- * Returns `estime: true` when the profile was too incomplete to compute a real
- * figure, so the UI can say the numbers are a placeholder rather than present
- * a fallback as a measurement.
+ * `manuel` says which of the four were set by hand, so the UI can mark them.
+ * `estime: true` means the profile was too incomplete to compute a real figure
+ * *and* nothing manual replaced it, so the UI can say the numbers are a
+ * placeholder rather than present a fallback as a measurement.
  */
 export function dailyTargets(profile) {
+  const { targets } = resolveTargets(profile);
+  return targets;
+}
+
+function resolveTargets(profile) {
   const p = profile || {};
   const poids = n(p.poids, null);
   const taille = n(p.taille, null);
@@ -39,14 +56,42 @@ export function dailyTargets(profile) {
     estime = false;
   }
 
-  const kcal = Math.round(tdee * (1 + goal.kcalDelta));
-  const proteines = Math.round((poids || FALLBACK_WEIGHT) * goal.proteinPerKg);
-  // Protein first, then split what is left between carbs and fat.
-  const kcalRestantes = Math.max(0, kcal - proteines * 4);
-  const glucides = Math.round((kcalRestantes * CARB_SHARE) / 4);
-  const lipides = Math.round((kcalRestantes * (1 - CARB_SHARE)) / 9);
+  // What the profile implies, before overrides.
+  const kcalAuto = Math.round(tdee * (1 + goal.kcalDelta));
+  const protAuto = Math.round((poids || FALLBACK_WEIGHT) * goal.proteinPerKg);
+  const split = (kc, prot) => {
+    // Protein first, then split what is left between carbs and fat.
+    const reste = Math.max(0, kc - prot * 4);
+    return {
+      glucides: Math.round((reste * CARB_SHARE) / 4),
+      lipides: Math.round((reste * (1 - CARB_SHARE)) / 9),
+    };
+  };
+  const auto = { kcal: kcalAuto, proteines: protAuto, ...split(kcalAuto, protAuto), goal, estime };
 
-  return { kcal, proteines, glucides, lipides, goal, estime };
+  const manuel = {
+    kcal: n(p.kcalCible) != null,
+    proteines: n(p.protCible) != null,
+    glucides: n(p.glucCible) != null,
+    lipides: n(p.lipCible) != null,
+  };
+  // A manual calorie or protein target feeds the carb/fat split, so the two
+  // halves of the plate stay consistent with what the user actually set.
+  const kcal = n(p.kcalCible) ?? kcalAuto;
+  const proteines = n(p.protCible) ?? protAuto;
+  const reste = split(kcal, proteines);
+  const targets = {
+    kcal: Math.round(kcal),
+    proteines: Math.round(proteines),
+    glucides: Math.round(n(p.glucCible) ?? reste.glucides),
+    lipides: Math.round(n(p.lipCible) ?? reste.lipides),
+    goal,
+    manuel,
+    // Nothing is "estimated" once the two figures the score reads are set by
+    // hand: an incomplete profile no longer has any say in them.
+    estime: estime && !(manuel.kcal && manuel.proteines),
+  };
+  return { targets, auto };
 }
 
 /** Sums a day's entries. Micronutrients only accumulate where data exists. */

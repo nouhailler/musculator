@@ -151,7 +151,12 @@ export default function Nutrition() {
       <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', padding: 13, marginBottom: 14 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
           <span style={{ fontSize: 13, fontWeight: 600 }}>Consommé vs objectif</span>
-          <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>{targets.goal.label}</span>
+          <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
+            {targets.goal.label}
+            {/* Says where the bars' targets come from: the goal alone no longer
+                explains them once one has been set by hand in the profile. */}
+            {Object.values(targets.manuel).some(Boolean) && ' · cibles perso'}
+          </span>
         </div>
         <Bar label="Calories" value={t.kcal} target={targets.kcal} unit="kcal" color="var(--color-accent)" />
         <Bar label="Protéines" value={t.proteines} target={targets.proteines} unit="g" color="var(--color-good)" />

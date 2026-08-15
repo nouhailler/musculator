@@ -41,7 +41,7 @@ export const HELP = {
       ['Repas dicté', "« Importer un repas dicté » reprend le JSON produit par Claude ou ChatGPT à partir d'une description orale de tes repas. Le prompt à leur donner est fourni dans l'écran."],
       ['Score /100', "Protéines 40 pts, calories 40 pts, micronutriments 20 pts. Les calories sont au maximum dans une bande de ±10 % autour de ta cible."],
       ['Données manquantes', "Un micronutriment non renseigné n'est jamais compté comme zéro : sa part sort du calcul et la journée est notée sur 80."],
-      ['Objectifs', "Ils sont calculés depuis ton profil (poids, taille, âge, fréquence) et ton objectif nutrition. Complète-les pour un calcul personnalisé."],
+      ['Objectifs', "Ils sont calculés depuis ton profil (poids, taille, âge, fréquence) et ton objectif nutrition. Complète-les pour un calcul personnalisé, ou fixe tes propres cibles dans le profil — elles s'affichent alors « cibles perso »."],
     ],
   },
   journal: {
@@ -49,8 +49,9 @@ export const HELP = {
     intro: "Le récapitulatif de tes séances du jour, et l'analyse de ta journée d'entraînement.",
     points: [
       ['Séances partielles', "Une séance arrêtée en cours est marquée en orange : seul le travail réellement fait est compté."],
-      ['Ajouter une séance', "Tu t'es entraîné hors appli ? « Ajouter une séance » l'ajoute au journal après coup, avec ou sans programme."],
-      ['Supprimer une séance', "L'icône corbeille sur une carte retire définitivement cette séance du journal."],
+      ['Ajouter une séance', "Tu t'es entraîné hors appli ? « Ajouter une séance » l'ajoute au journal après coup, avec ou sans programme. La date et l'heure se règlent : une séance d'hier se consigne aujourd'hui."],
+      ['Modifier une séance', "Le crayon corrige la date, l'heure et la durée — et le nom d'une séance libre. Ce qui a été fait (exercices, séries, muscles) n'est pas modifiable : c'est la trace de ta séance réelle."],
+      ['Supprimer une séance', "La corbeille demande confirmation, puis retire définitivement la séance. Le Journal ne montre qu'aujourd'hui : pour une séance passée, passe par l'historique dans Progrès."],
       ['Alimentation du jour', "Reprend ce que tu as consigné côté Nutrition. Ce n'est pas un bilan calorique complet : la dépense de repos n'y entre pas."],
       ['Analyse IA', "Par défaut elle est calculée sur l'appareil, sans réseau. Tu peux brancher un modèle OpenRouter dans ton profil. Le résultat est gardé pour la journée, pas recalculé à chaque visite."],
       ['Portée', "L'analyse ne remplace pas l'avis d'un professionnel de santé."],
@@ -61,7 +62,8 @@ export const HELP = {
     intro: "Ton historique, tes badges et l'évolution de ton rythme sur les dernières semaines.",
     points: [
       ['Badges', "Ils se débloquent depuis ton usage réel : nombre de séances, série de jours, séance matinale, HIIT…"],
-      ['Historique', "Les séances partielles y apparaissent avec une icône de pause et la mention « partielle »."],
+      ['Historique', "Les séances partielles y apparaissent avec une icône de pause et la mention « partielle », les séances ajoutées après coup avec un crayon."],
+      ['Corriger le passé', "Chaque ligne de l'historique se modifie ou se supprime — c'est le seul endroit qui atteint les séances des jours précédents."],
     ],
   },
 
@@ -98,6 +100,7 @@ export const HELP = {
     points: [
       ['Poids, taille, âge', "Sans eux, les objectifs caloriques retombent sur une valeur par défaut au lieu d'être calculés."],
       ['Objectif nutrition', "Distinct de l'objectif d'entraînement : on peut viser la force tout en séchant."],
+      ['Objectifs quotidiens', "Calories, protéines, glucides et lipides sont calculés depuis ton profil. Renseigne un champ pour imposer ta propre cible ; vide, il reste automatique. « Tout recalculer » revient au calcul."],
       ['Thème', "Sombre, clair, ou « Système » pour suivre le réglage de ton téléphone. Le choix s'applique tout de suite et reste sur cet appareil."],
       ['OpenRouter', "Facultatif. La clé est enregistrée en clair sur cet appareil — n'utilise pas une clé partagée."],
       ['Import Nutritor', "Reprend un export CSV de journal. Les jours déjà renseignés sont complétés, jamais remplacés."],
@@ -130,7 +133,8 @@ export const HELP = {
       ['Le prompt', "« Comment générer ce JSON ? » contient le prompt à copier. Dans un Projet Claude ou un GPT personnalisé, colle-le une fois en instructions : ensuite tu n'as plus qu'à dicter."],
       ['Valeurs pour 100 g', "L'assistant fournit le poids de la portion et les valeurs pour 100 g. La quantité reste modifiable dans le journal, tout se recalcule."],
       ['Prévisualisation', "Rien n'est enregistré avant que tu aies vu le détail. « Remplacer » ne vide que les repas présents dans l'import."],
-      ['Avertissements', "Ils listent ce qui a été deviné : quantité manquante, repas non reconnu, valeurs hors du bloc « pour100g »."],
+      ['Valeurs manquantes', "Si l'assistant nomme un aliment sans donner ses valeurs, Musculator le cherche dans la table CIQUAL et affiche l'entrée retenue sous son nom — vérifie-la, « chocolat noir » peut tomber sur un chocolat fourré. Un aliment introuvable est signalé et à saisir à la main."],
+      ['Avertissements', "Ils listent ce qui a été deviné : quantité pas exprimée en grammes (« 3 figues » devient 100 g), repas non reconnu, valeurs hors du bloc « pour100g »."],
       ['Estimations', "Les valeurs viennent d'un modèle de langage, pas d'une table officielle : elles sont approximatives et à vérifier si un aliment compte vraiment."],
     ],
   },

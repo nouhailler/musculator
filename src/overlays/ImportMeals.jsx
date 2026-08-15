@@ -26,14 +26,20 @@ export default function ImportMeals() {
   const [mode, setMode] = useState('append');
   const [showPrompt, setShowPrompt] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const preview = () => {
+  // Async: a food the assistant named without composing is resolved against
+  // the CIQUAL table, which is a chunk loaded on demand.
+  const preview = async () => {
     setError('');
+    setLoading(true);
     try {
-      setParsed(parseMealsImport(text, { fallbackDate: state.nutriDate, fallbackMeal: state.nutriMeal }));
+      setParsed(await parseMealsImport(text, { fallbackDate: state.nutriDate, fallbackMeal: state.nutriMeal }));
     } catch (e) {
       setParsed(null);
       setError(e.message || 'JSON invalide.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,7 +66,8 @@ export default function ImportMeals() {
         <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 14px', lineHeight: 1.55 }}>
           Dicte tes repas à Claude ou ChatGPT, puis colle ici le JSON généré. Les aliments sont
           ajoutés à la journée correspondante, avec leurs valeurs pour 100 g — la quantité reste
-          modifiable ensuite.
+          modifiable ensuite. Un aliment dont l'assistant n'a pas donné les valeurs est cherché
+          dans la table CIQUAL ; l'aperçu indique alors l'entrée utilisée.
         </p>
 
         {/* --- The prompt to paste into the assistant --- */}
@@ -113,10 +120,10 @@ export default function ImportMeals() {
 
         {!parsed ? (
           <SecondaryButton
-            icon="magnifying-glass" onClick={preview}
-            style={{ width: '100%', padding: 12, justifyContent: 'center', opacity: text.trim() ? 1 : 0.5 }}
+            icon={loading ? 'circle-notch' : 'magnifying-glass'} onClick={preview}
+            style={{ width: '100%', padding: 12, justifyContent: 'center', opacity: text.trim() && !loading ? 1 : 0.5 }}
           >
-            Prévisualiser
+            {loading ? 'Lecture…' : 'Prévisualiser'}
           </SecondaryButton>
         ) : (
           <>
@@ -137,8 +144,16 @@ export default function ImportMeals() {
                         const v = scale(e.food, e.grammes);
                         return (
                           <div key={e.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, fontSize: 11.5 }}>
-                            <span style={{ color: 'var(--color-neutral-200)', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <span style={{ color: 'var(--color-neutral-200)', minWidth: 0 }}>
                               {e.food.nom}
+                              {/* Values the assistant did not give come from the
+                                  table; naming the entry used is what lets a bad
+                                  match be caught before it is imported. */}
+                              {e.food.ciqualNom && (
+                                <span style={{ display: 'block', color: 'var(--color-neutral-500)', fontSize: 10 }}>
+                                  ↳ CIQUAL : {e.food.ciqualNom}
+                                </span>
+                              )}
                             </span>
                             <span style={{ color: 'var(--color-neutral-500)', flex: 'none', fontVariantNumeric: 'tabular-nums' }}>
                               {e.grammes} g · {Math.round(v.kcal)} kcal · P {Math.round(v.proteines)} g

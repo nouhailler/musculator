@@ -1,5 +1,6 @@
 import { useApp } from '../state/context.js';
 import { GOALS, DEFAULT_GOAL } from '../data/nutrition.js';
+import { autoTargets, dailyTargets } from '../lib/macros.js';
 import { DEFAULT_THEME, THEMES, themeLabel } from '../lib/theme.js';
 import { Field, TextInput, TextArea, RangeInput } from '../components/ui/Field.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';
@@ -12,6 +13,81 @@ const ZONE_OPTS = ['Pectoraux', 'Dos', 'Jambes', 'Épaules', 'Bras', 'Abdos'];
 const EXP_OPTS = ['Débutant', 'Intermédiaire', 'Avancé'];
 const NUTRI_GOAL_OPTS = GOALS.map((g) => g.label);
 const THEME_OPTS = THEMES.map((t) => t.label);
+
+// The four daily targets: each field is empty while the number is derived from
+// the profile above, and filled once the user sets their own. The computed
+// value stays visible as the placeholder, so overriding is a deliberate act
+// rather than a fork you can't find your way back from.
+const TARGETS = [
+  { key: 'kcalCible', label: 'Calories', unit: 'kcal', auto: 'kcal' },
+  { key: 'protCible', label: 'Protéines', unit: 'g', auto: 'proteines' },
+  { key: 'glucCible', label: 'Glucides', unit: 'g', auto: 'glucides' },
+  { key: 'lipCible', label: 'Lipides', unit: 'g', auto: 'lipides' },
+];
+
+function TargetFields() {
+  const { state, actions } = useApp();
+  const p = state.profile;
+  const auto = autoTargets(p);
+  const t = dailyTargets(p);
+  const custom = TARGETS.some((f) => Number(p[f.key]) > 0);
+  // 4/4/9: what the macro targets actually add up to. Set by hand they can
+  // drift from the calorie target, which is worth saying — the two bars on the
+  // Nutrition screen would otherwise disagree with no explanation.
+  const kcalMacros = t.proteines * 4 + t.glucides * 4 + t.lipides * 9;
+  const ecart = t.kcal > 0 ? Math.round(((kcalMacros - t.kcal) / t.kcal) * 100) : 0;
+
+  return (
+    <>
+      <Field label="Objectifs quotidiens" style={{ marginBottom: 4 }} />
+      <p style={{ fontSize: 11, color: 'var(--color-neutral-400)', margin: '0 0 10px', lineHeight: 1.5 }}>
+        Calculés depuis ton profil et ton objectif nutrition. Renseigne un champ pour imposer
+        ta propre cible ; laisse-le vide pour garder le calcul automatique.
+      </p>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+        {TARGETS.map((f) => (
+          <Field key={f.key} label={`${f.label} (${f.unit})`} style={{ flex: 1 }}>
+            <input
+              className="input" type="number" inputMode="numeric"
+              value={p[f.key] || ''}
+              // What an empty field will actually be worth — which is not the
+              // pure calculation once another field overrides it: setting
+              // 2 400 kcal moves the carb target with it. The untouched
+              // calculation stays on the line underneath.
+              placeholder={String(t[f.auto])}
+              onChange={(e) => actions.setProfileField(f.key, e.target.value === '' ? '' : Number(e.target.value))}
+              style={{ textAlign: 'center', padding: '8px 4px' }}
+            />
+          </Field>
+        ))}
+      </div>
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 11, color: 'var(--color-neutral-500)', lineHeight: 1.5, flex: '1 1 100%' }}>
+          Calcul automatique : {auto.kcal} kcal · P {auto.proteines} g · G {auto.glucides} g · L {auto.lipides} g
+          {auto.estime && ' (poids, taille et âge manquants)'}
+        </span>
+        {custom && (
+          <button
+            type="button"
+            onClick={() => TARGETS.forEach((f) => actions.setProfileField(f.key, ''))}
+            style={{ background: 'none', border: 'none', color: 'var(--color-accent-200)', fontSize: 11, cursor: 'pointer', padding: 0, flex: 'none', marginLeft: 'auto' }}
+          >
+            Tout recalculer
+          </button>
+        )}
+      </div>
+      {custom && Math.abs(ecart) > 5 && (
+        <div style={{ display: 'flex', gap: 8, fontSize: 11, color: 'var(--color-warn)', lineHeight: 1.5, marginBottom: 16 }}>
+          <Icon name="warning-circle" weight="fill" size={14} style={{ flex: 'none', marginTop: 1 }} />
+          <span>
+            Tes macros pèsent {Math.round(kcalMacros)} kcal, soit {ecart > 0 ? '+' : ''}{ecart} % par rapport à
+            ta cible calorique — les deux jauges de l'écran Nutrition ne pourront pas être pleines ensemble.
+          </span>
+        </div>
+      )}
+    </>
+  );
+}
 
 export default function Profile() {
   const { state, actions } = useApp();
@@ -68,6 +144,8 @@ export default function Profile() {
           onChange={(label) => actions.setProfileField('objectifNutrition', GOALS.find((g) => g.label === label)?.key || DEFAULT_GOAL)}
           style={{ marginBottom: 16 }}
         />
+
+        <TargetFields />
 
         <Field label="Contraintes / blessures (optionnel)" style={{ marginBottom: 18 }}>
           <TextArea value={p.contraintes} onChange={set('contraintes')} placeholder="ex. genou sensible, éviter les sauts" />

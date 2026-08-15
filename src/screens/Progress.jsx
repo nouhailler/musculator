@@ -1,12 +1,18 @@
+import { useState } from 'react';
 import { useApp, useDerived } from '../state/context.js';
 import { fmt, relativeDayLabel } from '../lib/format.js';
 import Icon from '../components/ui/Icon.jsx';
+import { IconCircleButton } from '../components/ui/Button.jsx';
+import SessionForm, { DeleteSessionButton } from '../components/SessionForm.jsx';
 
 const WEEK_LABELS = ['S-5', 'S-4', 'S-3', 'S-2', 'S-1', 'Cette sem.'];
 
 export default function Progress() {
   const { state } = useApp();
   const { streak, totalSessions, badges, history, weekly } = useDerived();
+  // The Journal only reaches today; this list is where a past session is
+  // corrected or removed.
+  const [editId, setEditId] = useState(null);
   const maxWeek = Math.max(1, ...weekly);
   const allTimeSec = state.sessionLog.reduce((a, s) => a + s.elapsedSec, 0);
   const allTimeKcal = state.sessionLog.reduce((a, s) => a + s.kcal, 0);
@@ -77,21 +83,33 @@ export default function Progress() {
 
       <h5 style={{ margin: '0 0 10px' }}>Historique des séances</h5>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-        {history.map((h) => (
-          <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: '11px 13px' }}>
+        {history.map((h) => (editId === h.id
+          ? <SessionForm key={h.id} session={h} onClose={() => setEditId(null)} />
+          : (
+          <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: '11px 13px' }}>
             <div className="icon-tile" style={{ width: 36, height: 36, color: h.partial ? 'var(--color-warn)' : undefined }}>
-              <Icon name={h.partial ? 'pause' : 'check-fat'} weight={h.partial ? 'fill' : 'regular'} size={17} />
+              <Icon name={h.partial ? 'pause' : h.manual ? 'note-pencil' : 'check-fat'} weight={h.partial ? 'fill' : 'regular'} size={17} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 13, fontWeight: 600 }}>{h.programNom}</div>
               <div style={{ fontSize: 11, color: 'var(--color-neutral-400)' }}>
-                {relativeDayLabel(h.dateKey)} · {h.exerciseIds.length} exercice{h.exerciseIds.length > 1 ? 's' : ''}
+                {relativeDayLabel(h.dateKey)} ·{' '}
+                {/* A session logged after the fact has no exercises by
+                    construction, so counting them would only ever say "0". */}
+                {h.manual
+                  ? 'ajoutée manuellement'
+                  : `${h.exerciseIds.length} exercice${h.exerciseIds.length > 1 ? 's' : ''}`}
                 {h.partial && <span style={{ color: 'var(--color-warn)' }}> · partielle</span>}
               </div>
             </div>
             <div style={{ fontSize: 12, color: 'var(--color-neutral-300)', fontFamily: 'var(--font-heading)' }}>{fmt(h.elapsedSec)}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 'none' }}>
+              <IconCircleButton icon="pencil-simple" size={26} title="Modifier cette séance"
+                onClick={() => setEditId(h.id)} style={{ color: 'var(--color-neutral-500)' }} />
+              <DeleteSessionButton id={h.id} />
+            </div>
           </div>
-        ))}
+          )))}
         {history.length === 0 && (
           <div className="empty-state">Aucune séance pour le moment.</div>
         )}

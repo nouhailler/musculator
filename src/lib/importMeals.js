@@ -12,6 +12,7 @@
 // deviate in the same ways.
 import { MEALS, MICROS } from '../data/nutrition.js';
 import { extractJsonObject } from './json.js';
+import { matchCiqual } from './ciqualMatch.js';
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_RE = /^(\d{1,2})\s*[:h]\s*(\d{2})?$/;
@@ -44,8 +45,11 @@ Object.assign(MEAL_SYNONYMS, {
 
 /** A meal key from whatever the model wrote, or null. */
 export function resolveMeal(input) {
-  const n = norm(input);
-  return n ? (MEAL_SYNONYMS[n] || null) : null;
+  // Separators are the model's choice, not part of the word: ChatGPT answers
+  // "petit_dejeuner" where the prompt asked for "petit-dejeuner".
+  const n = norm(input).replace(/[_-]+/g, ' ').replace(/\s+/g, ' ');
+  if (!n) return null;
+  return MEAL_SYNONYMS[n] || MEAL_SYNONYMS[n.replace(/ /g, '-')] || null;
 }
 
 // Fallback when only an hour was given. The boundaries follow the meal a French
@@ -89,47 +93,61 @@ function parseFood(raw, warnings, seq) {
     warnings.push('Aliment ignoré (format inattendu).');
     return null;
   }
-  const nom = str(raw.nom) || str(raw.name) || str(raw.aliment);
+  const nom = str(raw.nom) || str(raw.name) || str(raw.aliment) || str(raw.food) || str(raw.libelle);
   if (!nom) {
     warnings.push('Aliment sans nom ignoré.');
     return null;
   }
+
+  // Grams first, since that is the one thing only the user knows — and *only*
+  // from a field that says grams. A bare `quantity` is how a model writes a
+  // count of pieces ("quantity": 1 for one egg) or prose ("petite quantité");
+  // reading either as grams would silently log one gram of egg, which is far
+  // worse than falling back to a round number and saying so.
+  const g = num(raw.grammes) ?? num(raw.quantity_g) ?? num(raw.quantite_g) ?? num(raw.poids_g) ?? num(raw.grams) ?? num(raw.poids);
+  let grammes = g == null ? null : Math.round(g);
+  let pending = null;
+  if (grammes == null || grammes <= 0) {
+    const said = raw.quantity ?? raw.quantite;
+    pending = said !== undefined
+      ? `« ${nom} » : quantité « ${said} » non exprimée en grammes → 100 g, à ajuster.`
+      : `« ${nom} » : quantité absente ou illisible → 100 g, à ajuster.`;
+    grammes = 100;
+  }
+  grammes = Math.min(5000, grammes);
 
   // The per-100 g block is the documented shape; a model that flattened it onto
   // the food itself is still read, but the user is told how it was interpreted
   // since that is exactly where a portion total would silently land.
   const block = raw.pour100g || raw.per100 || raw.pour_100g || raw.per100g || raw.nutriments;
   const src = block && typeof block === 'object' ? block : raw;
-  if (!block || typeof block !== 'object') {
-    warnings.push(`« ${nom} » : pas de bloc « pour100g » — les valeurs lues sont prises pour 100 g.`);
-  }
 
   const proteines = Math.max(0, round1(num(src.proteines) ?? num(src.proteins) ?? 0));
   const glucides = Math.max(0, round1(num(src.glucides) ?? num(src.carbs) ?? 0));
   const lipides = Math.max(0, round1(num(src.lipides) ?? num(src.fat) ?? 0));
-  const declared = num(src.kcal) ?? num(src.calories) ?? num(src.energie);
+  const declared = num(src.kcal) ?? num(src.calories) ?? num(src.energie) ?? num(src.kcal_per_100g);
   // Same rule as the CIQUAL table: a food with macros but no energy gets the
   // Atwater estimate rather than a 0 kcal line that would wreck the day's score.
   const kcal = declared > 0
     ? Math.round(declared)
     : Math.round(4 * proteines + 4 * glucides + 9 * lipides);
 
-  if (!kcal && !proteines && !glucides && !lipides) {
-    warnings.push(`« ${nom} » ignoré : aucune valeur nutritionnelle exploitable.`);
-    return null;
-  }
+  const entry = { id: `fe-dic-${Date.now()}-${seq}`, grammes };
 
-  const g = num(raw.grammes) ?? num(raw.quantite) ?? num(raw.poids_g) ?? num(raw.grams) ?? num(raw.quantity);
-  let grammes = g == null ? null : Math.round(g);
-  if (grammes == null || grammes <= 0) {
-    warnings.push(`« ${nom} » : quantité absente ou illisible → 100 g.`);
-    grammes = 100;
-  }
-  grammes = Math.min(5000, grammes);
+  // Nothing usable: the name is all we have, so the food is looked up in the
+  // CIQUAL table afterwards (resolveLookups). An assistant that names foods
+  // without composing them is the common case, not an error. The quantity
+  // warning rides along rather than being reported now — a food that turns out
+  // to be unresolvable is dropped, and warning about the quantity of something
+  // that never made it in is noise.
+  if (!kcal && !proteines && !glucides && !lipides) return { ...entry, lookup: nom, pending };
 
+  if (pending) warnings.push(pending);
+  if (!block || typeof block !== 'object') {
+    warnings.push(`« ${nom} » : pas de bloc « pour100g » — les valeurs lues sont prises pour 100 g.`);
+  }
   return {
-    id: `fe-dic-${Date.now()}-${seq}`,
-    grammes,
+    ...entry,
     food: {
       // Deterministic id: dictating the same food twice reuses one cache entry
       // instead of growing `foodCache` on every import.
@@ -153,7 +171,7 @@ function parseMealBlock(raw, fallbackMeal, warnings, counter) {
     warnings.push('Repas ignoré (format inattendu).');
     return null;
   }
-  const list = [raw.aliments, raw.foods, raw.items].find(Array.isArray) || [];
+  const list = [raw.aliments, raw.foods, raw.items, raw.plats].find(Array.isArray) || [];
   const entries = list.map((f) => parseFood(f, warnings, counter.n++)).filter(Boolean);
   if (!entries.length) {
     warnings.push('Repas sans aliment exploitable ignoré.');
@@ -186,7 +204,7 @@ function parseDay(raw, fallbackDate, fallbackMeal, warnings, counter) {
 
   const blocks = [raw.meals, raw.repas].find(Array.isArray)
     // A day that skipped the meals array and listed foods directly is one meal.
-    || ([raw.aliments, raw.foods].find(Array.isArray) ? [raw] : []);
+    || ([raw.aliments, raw.foods, raw.items].find(Array.isArray) ? [raw] : []);
 
   const parsed = blocks.map((m) => parseMealBlock(m, fallbackMeal, warnings, counter)).filter(Boolean);
   if (!parsed.length) return null;
@@ -204,15 +222,62 @@ function parseDay(raw, fallbackDate, fallbackMeal, warnings, counter) {
 }
 
 /**
+ * Fills in the foods the model named but did not compose, from the bundled
+ * CIQUAL table. Mutates the parsed days in place and drops what it cannot
+ * resolve — a food with no composition would otherwise log as 0 kcal.
+ *
+ * Every lookup is reported: `food.ciqualNom` on what was resolved, so the
+ * preview can show which table entry was used and the user can catch a bad
+ * pick, and a warning for what was not.
+ */
+async function resolveLookups(days, warnings) {
+  const wanted = [...new Set(days.flatMap((d) => d.meals.flatMap((m) => m.entries.filter((e) => e.lookup).map((e) => e.lookup))))];
+  if (!wanted.length) return days;
+
+  const found = new Map();
+  await Promise.all(wanted.map(async (nom) => {
+    const food = await matchCiqual(nom);
+    if (food) found.set(nom, food);
+  }));
+
+  const missing = new Set();
+  for (const day of days) {
+    for (const meal of day.meals) {
+      meal.entries = meal.entries.filter((e) => {
+        if (!e.lookup) return true;
+        const hit = found.get(e.lookup);
+        if (!hit) { missing.add(e.lookup); return false; }
+        // Keep the dictated wording as the label — "figues" reads better in
+        // the journal than "Figue, crue" — but carry the table entry so the
+        // preview can show where the numbers came from.
+        e.food = { ...hit, id: `ciqual-dictee-${slug(e.lookup)}`, nom: e.lookup, marque: 'Table CIQUAL', ciqualNom: hit.nom };
+        if (e.pending) warnings.push(e.pending);
+        delete e.lookup;
+        delete e.pending;
+        return true;
+      });
+    }
+    day.meals = day.meals.filter((m) => m.entries.length);
+  }
+  for (const nom of missing) {
+    warnings.push(`« ${nom} » ignoré : aucune valeur fournie et introuvable dans la table CIQUAL — ajoute-le à la main.`);
+  }
+  return days.filter((d) => d.meals.length);
+}
+
+/**
  * Parses pasted text into days ready to preview.
+ *
+ * Async because a food the assistant named without composing is looked up in
+ * the CIQUAL table, which is a lazily loaded chunk.
  *
  * @param {string} text raw paste — prose and code fences tolerated
  * @param {{ fallbackDate: string, fallbackMeal: string }} ctx defaults for what
  *   the model left out (the day being viewed, the meal last used)
- * @returns {{ days: Array<{date, meals: Array<{key, entries}>}>, warnings: string[] }}
+ * @returns {Promise<{ days: Array<{date, meals: Array<{key, entries}>}>, warnings: string[] }>}
  * @throws when nothing usable can be read at all
  */
-export function parseMealsImport(text, { fallbackDate, fallbackMeal } = {}) {
+export async function parseMealsImport(text, { fallbackDate, fallbackMeal } = {}) {
   if (!String(text || '').trim()) throw new Error('Colle d’abord le JSON généré.');
 
   const raw = extractJsonObject(text);
@@ -239,7 +304,8 @@ export function parseMealsImport(text, { fallbackDate, fallbackMeal } = {}) {
   // single meal — ChatGPT in particular tends to answer with just the meal.
   const rawDays = Array.isArray(obj.days) ? obj.days : [obj];
 
-  const days = rawDays.map((d) => parseDay(d, topDate, meal, warnings, counter)).filter(Boolean);
+  const parsed = rawDays.map((d) => parseDay(d, topDate, meal, warnings, counter)).filter(Boolean);
+  const days = await resolveLookups(parsed, warnings);
   if (!days.length) {
     // Whatever was dropped on the way is the useful part of this failure — the
     // preview that would have carried the warnings is never shown.

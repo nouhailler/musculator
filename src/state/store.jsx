@@ -19,6 +19,9 @@ const defaultProfile = {
   prenom: '', sexe: 'Homme', age: '', poids: '', taille: '', poidsCible: '',
   experience: 'Débutant', objectif: 'Prise de masse', zones: [], frequence: 4, contraintes: '',
   objectifNutrition: 'maintien',
+  // Daily nutrition targets. Empty means "keep deriving it from the profile";
+  // a value overrides the calculation in lib/macros.js.
+  kcalCible: '', protCible: '', glucCible: '', lipCible: '',
 };
 
 function loadPersisted() {
@@ -138,14 +141,28 @@ function buildSessionEntry(state, partial = false) {
   };
 }
 
-// A new session for the day makes any cached analysis stale — this is the one
-// place a session is logged from, so it is also the one place that has to
-// evict it (both the live copy and the persisted-per-day one).
-function withStaleAnalysisFor(state, dateKeyStr) {
+// Touching a day's sessions makes any cached analysis of that day stale —
+// adding one, deleting one, or moving one to another date, which is why this
+// takes several days: an edit that changes the date invalidates both ends.
+// The live copy only ever shows today's analysis, so it is left alone when
+// some other day changed.
+function withStaleAnalysisFor(state, ...days) {
   const analysisLog = { ...state.analysisLog };
-  delete analysisLog[dateKeyStr];
-  return { analysis: null, analysisError: '', analysisLog };
+  for (const d of days) delete analysisLog[d];
+  return days.includes(dateKey())
+    ? { analysis: null, analysisError: '', analysisLog }
+    : { analysisLog };
 }
+
+// Newest first, by day then by time. The log used to be strictly append-only
+// with entries created in chronological order, so array order was date order
+// for free; a session can now be logged for — or moved to — a past day, and
+// `history` still reads the array in order.
+const sortLog = (log) => [...log].sort((a, b) => (
+  a.dateKey === b.dateKey
+    ? String(b.heure || '').localeCompare(String(a.heure || ''))
+    : String(b.dateKey).localeCompare(String(a.dateKey))
+));
 
 // Ends a workout, writes it to the journal and shows the summary. `partial` is
 // a run stopped before its end — logged all the same, from what was done.
@@ -170,14 +187,27 @@ function finishWorkout(state, w, partial = false) {
   };
 }
 
+// A date typed into a form reaches the reducer as whatever the input held, and
+// a bad one would put an entry somewhere no screen can reach it again. Both
+// return null rather than a fallback, so the caller decides the default.
+const validDateKey = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) && !Number.isNaN(Date.parse(`${v}T00:00:00`)) ? v : null);
+const validHeure = (v) => (/^([01]\d|2[0-3]):[0-5]\d$/.test(String(v || '')) ? v : null);
+
 // A session logged after the fact — worked out outside the app, so it never
 // touches the workout state machine. Kept simple: no per-set tracking exists
 // to draw a series count from, so a picked program is assumed completed as
 // prescribed and a free-form entry carries no exercises at all.
-function buildManualSessionEntry(state, { progId, customName, minutes }) {
+function buildManualSessionEntry(state, { progId, customName, minutes, dateKey: d, heure }) {
   const elapsedSec = Math.max(60, Math.round((Number(minutes) || 0) * 60));
   const kcal = Math.round((elapsedSec / 60) * KCAL_PER_MIN);
-  const base = { id: `s-${Date.now()}`, dateKey: dateKey(), heure: nowHM(), elapsedSec, kcal, partial: false, manual: true };
+  // The session being logged is usually one that already happened, so the day
+  // and time are the user's to set; now is only the default.
+  const base = {
+    id: `s-${Date.now()}`,
+    dateKey: validDateKey(d) || dateKey(),
+    heure: validHeure(heure) || nowHM(),
+    elapsedSec, kcal, partial: false, manual: true,
+  };
   if (!progId) {
     return { ...base, programId: 'manual', programNom: (customName || '').trim() || 'Séance libre', series: 0, exerciseIds: [], exosTotal: 0, muscles: [] };
   }
@@ -491,12 +521,51 @@ function reducer(state, action) {
         analysisLog: { ...state.analysisLog, [dateKey()]: { analysis: action.analysis, source: action.source } },
       };
 
-    // --- Journal (today) ----------------------------------------------------
-    case 'DELETE_SESSION':
-      return { ...state, sessionLog: state.sessionLog.filter((s) => s.id !== action.id) };
+    // --- Journal ------------------------------------------------------------
+    case 'DELETE_SESSION': {
+      const gone = state.sessionLog.find((s) => s.id === action.id);
+      if (!gone) return state;
+      return {
+        ...state,
+        sessionLog: state.sessionLog.filter((s) => s.id !== action.id),
+        ...withStaleAnalysisFor(state, gone.dateKey),
+      };
+    }
     case 'ADD_MANUAL_SESSION': {
-      const entry = buildManualSessionEntry(state, action);
-      return { ...state, sessionLog: [entry, ...state.sessionLog], ...withStaleAnalysisFor(state, entry.dateKey) };
+      const entry = buildManualSessionEntry(state, action.patch);
+      return {
+        ...state,
+        sessionLog: sortLog([entry, ...state.sessionLog]),
+        ...withStaleAnalysisFor(state, entry.dateKey),
+      };
+    }
+
+    // Metadata only — when, how long, and the label of a free-form entry. What
+    // was performed (exerciseIds, series, muscles) is the record of a real
+    // session and stays out of reach; kcal follows the duration through the
+    // same rule that produced it in the first place.
+    case 'EDIT_SESSION': {
+      const before = state.sessionLog.find((s) => s.id === action.id);
+      if (!before) return state;
+      const { nom, minutes } = action.patch;
+      const elapsedSec = Number(minutes) > 0 ? Math.max(60, Math.round(Number(minutes) * 60)) : before.elapsedSec;
+      const after = {
+        ...before,
+        dateKey: validDateKey(action.patch.dateKey) || before.dateKey,
+        heure: validHeure(action.patch.heure) || before.heure,
+        elapsedSec,
+        kcal: Math.round((elapsedSec / 60) * KCAL_PER_MIN),
+        // Renaming a catalogue program would only make its own name lie; a
+        // free-form entry's name is just a label the user typed.
+        programNom: before.programId === 'manual' && String(nom || '').trim()
+          ? String(nom).trim()
+          : before.programNom,
+      };
+      return {
+        ...state,
+        sessionLog: sortLog(state.sessionLog.map((s) => (s.id === action.id ? after : s))),
+        ...withStaleAnalysisFor(state, before.dateKey, after.dateKey),
+      };
     }
     case 'SET_DAY_NOTE':
       return { ...state, dayNotes: { ...state.dayNotes, [action.dateKey]: action.text } };
@@ -645,7 +714,10 @@ export function AppProvider({ children }) {
     finishHome: () => dispatch({ type: 'FINISH_HOME' }),
 
     deleteSession: (id) => dispatch({ type: 'DELETE_SESSION', id }),
-    addManualSession: (progId, customName, minutes) => dispatch({ type: 'ADD_MANUAL_SESSION', progId, customName, minutes }),
+    // Both take the same `{ progId, customName, nom, minutes, dateKey, heure }`
+    // shape, so one form component drives adding and editing alike.
+    addManualSession: (patch) => dispatch({ type: 'ADD_MANUAL_SESSION', patch }),
+    editSession: (id, patch) => dispatch({ type: 'EDIT_SESSION', id, patch }),
     setDayNote: (text) => dispatch({ type: 'SET_DAY_NOTE', dateKey: dateKey(), text }),
 
     setTheme: (theme) => dispatch({ type: 'SET_THEME', theme }),
