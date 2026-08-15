@@ -79,8 +79,62 @@ export async function checkForUpdate() {
   return 'current';
 }
 
-/** Activates the waiting worker and reloads onto it. */
+let applying = false;
+
+/**
+ * Activates the waiting worker and reloads onto it.
+ *
+ * The plugin's own reload is **conditional**: workbox only reloads on
+ * `controlling` when it decided at registration time that the page was already
+ * controlled by a compatible worker. After the app has been reinstalled, or
+ * after the data was cleared, or on the first load that installed a worker,
+ * that is false — the new worker activates and the page stays on the old code
+ * forever, which reads as a button that does nothing. So this never depends on
+ * it: it asks, watches for the takeover itself, and escapes on a timer.
+ */
 export function applyUpdate() {
-  if (updateSW) updateSW(true);
-  else window.location.reload();
+  if (applying) return;
+  applying = true;
+  const reload = () => window.location.reload();
+
+  // Nothing controls this page, so a reload is already served by the network.
+  if (!navigator.serviceWorker?.controller) {
+    reload();
+    return;
+  }
+
+  navigator.serviceWorker.addEventListener('controllerchange', reload, { once: true });
+  try {
+    updateSW?.(true);
+  } catch {
+    // The message never left; the timer below is the answer.
+  }
+
+  // Last resort, ~2.5 s in: drop the worker so the reload cannot be served
+  // from its cache, then reload. Costs one round of network fetches and the
+  // fresh page registers a worker again immediately — a fair price for never
+  // leaving someone stuck on an old build.
+  setTimeout(() => {
+    const done = () => reload();
+    navigator.serviceWorker.getRegistrations()
+      .then((regs) => Promise.all(regs.map((r) => r.unregister())))
+      .then(done, done);
+  }, 2500);
+}
+
+/**
+ * The escape hatch: forget the worker and every cached asset, then reload from
+ * the network. Stored data is untouched — this clears the Cache Storage the
+ * service worker owns, never localStorage, where the journal lives.
+ */
+export async function hardReload() {
+  try {
+    const regs = await navigator.serviceWorker?.getRegistrations?.() || [];
+    await Promise.all(regs.map((r) => r.unregister()));
+    const keys = await caches?.keys?.() || [];
+    await Promise.all(keys.map((k) => caches.delete(k)));
+  } catch {
+    // Whatever failed, reloading is still the right next move.
+  }
+  window.location.reload();
 }

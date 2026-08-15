@@ -68,6 +68,13 @@ the old JavaScript keeps running, and there is no moment the user can point at.
 - **`__BUILD_ID__` / `__BUILD_TIME__` are stamped in by `vite.config.js`** (Netlify's
   `COMMIT_REF`, else `git rev-parse`, else "dev") and shown in the profile. Being able to
   *read* the running version is what replaces refreshing and hoping.
+- **`applyUpdate` must not rely on the plugin's reload.** vite-plugin-pwa reloads on
+  `controlling` only when workbox judged the page already controlled at registration time,
+  which is false on the load that installed the worker and after a reinstall — the worker
+  activates and the page never moves. It watches `controllerchange` itself, reloads
+  immediately when nothing controls the page, and unregisters + reloads on a 2.5 s timer as
+  a last resort. `hardReload()` is the manual version of that last resort; it clears Cache
+  Storage only, never `localStorage`, where every user's data lives.
 - **An update is never applied during a workout.** Applying reloads the page and the running
   session lives in memory only, so `checkUpdate` refuses and `UpdateBanner` hides itself.
 - `netlify.toml` carries headers only, no `[build]` block, so it cannot conflict with the

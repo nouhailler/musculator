@@ -11,7 +11,7 @@ import { dailyTargets } from '../lib/macros.js';
 import { makeActivityEntry } from '../lib/activity.js';
 import { startCadence, stopSpeaking, say } from '../lib/voice.js';
 import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme.js';
-import { applyUpdate, checkForUpdate, onUpdateStatus, updateAvailable } from '../lib/pwa.js';
+import { applyUpdate, checkForUpdate, hardReload, onUpdateStatus, updateAvailable } from '../lib/pwa.js';
 import { MEALS } from '../data/nutrition.js';
 import { mergeLog, parseNutritorCSV } from '../lib/importNutritor.js';
 import { applyImport, importedFoods } from '../lib/importMeals.js';
@@ -816,6 +816,9 @@ export function AppProvider({ children }) {
       } });
     },
     applyUpdate: () => applyUpdate(),
+    // Manual escape when everything else has failed: drops the worker and its
+    // caches, keeps the journal (that lives in localStorage).
+    hardReload: () => hardReload(),
     setOpenRouter: (patch) => dispatch({ type: 'SET_OPENROUTER', patch }),
 
     setNutriDate: (d) => dispatch({ type: 'SET_NUTRI_DATE', dateKey: d }),

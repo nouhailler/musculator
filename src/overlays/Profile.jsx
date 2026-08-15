@@ -219,10 +219,20 @@ export default function Profile() {
           {state.updateChecking ? 'Recherche…' : state.updateReady ? 'Installer la nouvelle version' : 'Vérifier les mises à jour'}
         </SecondaryButton>
         {state.updateStatus && (
-          <div style={{ fontSize: 12, color: state.updateReady ? 'var(--color-good)' : 'var(--color-neutral-400)', marginBottom: 12, lineHeight: 1.5 }}>
+          <div style={{ fontSize: 12, color: state.updateReady ? 'var(--color-good)' : 'var(--color-neutral-400)', marginBottom: 8, lineHeight: 1.5 }}>
             {state.updateStatus}
           </div>
         )}
+        {/* Nothing should be able to strand someone on an old build. */}
+        <div style={{ fontSize: 11, color: 'var(--color-neutral-500)', marginBottom: 12, lineHeight: 1.5 }}>
+          Rien ne bouge ?{' '}
+          <button type="button" onClick={actions.hardReload}
+            style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', fontSize: 11, color: 'var(--color-accent-200)', cursor: 'pointer' }}>
+            Forcer le rechargement complet
+          </button>
+          {' '}— vide le cache de l'app et recharge tout depuis le serveur. Tes données (profil,
+          séances, journal) ne sont pas touchées.
+        </div>
 
         <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
 

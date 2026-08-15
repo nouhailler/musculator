@@ -366,6 +366,20 @@ grouped by date and reference the commit they landed in.
 
 ### Fixed
 
+- **The update button could say "redémarrage…" and never restart.** vite-plugin-pwa's reload
+  is conditional: workbox only reloads on `controlling` when it decided *at registration
+  time* that the page was already controlled by a compatible worker. After the app has been
+  reinstalled, or on the load that first installed a worker, that is false — the new worker
+  activated and the page stayed on the old code for good, with the banner and the green
+  message stuck on screen. `applyUpdate` no longer depends on it: an uncontrolled page
+  reloads immediately (its reload is served by the network anyway), a controlled one watches
+  `controllerchange` itself, and a 2.5 s timer unregisters the worker and reloads if neither
+  happened. Verified on both paths — 0.6 s and 0.8 s to reload.
+- **An escape hatch** in the same settings block, for anything left: "Forcer le rechargement
+  complet" drops the worker and every cached asset and refetches from the server. It clears
+  Cache Storage only — the journal lives in `localStorage` and is untouched, which matters
+  because the obvious manual workaround (clearing the site's data) would erase it.
+
 - `goalDef()` and the profile fell back to `GOALS[1]` for an unknown nutrition goal — a
   positional index into a list that is ordered for the picker, so inserting Recomposition
   into it silently changed the fallback. Both resolve by key now.
