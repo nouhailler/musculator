@@ -1,9 +1,26 @@
+import { execSync } from 'node:child_process'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// Stamped into the bundle so the app can show which build is running — the
+// only way to settle "is my phone on the new version?" without guessing.
+// Netlify exposes the commit as COMMIT_REF; locally, ask git.
+function buildId() {
+  if (process.env.COMMIT_REF) return process.env.COMMIT_REF.slice(0, 7)
+  try {
+    return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim()
+  } catch {
+    return 'dev'
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    __BUILD_ID__: JSON.stringify(buildId()),
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+  },
   build: {
     rollupOptions: {
       output: {
@@ -19,7 +36,13 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // 'prompt', not 'autoUpdate': an installed PWA is reopened rather than
+      // reloaded, so an automatic update lands whenever the OS feels like it.
+      // The app registers the worker itself (see src/lib/pwa.js) to keep the
+      // registration in reach, offer a real update button and — above all —
+      // avoid reloading in the middle of a workout, whose state is ephemeral.
+      registerType: 'prompt',
+      injectRegister: null,
       includeAssets: ['favicon.png', 'icons/*.png'],
       manifest: {
         name: 'Musculator',

@@ -1,0 +1,38 @@
+# Headers only — the build command and publish directory stay wherever they are
+# configured in Netlify, so this file cannot break a deploy.
+#
+# The point of these rules is the update path. A phone that keeps serving a
+# stale service worker or a stale index.html never learns that a new version
+# exists, however good the in-app update button is.
+
+# The service worker decides what every other file is allowed to be. It must be
+# revalidated on every check, or the browser can hand back the previous one for
+# as long as it likes and the app stays frozen on an old build.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/registerSW.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# The entry point names the hashed bundles, so caching it would pin the app to
+# the bundle set it was built with.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Assets carry a content hash in their filename: a changed file is a new URL,
+# so the old one can be kept forever.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

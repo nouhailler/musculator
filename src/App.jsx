@@ -1,5 +1,6 @@
 import { useApp } from './state/context.js';
 import OfflineBanner from './components/OfflineBanner.jsx';
+import UpdateBanner from './components/UpdateBanner.jsx';
 import DisclaimerModal from './components/DisclaimerModal.jsx';
 import TabBar from './components/TabBar.jsx';
 import TopBar from './components/TopBar.jsx';
@@ -45,6 +46,7 @@ export default function App() {
         {state.view === 'workout' && <Workout />}
         {state.view === 'complete' && <WorkoutComplete />}
         <TabBar />
+        <UpdateBanner />
         <Drawer />
         <HelpSheet />
         <DisclaimerModal />

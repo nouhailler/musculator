@@ -4,6 +4,9 @@ import './styles/tokens.css'
 import './styles/app.css'
 import App from './App.jsx'
 import { AppProvider } from './state/store.jsx'
+import { initPwa } from './lib/pwa.js'
+
+initPwa()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -33,6 +33,24 @@ grouped by date and reference the commit they landed in.
     new session for that day (live or added after the fact) evicts the cached entry, since it
     would otherwise describe a day that has since changed.
 
+- **An update button, and a visible version** — a new Netlify deploy could take many reloads
+  to reach an installed phone, with no way to tell whether it had landed.
+  - The service worker is now registered by the app (`src/lib/pwa.js`, `registerType:
+    'prompt'`) instead of silently by the plugin. `autoUpdate` was the wrong fit: an
+    installed PWA is reopened rather than reloaded, so a new worker installed in the
+    background while the old JavaScript kept running.
+  - *Mon profil & objectifs → Version & mise à jour* shows the running build (commit and
+    build time, stamped in at build time from Netlify's `COMMIT_REF`) and a button that asks
+    the server, installs what it finds and restarts onto it. Reading the version is what
+    replaces reloading and hoping.
+  - A banner offers the update as soon as one has installed, and the app re-checks whenever
+    it comes back to the foreground — which is what a phone does instead of navigating.
+  - **Never during a workout**: applying reloads the page, and a running session lives in
+    memory only. The check refuses and the banner hides itself.
+  - `netlify.toml` adds cache headers — `sw.js`, `index.html` and the manifest revalidate,
+    hashed assets stay immutable. Headers only, no `[build]` block, so it cannot conflict
+    with the deploy settings configured in Netlify.
+
 - **Walking** — kilometres now count towards the day's expenditure alongside training.
   - **Three ways in**, chosen because no web API counts steps in the background and the app
     refuses to promise one: manual entry (distance and/or duration), a live GPS walk over

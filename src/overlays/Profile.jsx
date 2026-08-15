@@ -2,6 +2,7 @@ import { useApp } from '../state/context.js';
 import { GOALS, DEFAULT_GOAL } from '../data/nutrition.js';
 import { autoTargets, dailyTargets } from '../lib/macros.js';
 import { DEFAULT_KM_TARGET } from '../data/activity.js';
+import { BUILD_ID, BUILD_TIME } from '../lib/pwa.js';
 import { DEFAULT_THEME, THEMES, themeLabel } from '../lib/theme.js';
 import { Field, TextInput, TextArea, RangeInput } from '../components/ui/Field.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';
@@ -103,6 +104,15 @@ function TargetFields() {
   );
 }
 
+// "15/08/2026 à 11:32" — the build's own date, not the device's idea of today.
+const buildLabel = (() => {
+  try {
+    return new Date(BUILD_TIME).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
+  } catch {
+    return BUILD_TIME;
+  }
+})();
+
 export default function Profile() {
   const { state, actions } = useApp();
   const p = state.profile;
@@ -182,6 +192,30 @@ export default function Profile() {
           onChange={(label) => actions.setTheme(THEMES.find((t) => t.label === label)?.key || DEFAULT_THEME)}
           style={{ marginBottom: 6 }}
         />
+
+        <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
+
+        <h5 style={{ margin: '0 0 4px' }}>Version & mise à jour</h5>
+        <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 10px', lineHeight: 1.55 }}>
+          L'app est installée sur ton téléphone : une nouvelle version se télécharge en arrière-plan
+          mais ne s'applique qu'au redémarrage. Ce bouton la cherche et l'installe tout de suite.
+        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: 'var(--color-neutral-500)', marginBottom: 10 }}>
+          <Icon name="info" size={14} style={{ flex: 'none' }} />
+          <span>Version installée : <strong style={{ color: 'var(--color-neutral-300)' }}>{BUILD_ID}</strong> · {buildLabel}</span>
+        </div>
+        <SecondaryButton
+          icon={state.updateChecking ? 'circle-notch' : 'arrow-counter-clockwise'}
+          onClick={actions.checkUpdate}
+          style={{ width: '100%', padding: 11, justifyContent: 'center', marginBottom: 8 }}
+        >
+          {state.updateChecking ? 'Recherche…' : state.updateReady ? 'Installer la nouvelle version' : 'Vérifier les mises à jour'}
+        </SecondaryButton>
+        {state.updateStatus && (
+          <div style={{ fontSize: 12, color: state.updateReady ? 'var(--color-good)' : 'var(--color-neutral-400)', marginBottom: 12, lineHeight: 1.5 }}>
+            {state.updateStatus}
+          </div>
+        )}
 
         <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
 

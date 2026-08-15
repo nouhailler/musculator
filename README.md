@@ -292,6 +292,16 @@ than leaving you with nothing.
 
 ---
 
+## 🔄 Updating an installed app
+
+A PWA on a home screen is reopened, not reloaded, so a fresh deploy can sit installed in the
+background while the old code keeps running. *Mon profil & objectifs → Version & mise à jour*
+therefore shows **which build is running** — commit and build time, stamped in at build time
+from Netlify's `COMMIT_REF` — next to a button that checks the server, installs what it finds
+and restarts onto it. A banner offers the same as soon as an update has installed, and the app
+re-checks every time it returns to the foreground. It never updates during a workout: applying
+reloads the page, and a running session lives in memory only.
+
 ## 🗂️ Project layout
 
 ```

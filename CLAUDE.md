@@ -55,6 +55,25 @@ to reducer state; add them to `useDerived` or to a `lib/` helper.
 filters, in-progress workout) is deliberately ephemeral. Adding a durable field means
 touching both `loadPersisted()` and the persist effect in `store.jsx`.
 
+### Updating an installed app
+
+`registerType: 'prompt'` with `injectRegister: null` — the app registers the worker itself
+(`lib/pwa.js`) rather than letting the plugin do it silently. `autoUpdate` was the wrong fit:
+an installed PWA is *reopened*, not reloaded, so a new worker installs in the background while
+the old JavaScript keeps running, and there is no moment the user can point at.
+
+- `initPwa()` (called from `main.jsx`) keeps the `ServiceWorkerRegistration` in reach, which
+  is the only object that can re-check the server, and re-checks on `visibilitychange` —
+  coming back to the foreground is what a phone does instead of navigating.
+- **`__BUILD_ID__` / `__BUILD_TIME__` are stamped in by `vite.config.js`** (Netlify's
+  `COMMIT_REF`, else `git rev-parse`, else "dev") and shown in the profile. Being able to
+  *read* the running version is what replaces refreshing and hoping.
+- **An update is never applied during a workout.** Applying reloads the page and the running
+  session lives in memory only, so `checkUpdate` refuses and `UpdateBanner` hides itself.
+- `netlify.toml` carries headers only, no `[build]` block, so it cannot conflict with the
+  deploy settings: `sw.js`, `index.html` and the manifest must revalidate, hashed assets are
+  immutable.
+
 ### Navigation
 
 No router. `state.tab` picks one of 6 tab screens, `state.view` pushes a full-screen overlay

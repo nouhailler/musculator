@@ -11,6 +11,7 @@ import { dailyTargets } from '../lib/macros.js';
 import { makeActivityEntry } from '../lib/activity.js';
 import { startCadence, stopSpeaking, say } from '../lib/voice.js';
 import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme.js';
+import { applyUpdate, checkForUpdate, onUpdateStatus, updateAvailable } from '../lib/pwa.js';
 import { MEALS } from '../data/nutrition.js';
 import { mergeLog, parseNutritorCSV } from '../lib/importNutritor.js';
 import { applyImport, importedFoods } from '../lib/importMeals.js';
@@ -96,6 +97,9 @@ function initialState() {
     nutriDate: dateKey(), nutriMeal: MEALS[0].key,
     foodQuery: '', foodResults: [], foodLoading: false, foodError: '', foodPending: null,
     importStatus: '', importError: '',
+    // Service-worker update state: whether a new build is waiting, and what the
+    // settings button is currently saying.
+    updateReady: updateAvailable(), updateChecking: false, updateStatus: '',
     online: typeof navigator !== 'undefined' ? navigator.onLine : true,
   };
 }
@@ -657,6 +661,10 @@ export function AppProvider({ children }) {
       state.openrouter, state.nutriLog, state.foodCache, state.theme, state.dayNotes, state.analysisLog,
       state.activityLog]);
 
+  // A new build finishing its install is the one thing that can change the
+  // app under the user's feet, so it is surfaced rather than applied silently.
+  useEffect(() => onUpdateStatus((ready) => dispatch({ type: 'PATCH', payload: { updateReady: ready } })), []);
+
   // Puts the chosen palette in force. Under 'système' the teardown unsubscribes
   // from the OS setting, so switching away stops following it.
   useEffect(() => applyTheme(state.theme), [state.theme]);
@@ -784,6 +792,30 @@ export function AppProvider({ children }) {
     importActivity: (log) => dispatch({ type: 'IMPORT_ACTIVITY', log }),
 
     setTheme: (theme) => dispatch({ type: 'SET_THEME', theme }),
+
+    // Asks the server for a new version now. Applying reloads the page, which
+    // is why a running workout blocks it: that state is deliberately ephemeral
+    // and a reload would throw the session away.
+    checkUpdate: async () => {
+      if (state.workout) {
+        dispatch({ type: 'PATCH', payload: { updateStatus: 'Séance en cours — termine-la avant de mettre à jour.' } });
+        return;
+      }
+      dispatch({ type: 'PATCH', payload: { updateChecking: true, updateStatus: 'Recherche…' } });
+      const result = await checkForUpdate();
+      if (result === 'update') {
+        dispatch({ type: 'PATCH', payload: { updateChecking: false, updateStatus: 'Nouvelle version installée, redémarrage…' } });
+        setTimeout(applyUpdate, 400);
+        return;
+      }
+      dispatch({ type: 'PATCH', payload: {
+        updateChecking: false,
+        updateStatus: result === 'current'
+          ? "Tu es déjà sur la dernière version."
+          : "Mise à jour automatique indisponible ici (pas de service worker) — recharge la page.",
+      } });
+    },
+    applyUpdate: () => applyUpdate(),
     setOpenRouter: (patch) => dispatch({ type: 'SET_OPENROUTER', patch }),
 
     setNutriDate: (d) => dispatch({ type: 'SET_NUTRI_DATE', dateKey: d }),
