@@ -149,13 +149,56 @@ export async function searchCiqual(query, limit = 25) {
 
 const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
 
+// --- The user's own foods (foodCache) --------------------------------------
+//
+// Everything ever added to the log is kept in `foodCache`, whatever its source
+// — that cache is what the app calls "les aliments scannés". These two helpers
+// are what the search screen shows it with, so the ordering rule lives in one
+// place rather than in the component.
+
+const byName = (a, b) => a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' });
+
+/**
+ * Cached foods in alphabetical order, cut into runs sharing an initial:
+ * `[{ letter, foods }]`. Accents fold onto the base letter (Épinards → E) and
+ * anything that is not a letter lands in a single "#" group.
+ */
+export function groupByInitial(foods) {
+  const groups = [];
+  for (const f of [...foods].sort(byName)) {
+    // NFD splits accents off their letter but leaves ligatures alone, so Œufs
+    // would land in "#" rather than under the O it is sorted with.
+    const c = norm(f.nom).replace(/œ/g, 'oe').replace(/æ/g, 'ae').charAt(0).toUpperCase();
+    const letter = /[A-Z]/.test(c) ? c : '#';
+    const last = groups[groups.length - 1];
+    if (last && last.letter === letter) last.foods.push(f);
+    else groups.push({ letter, foods: [f] });
+  }
+  return groups;
+}
+
+/**
+ * Cached foods matching a search term. They answer instantly and with no
+ * network, so search puts them ahead of Open Food Facts and of the generic
+ * table — a food you have already logged is almost always the one you meant.
+ */
+export function searchCache(foods, query) {
+  const q = norm(query);
+  if (q.length < 2) return [];
+  return foods.filter((f) => norm(f.nom).includes(q)).sort(byName);
+}
+
 // --- Manual entry ----------------------------------------------------------
 
 export function manualFood({ nom, kcal, proteines, glucides, lipides }) {
+  const name = (nom || '').trim() || 'Aliment perso';
   return {
-    id: `perso-${Date.now()}`,
+    // Derived from the name, not from the clock: the cache is a list the user
+    // reads, and a timestamped id would put one row in it per time the same
+    // home-made dish was typed in.
+    id: `perso-${norm(name).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || Date.now()}`,
     source: 'perso',
-    nom: (nom || '').trim() || 'Aliment perso',
+    nom: name,
     marque: null,
     image: null,
     barcode: null,

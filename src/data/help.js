@@ -114,6 +114,8 @@ export const HELP = {
       ['Scanner', "Utilise la caméra. Sur les navigateurs sans lecteur intégré, un décodeur est téléchargé à la première utilisation. La caméra exige une connexion sécurisée (HTTPS)."],
       ['Recherche', "La table générique répond hors-ligne ; les produits de marque viennent d'Open Food Facts quand le réseau est là."],
       ['Saisie manuelle', "Pour un plat maison ou un aliment sans code-barres. Les valeurs se saisissent pour 100 g."],
+      ['Mes aliments', "Tout ce que tu as déjà ajouté reste listé en bas de l'écran, par ordre alphabétique. Une lettre qui porte plusieurs aliments se replie en accordéon."],
+      ['Priorité à tes aliments', "Dans une recherche, tes aliments déjà utilisés remontent avant Open Food Facts et la table générique."],
       ['Micronutriments', "Les aliments génériques en portent presque toujours, les produits de marque rarement — c'est ce qui fait varier la part « micros » du score."],
     ],
   },

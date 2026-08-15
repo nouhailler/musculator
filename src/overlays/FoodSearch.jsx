@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useApp } from '../state/context.js';
 import { MEALS, mealLabel } from '../data/nutrition.js';
-import { fromOFF, loadCiqual, manualFood, searchCiqual } from '../lib/food.js';
+import { fromOFF, groupByInitial, loadCiqual, manualFood, searchCache, searchCiqual } from '../lib/food.js';
 import { productByBarcode, searchProducts } from '../lib/off.js';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
@@ -11,7 +11,7 @@ import { PrimaryButton, SecondaryButton } from '../components/ui/Button.jsx';
 
 const SOURCE_LABEL = { off: 'Open Food Facts', ciqual: 'Table générique', perso: 'Perso' };
 
-function FoodRow({ food, onPick }) {
+function FoodRow({ food, onPick, mine }) {
   const p = food.per100;
   return (
     <button type="button" onClick={() => onPick(food)} className="row-card" style={{ padding: 11 }}>
@@ -24,7 +24,11 @@ function FoodRow({ food, onPick }) {
         )}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 600 }}>{food.nom}</div>
-        <div style={{ fontSize: 11, color: 'var(--color-neutral-400)' }}>{food.marque || SOURCE_LABEL[food.source]}</div>
+        <div style={{ fontSize: 11, color: 'var(--color-neutral-400)' }}>
+          {food.marque || SOURCE_LABEL[food.source]}
+          {/* Why this row is at the top of a search: it comes from the cache. */}
+          {mine && <span style={{ color: 'var(--color-accent-300)' }}> · déjà utilisé</span>}
+        </div>
         <div style={{ fontSize: 10, color: 'var(--color-neutral-500)', marginTop: 2 }}>
           {p.kcal} kcal · P {p.proteines} · G {p.glucides} · L {p.lipides} /100 g
           {Object.keys(p.micros).length > 0 && ' · micros ✓'}
@@ -50,24 +54,46 @@ export default function FoodSearch() {
 
   useEffect(() => { loadCiqual().catch(() => {}); }, []);
 
-  // Offline-first: the bundled generic table answers instantly and without a
-  // network, and Open Food Facts is layered on top when it is reachable.
+  // Every food ever logged, whatever its source — what the app calls "les
+  // aliments scannés". Shown in full at the bottom of the screen, and given
+  // priority in search results.
+  const cached = useMemo(() => Object.values(state.foodCache), [state.foodCache]);
+  const groups = useMemo(() => groupByInitial(cached), [cached]);
+  const [openLetter, setOpenLetter] = useState(null);
+
+  // The user's own foods first, then the branded results, then the generics.
+  // Deduplicated by id so a cached product is not repeated by the OFF answer
+  // that re-fetched it.
+  const ranked = (mine, rest) => {
+    const seen = new Set();
+    const out = [];
+    for (const f of [...mine, ...rest]) {
+      if (seen.has(f.id)) continue;
+      seen.add(f.id);
+      out.push(f);
+    }
+    return out;
+  };
+
+  // Offline-first: the cache and the bundled generic table answer instantly and
+  // without a network, and Open Food Facts is layered on top when reachable.
   const runSearch = async (q) => {
     const term = (q ?? query).trim();
     if (term.length < 2) return;
     setError(''); setNotice(''); setManual(null);
     setLoading(true);
+    const mine = searchCache(cached, term);
     const local = await searchCiqual(term);
-    setResults(local);
+    setResults(ranked(mine, local));
     try {
       const products = await searchProducts(term);
       const remote = products.map(fromOFF).filter((f) => f.per100.kcal > 0);
-      // Branded results first — a search usually targets a specific product —
+      // Branded results next — a search usually targets a specific product —
       // with the offline generics kept underneath rather than replaced.
-      setResults([...remote, ...local]);
-      if (!remote.length && !local.length) setNotice('Aucun résultat. Essaie un autre terme ou saisis l\'aliment à la main.');
+      setResults(ranked(mine, [...remote, ...local]));
+      if (!mine.length && !remote.length && !local.length) setNotice('Aucun résultat. Essaie un autre terme ou saisis l\'aliment à la main.');
     } catch (e) {
-      setError(local.length
+      setError(mine.length || local.length
         ? `${e.message} Résultats hors-ligne affichés.`
         : e.message);
     } finally {
@@ -160,7 +186,7 @@ export default function FoodSearch() {
           <>
             <div className="section-label">{results.length} résultat{results.length > 1 ? 's' : ''}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 18 }}>
-              {results.map((f) => <FoodRow key={f.id} food={f} onPick={pick} />)}
+              {results.map((f) => <FoodRow key={f.id} food={f} onPick={pick} mine={!!state.foodCache[f.id]} />)}
             </div>
           </>
         )}
@@ -203,6 +229,44 @@ export default function FoodSearch() {
             </button>
           ))}
         </div>
+        {/* Everything already logged, always reachable without searching for it
+            again. A letter carrying a single food shows it directly; a crowded
+            one folds into an accordion, since the cache only ever grows. */}
+        {groups.length > 0 && (
+          <>
+            <div className="section-label">Mes aliments · {cached.length}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 18 }}>
+              {groups.map((g) => (g.foods.length === 1
+                ? <FoodRow key={g.letter} food={g.foods[0]} onPick={pick} mine />
+                : (
+                  <div key={g.letter}>
+                    <button
+                      type="button" onClick={() => setOpenLetter((l) => (l === g.letter ? null : g.letter))}
+                      className="row-card" style={{ padding: 11 }}
+                      aria-expanded={openLetter === g.letter}
+                    >
+                      <div className="icon-tile" style={{ fontFamily: 'var(--font-heading)', fontSize: 17, fontWeight: 600 }}>
+                        {g.letter}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 600 }}>{g.foods.length} aliments</div>
+                        <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {g.foods.map((f) => f.nom).join(', ')}
+                        </div>
+                      </div>
+                      <Icon name={openLetter === g.letter ? 'caret-up' : 'caret-down'} size={16} color="var(--color-neutral-500)" />
+                    </button>
+                    {openLetter === g.letter && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 7, margin: '7px 0 0 14px' }}>
+                        {g.foods.map((f) => <FoodRow key={f.id} food={f} onPick={pick} mine />)}
+                      </div>
+                    )}
+                  </div>
+                )))}
+            </div>
+          </>
+        )}
+
         <div style={{ height: 8 }} />
         <Tag variant="outline">Les aliments scannés restent utilisables hors-ligne</Tag>
         <div style={{ height: 24 }} />

@@ -10,6 +10,21 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **"Mes aliments" on the food search screen** — everything already logged (`foodCache`) is
+  now listed below the meal picker, so a food used before never has to be scanned or searched
+  for again.
+  - Alphabetical and accent-insensitive: *Épinards* files under E, *Œufs* under O, digits
+    under a single "#". A letter carrying one food shows it as a normal row; a letter
+    carrying several folds into an accordion, one open at a time, since the cache only ever
+    grows and the section sits at the bottom of an already long screen.
+  - Search results are re-ranked: your own foods first (marked *déjà utilisé*), then Open
+    Food Facts, then the generic table, deduplicated by id so a cached product is not
+    repeated by the OFF answer that re-fetched it. They also answer with no network, so the
+    offline fallback now has something to show for a food you have logged before.
+  - `manualFood()` derives its id from the name instead of `Date.now()`. The cache is a list
+    the user reads now, and a timestamped id put one row in it per time the same home-made
+    dish was typed in.
+
 - **Dictated meal import** — a new "Importer un repas dicté" screen on the Nutrition tab takes
   the JSON produced by a chat assistant (Claude or ChatGPT) from a spoken description of a
   meal, and files its foods into the right day and the right meal.

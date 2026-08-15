@@ -185,6 +185,12 @@ food came from. Two invariants matter:
   energy with the Atwater factors in that case; treating 0 as a real value shows a 0 kcal
   lentil and wrecks the calorie half of the score.
 
+**`foodCache` is user-visible now**, not just an offline safety net: the search screen lists
+all of it under "Mes aliments" and ranks it above every other source. Two consequences —
+a food's `id` is what deduplicates that list, so ids have to stay stable and deterministic
+per food rather than carrying a timestamp, and anything written into the cache shows up in
+the user's own list. `groupByInitial`/`searchCache` in `lib/food.js` own the ordering.
+
 Every tunable number — score weights, micronutrient references, protein g/kg, calorie
 tolerance, activity multipliers — lives in `data/nutrition.js`. Don't scatter them back into
 the maths or the UI.

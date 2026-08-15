@@ -117,7 +117,8 @@ a hand-typed food are interchangeable:
 
 - **Open Food Facts** — barcode lookup and text search. The retry/timeout policy and the
   relevance ranking are ported from Nutritor's `openFoodFacts.ts`. Every fetched product is
-  cached in `foodCache` so it can be re-added with no network.
+  cached in `foodCache` so it can be re-added with no network. The whole cache is listed at
+  the bottom of the search screen, alphabetically, and takes priority in search results.
 - **CIQUAL** (`src/data/ciqual.js`) — 3 167 generic French foods bundled with the app, so
   search works fully offline and covers foods that have no barcode. It also carries the
   micronutrients OFF usually lacks, which is what makes the score's third component work.
