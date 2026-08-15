@@ -41,6 +41,11 @@ function loadPersisted() {
       nutriLog: (p.nutriLog && typeof p.nutriLog === 'object') ? p.nutriLog : {},
       // Every food ever fetched, kept so it can be re-added with no network.
       foodCache: (p.foodCache && typeof p.foodCache === 'object') ? p.foodCache : {},
+      // Free-text notes, one per day, kept independent of the session log.
+      dayNotes: (p.dayNotes && typeof p.dayNotes === 'object') ? p.dayNotes : {},
+      // Cached AI analysis per day, so it survives a reload. Invalidated
+      // whenever a new session is logged for that day (see finishWorkout).
+      analysisLog: (p.analysisLog && typeof p.analysisLog === 'object') ? p.analysisLog : {},
     };
   } catch {
     return null;
@@ -51,7 +56,11 @@ function initialState() {
   const persisted = loadPersisted() || {
     profile: defaultProfile, customWorkouts: [], sessionLog: [], disclaimerAcked: false, voiceOn: true,
     openrouter: { key: '', model: '' }, nutriLog: {}, foodCache: {}, theme: DEFAULT_THEME,
+    dayNotes: {}, analysisLog: {},
   };
+  // A cached analysis for today survives a reload — it is invalidated
+  // (see finishWorkout) the moment a new session makes it stale.
+  const cachedAnalysis = persisted.analysisLog[dateKey()] || null;
   return {
     ...persisted,
     tab: 'home', view: null,
@@ -63,8 +72,8 @@ function initialState() {
     builder: { name: '', duree: 30, objectif: 'Prise de masse', exos: [], pickerOpen: false },
     workout: null,
     completeSummary: null,
-    analysis: null, analysisLoading: false, analysisError: '',
-    analysisSource: null,
+    analysis: cachedAnalysis ? cachedAnalysis.analysis : null, analysisLoading: false, analysisError: '',
+    analysisSource: cachedAnalysis ? cachedAnalysis.source : null,
     // Transient model-picker state: fetched live, never persisted.
     orModels: [], orLoading: false, orError: '', orStatus: '',
     // Nutrition: the day being viewed, plus transient search state.
@@ -129,6 +138,15 @@ function buildSessionEntry(state, partial = false) {
   };
 }
 
+// A new session for the day makes any cached analysis stale — this is the one
+// place a session is logged from, so it is also the one place that has to
+// evict it (both the live copy and the persisted-per-day one).
+function withStaleAnalysisFor(state, dateKeyStr) {
+  const analysisLog = { ...state.analysisLog };
+  delete analysisLog[dateKeyStr];
+  return { analysis: null, analysisError: '', analysisLog };
+}
+
 // Ends a workout, writes it to the journal and shows the summary. `partial` is
 // a run stopped before its end — logged all the same, from what was done.
 function finishWorkout(state, w, partial = false) {
@@ -148,7 +166,31 @@ function finishWorkout(state, w, partial = false) {
       partial,
     },
     sessionLog: [entry, ...state.sessionLog],
-    analysis: null, analysisError: '',
+    ...withStaleAnalysisFor(state, entry.dateKey),
+  };
+}
+
+// A session logged after the fact — worked out outside the app, so it never
+// touches the workout state machine. Kept simple: no per-set tracking exists
+// to draw a series count from, so a picked program is assumed completed as
+// prescribed and a free-form entry carries no exercises at all.
+function buildManualSessionEntry(state, { progId, customName, minutes }) {
+  const elapsedSec = Math.max(60, Math.round((Number(minutes) || 0) * 60));
+  const kcal = Math.round((elapsedSec / 60) * KCAL_PER_MIN);
+  const base = { id: `s-${Date.now()}`, dateKey: dateKey(), heure: nowHM(), elapsedSec, kcal, partial: false, manual: true };
+  if (!progId) {
+    return { ...base, programId: 'manual', programNom: (customName || '').trim() || 'Séance libre', series: 0, exerciseIds: [], exosTotal: 0, muscles: [] };
+  }
+  const program = progById(progId, state.customWorkouts);
+  const exObjs = program.exos.map(exById);
+  return {
+    ...base,
+    programId: program.id,
+    programNom: program.nom,
+    series: program.exos.reduce((a, id) => a + effSeries(program, id), 0),
+    exerciseIds: program.exos,
+    exosTotal: program.exos.length,
+    muscles: [...new Set(exObjs.map((e) => e.muscle.split(' · ')[0]))],
   };
 }
 
@@ -444,7 +486,20 @@ function reducer(state, action) {
     case 'ANALYSIS_ERROR':
       return { ...state, analysisLoading: false, analysisError: action.message };
     case 'ANALYSIS_DONE':
-      return { ...state, analysisLoading: false, analysis: action.analysis, analysisSource: action.source };
+      return {
+        ...state, analysisLoading: false, analysis: action.analysis, analysisSource: action.source,
+        analysisLog: { ...state.analysisLog, [dateKey()]: { analysis: action.analysis, source: action.source } },
+      };
+
+    // --- Journal (today) ----------------------------------------------------
+    case 'DELETE_SESSION':
+      return { ...state, sessionLog: state.sessionLog.filter((s) => s.id !== action.id) };
+    case 'ADD_MANUAL_SESSION': {
+      const entry = buildManualSessionEntry(state, action);
+      return { ...state, sessionLog: [entry, ...state.sessionLog], ...withStaleAnalysisFor(state, entry.dateKey) };
+    }
+    case 'SET_DAY_NOTE':
+      return { ...state, dayNotes: { ...state.dayNotes, [action.dateKey]: action.text } };
 
     default:
       return state;
@@ -470,12 +525,14 @@ export function AppProvider({ children }) {
         nutriLog: state.nutriLog,
         foodCache: state.foodCache,
         theme: state.theme,
+        dayNotes: state.dayNotes,
+        analysisLog: state.analysisLog,
       }));
     } catch {
       // storage unavailable (private mode / quota) — app still works, just without persistence
     }
   }, [state.profile, state.customWorkouts, state.sessionLog, state.disclaimerAcked, state.voiceOn,
-      state.openrouter, state.nutriLog, state.foodCache, state.theme]);
+      state.openrouter, state.nutriLog, state.foodCache, state.theme, state.dayNotes, state.analysisLog]);
 
   // Puts the chosen palette in force. Under 'système' the teardown unsubscribes
   // from the OS setting, so switching away stops following it.
@@ -586,6 +643,10 @@ export function AppProvider({ children }) {
     cancelEdit: () => dispatch({ type: 'CANCEL_EDIT' }),
     quitWorkout: () => { stopSpeaking(); dispatch({ type: 'QUIT_WORKOUT' }); },
     finishHome: () => dispatch({ type: 'FINISH_HOME' }),
+
+    deleteSession: (id) => dispatch({ type: 'DELETE_SESSION', id }),
+    addManualSession: (progId, customName, minutes) => dispatch({ type: 'ADD_MANUAL_SESSION', progId, customName, minutes }),
+    setDayNote: (text) => dispatch({ type: 'SET_DAY_NOTE', dateKey: dateKey(), text }),
 
     setTheme: (theme) => dispatch({ type: 'SET_THEME', theme }),
     setOpenRouter: (patch) => dispatch({ type: 'SET_OPENROUTER', patch }),

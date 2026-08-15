@@ -49,7 +49,10 @@ export const HELP = {
     intro: "Le récapitulatif de tes séances du jour, et l'analyse de ta journée d'entraînement.",
     points: [
       ['Séances partielles', "Une séance arrêtée en cours est marquée en orange : seul le travail réellement fait est compté."],
-      ['Analyse IA', "Par défaut elle est calculée sur l'appareil, sans réseau. Tu peux brancher un modèle OpenRouter dans ton profil."],
+      ['Ajouter une séance', "Tu t'es entraîné hors appli ? « Ajouter une séance » l'ajoute au journal après coup, avec ou sans programme."],
+      ['Supprimer une séance', "L'icône corbeille sur une carte retire définitivement cette séance du journal."],
+      ['Alimentation du jour', "Reprend ce que tu as consigné côté Nutrition. Ce n'est pas un bilan calorique complet : la dépense de repos n'y entre pas."],
+      ['Analyse IA', "Par défaut elle est calculée sur l'appareil, sans réseau. Tu peux brancher un modèle OpenRouter dans ton profil. Le résultat est gardé pour la journée, pas recalculé à chaque visite."],
       ['Portée', "L'analyse ne remplace pas l'avis d'un professionnel de santé."],
     ],
   },

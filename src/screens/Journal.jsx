@@ -1,18 +1,62 @@
-import { useApp, useDerived } from '../state/context.js';
+import { useMemo, useState } from 'react';
+import { useApp, useDerived, allPrograms } from '../state/context.js';
 import { exById } from '../data/exercises.js';
+import { MEALS } from '../data/nutrition.js';
+import { totals } from '../lib/macros.js';
 import { fmt, todayLabel } from '../lib/format.js';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
-import { PrimaryButton } from '../components/ui/Button.jsx';
+import { PrimaryButton, SecondaryButton, IconCircleButton } from '../components/ui/Button.jsx';
+import { Field, TextInput, TextArea } from '../components/ui/Field.jsx';
+import { PillGroup } from '../components/ui/Pill.jsx';
+
+const LIBRE = 'Libre';
+
+function AddSessionForm({ onClose }) {
+  const { state, actions } = useApp();
+  const progs = allPrograms(state.customWorkouts);
+  const [progNom, setProgNom] = useState(LIBRE);
+  const [customName, setCustomName] = useState('');
+  const [minutes, setMinutes] = useState(20);
+
+  const submit = () => {
+    const prog = progs.find((p) => p.nom === progNom);
+    actions.addManualSession(prog ? prog.id : null, customName, minutes);
+    onClose();
+  };
+
+  return (
+    <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 13, marginBottom: 10 }}>
+      <div className="section-label">Programme suivi</div>
+      <PillGroup options={[LIBRE, ...progs.map((p) => p.nom)]} value={progNom} onChange={setProgNom} style={{ marginBottom: 12 }} />
+      {progNom === LIBRE && (
+        <Field label="Description" style={{ marginBottom: 10 }}>
+          <TextInput value={customName} onChange={setCustomName} placeholder="ex. Course à pied, natation…" />
+        </Field>
+      )}
+      <Field label="Durée (min)" style={{ marginBottom: 12 }}>
+        <TextInput type="number" value={minutes} onChange={setMinutes} textAlign="center" />
+      </Field>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <SecondaryButton onClick={onClose} style={{ flex: 1, justifyContent: 'center' }}>Annuler</SecondaryButton>
+        <PrimaryButton icon="check-circle" onClick={submit} disabled={!(Number(minutes) > 0)} style={{ flex: 1 }}>Ajouter</PrimaryButton>
+      </div>
+    </div>
+  );
+}
 
 export default function Journal() {
   const { state, actions } = useApp();
-  const { journalToday } = useDerived();
+  const { journalToday, today } = useDerived();
+  const [addOpen, setAddOpen] = useState(false);
 
   const dayTime = journalToday.reduce((a, j) => a + j.elapsedSec, 0);
   const dayKcal = journalToday.reduce((a, j) => a + j.kcal, 0);
   const daySeries = journalToday.reduce((a, j) => a + j.series, 0);
   const an = state.analysis;
+
+  const nutriEntries = useMemo(() => MEALS.flatMap((m) => state.nutriLog[today]?.[m.key] || []), [state.nutriLog, today]);
+  const nutriTotals = useMemo(() => totals(nutriEntries), [nutriEntries]);
 
   return (
     <div className="screen mscroll">
@@ -26,6 +70,33 @@ export default function Journal() {
         <div className="stat-box"><div className="stat-value">{fmt(dayTime)}</div><div className="stat-label">temps</div></div>
         <div className="stat-box"><div className="stat-value">{dayKcal}</div><div className="stat-label">kcal</div></div>
         <div className="stat-box"><div className="stat-value">{daySeries}</div><div className="stat-label">séries</div></div>
+      </div>
+
+      <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 13, marginBottom: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: nutriEntries.length ? 10 : 4 }}>
+          <span style={{ fontSize: 13, fontWeight: 600 }}>Alimentation du jour</span>
+          <button type="button" onClick={() => actions.goTab('nutrition')}
+            style={{ background: 'none', border: 'none', color: 'var(--color-accent-200)', fontSize: 11, cursor: 'pointer', padding: 0 }}>
+            Voir le détail
+          </button>
+        </div>
+        {nutriEntries.length === 0 ? (
+          <div style={{ fontSize: 12, color: 'var(--color-neutral-400)' }}>Rien noté aujourd'hui.</div>
+        ) : (
+          <>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+              <div className="stat-box"><div className="stat-value">{nutriTotals.kcal}</div><div className="stat-label">kcal</div></div>
+              <div className="stat-box"><div className="stat-value">{nutriTotals.proteines}</div><div className="stat-label">prot. (g)</div></div>
+              <div className="stat-box"><div className="stat-value">{nutriTotals.glucides}</div><div className="stat-label">gluc. (g)</div></div>
+              <div className="stat-box"><div className="stat-value">{nutriTotals.lipides}</div><div className="stat-label">lip. (g)</div></div>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--color-neutral-500)', lineHeight: 1.5 }}>
+              {dayKcal > 0
+                ? `${nutriTotals.kcal} kcal mangées pour ${dayKcal} kcal brûlées à l'entraînement — pas un bilan calorique complet, la dépense de repos n'y est pas.`
+                : `${nutriTotals.kcal} kcal mangées aujourd'hui.`}
+            </div>
+          </>
+        )}
       </div>
 
       <PrimaryButton
@@ -89,13 +160,20 @@ export default function Journal() {
 
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', margin: '4px 0 10px' }}>
         <h6 style={{ color: 'var(--color-neutral-400)', margin: 0 }}>Séances d'aujourd'hui · {journalToday.length}</h6>
+        {!addOpen && (
+          <button type="button" onClick={() => setAddOpen(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', color: 'var(--color-accent-200)', fontSize: 11, cursor: 'pointer', padding: 0 }}>
+            <Icon name="plus" size={13} />Ajouter une séance
+          </button>
+        )}
       </div>
+      {addOpen && <AddSessionForm onClose={() => setAddOpen(false)} />}
       {journalToday.length === 0 && (
         <div className="empty-state" style={{ padding: '24px 10px', background: 'var(--color-surface)', border: '1px dashed var(--color-divider)', borderRadius: 'var(--radius-md)' }}>
           <Icon name="moon" size={24} style={{ display: 'block', margin: '0 auto 8px' }} />Aucune séance encore aujourd'hui.<br />Lance-toi depuis l'accueil !
         </div>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}>
         {journalToday.map((j) => (
           <div key={j.id} style={{
             background: 'var(--color-surface)',
@@ -103,9 +181,12 @@ export default function Journal() {
             borderLeft: j.partial ? '3px solid var(--color-warn)' : undefined,
             borderRadius: 'var(--radius-md)', padding: 13,
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: j.partial ? 5 : 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: j.partial || j.manual ? 5 : 8 }}>
               <div style={{ fontSize: 14, fontWeight: 600 }}>{j.programNom}</div>
-              <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>{j.heure}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>{j.heure}</span>
+                <IconCircleButton icon="trash" size={26} title="Supprimer cette séance" onClick={() => actions.deleteSession(j.id)} style={{ color: 'var(--color-neutral-500)' }} />
+              </div>
             </div>
             {/* Older entries predate the flag, so they simply read as complete. */}
             {j.partial && (
@@ -114,16 +195,34 @@ export default function Journal() {
                 Séance partielle{j.exosTotal ? ` — arrêtée après ${j.exerciseIds.length} exercice${j.exerciseIds.length > 1 ? 's' : ''} sur ${j.exosTotal}` : ' — arrêtée en cours'}
               </div>
             )}
+            {j.manual && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--color-neutral-400)', marginBottom: 8 }}>
+                <Icon name="note-pencil" size={13} style={{ flex: 'none' }} />
+                Ajoutée manuellement
+              </div>
+            )}
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 9 }}>
               <Tag variant="neutral" icon="clock">{fmt(j.elapsedSec)}</Tag>
               <Tag variant="neutral" icon="flame">{j.kcal} kcal</Tag>
-              <Tag variant="neutral">{j.series} série{j.series > 1 ? 's' : ''}</Tag>
+              {j.series > 0 && <Tag variant="neutral">{j.series} série{j.series > 1 ? 's' : ''}</Tag>}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', lineHeight: 1.5 }}>{j.exerciseIds.map((id) => exById(id).nom).join(' · ')}</div>
-            <div style={{ fontSize: 11, color: 'var(--color-accent-300)', marginTop: 4 }}>Muscles : {j.muscles.join(' · ')}</div>
+            {j.exerciseIds.length > 0 && (
+              <>
+                <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', lineHeight: 1.5 }}>{j.exerciseIds.map((id) => exById(id).nom).join(' · ')}</div>
+                <div style={{ fontSize: 11, color: 'var(--color-accent-300)', marginTop: 4 }}>Muscles : {j.muscles.join(' · ')}</div>
+              </>
+            )}
           </div>
         ))}
       </div>
+
+      <h6 style={{ color: 'var(--color-neutral-400)', marginBottom: 8 }}>Notes du jour</h6>
+      <TextArea
+        value={state.dayNotes[today] || ''}
+        onChange={actions.setDayNote}
+        placeholder="Ressenti, courbatures, sommeil…"
+        style={{ marginBottom: 20 }}
+      />
     </div>
   );
 }
