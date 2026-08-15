@@ -526,6 +526,57 @@ export const DEMOS = {
       { hip: [44, 70], torso: -90, arm: [90, 90], leg: [-33.8, 83.9], foot: 58 },
     ],
   },
+
+  // --- Isolations du haut du corps, ajoutées après coup --------------------
+  // Debout, hanche à y=58 : cuisse 16 + tibia 16 sous le sol à y=90.
+  //
+  // De profil, une silhouette debout bras le long du corps se réduit à un
+  // trait vertical : bras, tronc et jambes se superposent. Les membres sont
+  // donc légèrement écartés de la verticale et les deux côtés dissociés
+  // (armB / legB), ce qui donne au corps une épaisseur sans lui faire prendre
+  // une position qu'on ne tient pas vraiment.
+  'curl-biceps': {
+    scene: 'ground',
+    weights: true,
+    frames: [
+      // bas : bras tendus le long du corps, mains à hauteur de hanche
+      { hip: [50, 58], torso: -90, arm: [80, 78], armB: [95, 97], leg: [96, 84], legB: [84, 96], foot: 0 },
+      // haut : coude fixe, avant-bras remonté à hauteur d'épaule
+      { hip: [50, 58], torso: -90, arm: [85, -70], armB: [95, -60], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  // Vu de face plutôt que de profil : de profil, une élévation latérale se
+  // confondrait avec une élévation frontale. Les deux bras s'écartent en T.
+  'elevations-laterales': {
+    scene: 'ground',
+    weights: true,
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [80, 82], armB: [100, 98], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [5, 0], armB: [175, 180], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  // Coude vers l'avant plutôt qu'à la verticale : de profil, un bras tendu au
+  // -dessus de la tête disparaît derrière elle et le geste ne se lit plus.
+  'extension-triceps': {
+    scene: 'ground',
+    weights: true,
+    frames: [
+      // tendu : haltère au-dessus de la tête
+      { hip: [50, 58], torso: -90, arm: [-60, -80], armB: [-75, -70], leg: [96, 84], legB: [84, 96], foot: 0 },
+      // fléchi : coude haut et fixe, avant-bras derrière la nuque
+      { hip: [50, 58], torso: -90, arm: [-60, 170], armB: [-75, 178], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  // Allongé : les épaules ne quittent pas le sol, seules les jambes montent —
+  // c'est ce qui le distingue du crunch.
+  'releve-jambes': {
+    scene: 'mat',
+    frames: [
+      { hip: [56, 86], torso: 178, arm: [0, 0], leg: [-8, -8], foot: 0 },
+      { hip: [56, 86], torso: 178, arm: [0, 0], leg: [-85, -85], foot: -85 },
+    ],
+  },
+
 };
 
 export function demoFor(exId) {

@@ -12,10 +12,10 @@
 // Every id here must exist in data/exercises.js, and every muscle id must have
 // at least one zone in overlays/BodyMap.jsx, otherwise it can't be selected.
 export const MUSCLES = [
-  { id: 'epaules', nom: 'Épaules (deltoïdes)', region: 'front', exos: ['developpe', 'pompes'] },
+  { id: 'epaules', nom: 'Épaules (deltoïdes)', region: 'front', exos: ['developpe', 'elevations-laterales', 'pompes'] },
   { id: 'pecs', nom: 'Pectoraux', region: 'front', exos: ['pompes', 'dips', 'developpe'] },
-  { id: 'biceps', nom: 'Biceps', region: 'front', exos: ['tractions', 'rowing'] },
-  { id: 'abdos', nom: 'Abdominaux', region: 'front', exos: ['gainage', 'abdos', 'mountain', 'copenhagen'] },
+  { id: 'biceps', nom: 'Biceps', region: 'front', exos: ['curl-biceps', 'tractions', 'rowing'] },
+  { id: 'abdos', nom: 'Abdominaux', region: 'front', exos: ['abdos', 'releve-jambes', 'gainage', 'mountain', 'copenhagen'] },
   {
     id: 'quads',
     nom: 'Quadriceps',
@@ -34,7 +34,7 @@ export const MUSCLES = [
   },
   { id: 'trapezes', nom: 'Trapèzes', region: 'back', exos: ['tractions', 'rowing', 'developpe'] },
   { id: 'dos', nom: 'Dos (grand dorsal)', region: 'back', exos: ['tractions', 'rowing'] },
-  { id: 'triceps', nom: 'Triceps', region: 'back', exos: ['dips', 'pompes', 'developpe'] },
+  { id: 'triceps', nom: 'Triceps', region: 'back', exos: ['dips', 'extension-triceps', 'pompes', 'developpe'] },
   {
     id: 'fessiers',
     nom: 'Fessiers (grand fessier)',

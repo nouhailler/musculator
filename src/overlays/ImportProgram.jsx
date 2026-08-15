@@ -82,7 +82,7 @@ export default function ImportProgram() {
           {showPrompt && (
             <div style={{ borderTop: '1px solid var(--color-divider)', padding: 12 }}>
               <p style={{ fontSize: 12, color: 'var(--color-neutral-300)', margin: '0 0 10px', lineHeight: 1.55 }}>
-                Le prompt contient les 45 exercices de l'app : l'assistant choisit dedans plutôt que
+                Le prompt contient les 49 exercices de l'app : l'assistant choisit dedans plutôt que
                 d'en inventer, sinon la séance perdrait sa démo animée et son coach vocal. Colle-le
                 dans un Projet Claude ou un GPT personnalisé, puis demande ton programme.
               </p>

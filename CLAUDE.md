@@ -12,7 +12,14 @@ npm run lint       # oxlint
 npm run gen-icons  # regenerate public/icons/*.png
 npm run gen-prompt # regenerate PROMPT-REPAS.md from src/lib/mealPrompt.js
 npm run shots      # regenerate docs/screenshots/*.webp (needs a build served on :4173)
+npm run check-catalogue  # verify the content invariants below
 ```
+
+**`npm run check-catalogue` enforces what this file documents.** Every rule below about ids
+existing, icons being registered, `mat` being a closed vocabulary, every exercise having a
+demo and cues, every muscle having a body-map zone — none of it was checked by anything until
+the catalogue started growing. Run it after touching `src/data/`; it is the only thing
+standing between a typo and a blank demo in the middle of a session.
 
 `docs/screenshots/` is the README's gallery and is **generated** (`scripts/shots.mjs` seeds a
 fixed demo state, so the shots are reproducible and show populated screens). Re-run it when a
@@ -203,6 +210,12 @@ tooling:
   the library filter matches it literally.
 - Every muscle id needs at least one zone in `overlays/BodyMap.jsx` or it can't be selected.
 
+Adding an exercise is four files at once: the sheet in `exercises.js`, a demo in `demos.js`,
+voice cues in `cues.js`, and the id in the right muscle's `exos` in `muscles.js`. A pose that
+stands still is worth drawing carefully — **seen from the side, a standing figure with arms
+along the body collapses into a single vertical line**, so the limbs are angled a few degrees
+off vertical and the two sides split (`armB` / `legB`) to give the body some thickness.
+
 Every entry carries `sollicitation` and `surcharge`, which the sheet's "Muscle ciblé" block
 renders. They answer different questions from the fields around them and should not drift
 into each other: `sollicitation` is the *mechanism* (contraction regime, where in the range
@@ -223,7 +236,7 @@ viewBox); `lib/pose.js` does forward kinematics, interpolation and per-exercise 
 framing and is kept React-free; `components/ExerciseDemo.jsx` mutates SVG nodes imperatively
 via refs so a running animation never re-renders the tree above it.
 
-All 45 exercises have a demo. `demoFor(id)` still returns `null` for an unknown id and both
+All 49 exercises have a demo. `demoFor(id)` still returns `null` for an unknown id and both
 call sites degrade to the icon, so that guard stays — but a new exercise without a `DEMOS`
 entry is a gap, not a supported state.
 

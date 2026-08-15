@@ -63,6 +63,24 @@ grouped by date and reference the commit they landed in.
     one `OBJECTIFS` in `data/programs.js`, so a saved workout cannot carry an objective the
     profile is unable to express.
 
+- **Four exercises, and a validator to make adding them safe** — the catalogue grows from 45
+  to 49.
+  - `npm run check-catalogue` enforces the invariants CLAUDE.md documents and nothing
+    checked: every id referenced in `muscles`/`programs`/`demos`/`cues`/`similaires` exists,
+    every icon is registered in `Icon.jsx`, `mat` and `niveau` stay in their closed
+    vocabularies, every exercise has a demo and cues, every muscle has a body-map zone, a cue
+    stays under four words. Proven against deliberately broken data before being trusted —
+    its own first two rules were wrong and reported 128 false problems on a healthy
+    catalogue.
+  - **Curl biceps, élévations latérales, extension triceps nuque, relevé de jambes.** The
+    gaps were not guessed: they are what the dictated-programme import kept substituting for.
+    The catalogue had *no* biceps exercise at all, and a single compound movement each for
+    the deltoids and triceps. Each comes with its full sheet, an animated demo, voice cues
+    and its place on the muscle map — the four files an exercise actually spans.
+  - Authoring the poses turned up something worth writing down: seen from the side, a
+    standing figure with arms along the body is a vertical line. The limbs are angled a few
+    degrees off vertical and the two sides split so the body reads as a body.
+
 - **"Importer un programme dicté"** on the Programmes screen — ask Claude or ChatGPT for a
   training plan, paste the JSON, and each session of the plan becomes a custom workout with
   the prescribed sets, reps, load and rest.

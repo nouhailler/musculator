@@ -82,6 +82,10 @@ CATALOGUE (id · nom · muscle principal · niveau · matériel)
   pistol-squat · Pistol squat · Quadriceps · Grand fessier · Avancé · Sans matériel/Maison
   ghr · Glute-ham raise (GHR) · Ischio-jambiers · Grand fessier · Avancé · Salle
   hyperextension-45 · Hyperextension 45° · Grand fessier · Ischio-jambiers · Intermédiaire · Salle
+  curl-biceps · Curl biceps haltères · Biceps · Débutant · Haltères/Maison
+  elevations-laterales · Élévations latérales · Deltoïdes · Débutant · Haltères/Maison
+  extension-triceps · Extension triceps nuque · Triceps · Débutant · Haltères/Maison
+  releve-jambes · Relevé de jambes · Grand droit · Intermédiaire · Sans matériel/Maison
 
 SÉANCES
 - Une séance Musculator = une liste d'exercices faite d'un coup. Un programme sur la semaine

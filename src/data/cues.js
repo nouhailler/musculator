@@ -75,6 +75,14 @@ export const CUES = {
   // --- Mollets ---
   'mollets-debout': { beat: 1300, seq: ['Monte', 'Descends lentement'] },
   'mollets-assis': { beat: 1300, seq: ['Monte', 'Redescends'] },
+
+  // Isolations du haut du corps : la première consigne est celle du geste qui
+  // commence à la première image, comme partout ailleurs ici.
+  'curl-biceps': { beat: 1400, seq: ['Monte', 'Descends'] },
+  'elevations-laterales': { beat: 1400, seq: ['Écarte', 'Redescends'] },
+  'extension-triceps': { beat: 1500, seq: ['Fléchis', 'Tends'] },
+  'releve-jambes': { beat: 1600, seq: ['Lève', 'Contrôle'] },
+
 };
 
 export const ENCOURAGEMENTS = [

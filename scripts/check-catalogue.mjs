@@ -1,0 +1,148 @@
+// Checks the catalogue's invariants. Run with: npm run check-catalogue
+//
+// CLAUDE.md documents a dozen rules that hold the content together — every id
+// referenced somewhere must exist in exercises.js, every icon slug must be
+// registered, every exercise needs a demo and voice cues, `mat` uses a closed
+// vocabulary — and until now nothing enforced any of them. They held because
+// the catalogue was written in one go; they will not hold while it grows.
+//
+// Reads the data modules directly and greps the two files that are code rather
+// than data (the icon registry and the body map's zones), so a rule can only
+// pass by actually being satisfied.
+import { readFileSync } from 'node:fs';
+
+const { EXERCISES, PATTERNS } = await import('../src/data/exercises.js');
+const { PROGRAMS } = await import('../src/data/programs.js');
+const { MUSCLES, ZONES } = await import('../src/data/muscles.js');
+const { DEMOS } = await import('../src/data/demos.js');
+const { CUES } = await import('../src/data/cues.js');
+const { BADGE_DEFS } = await import('../src/data/badges.js');
+const { MEALS } = await import('../src/data/nutrition.js');
+
+const problems = [];
+const fail = (rule, detail) => problems.push(`${rule}: ${detail}`);
+
+const ids = EXERCISES.map((e) => e.id);
+const idSet = new Set(ids);
+
+// --- Exercises -------------------------------------------------------------
+
+const MAT = new Set(['Sans matériel', 'Haltères', 'Élastique', 'Salle', 'Maison']);
+const NIVEAUX = new Set(['Débutant', 'Intermédiaire', 'Avancé']);
+const REQUIRED = [
+  'nom', 'muscle', 'primaire', 'niveau', 'mat', 'series', 'reps', 'repos', 'icon',
+  'desc', 'conseils', 'depart', 'mouvement', 'respiration', 'erreurs',
+  'sollicitation', 'surcharge',
+];
+
+const seen = new Set();
+for (const e of EXERCISES) {
+  const where = `exercise "${e.id}"`;
+  if (seen.has(e.id)) fail('duplicate id', e.id);
+  seen.add(e.id);
+
+  for (const field of REQUIRED) {
+    const v = e[field];
+    const empty = v == null || v === '' || (Array.isArray(v) && !v.length);
+    if (empty) fail('missing field', `${where} has no "${field}"`);
+  }
+  if (!NIVEAUX.has(e.niveau)) fail('niveau', `${where} has "${e.niveau}"`);
+  for (const m of e.mat || []) if (!MAT.has(m)) fail('mat vocabulary', `${where} uses "${m}"`);
+  if (e.pattern && !PATTERNS.includes(e.pattern)) fail('pattern', `${where} uses "${e.pattern}"`);
+  for (const s of e.similaires || []) {
+    if (!idSet.has(s)) fail('broken similaire', `${where} points at "${s}"`);
+    if (s === e.id) fail('self similaire', where);
+  }
+  // Both are user-facing prose and answer different questions; a copy-paste
+  // between them is the failure mode worth catching.
+  if (e.sollicitation && e.sollicitation === e.surcharge) fail('duplicate prose', `${where} has the same sollicitation and surcharge`);
+}
+
+// --- Cross-references ------------------------------------------------------
+
+for (const id of ids) {
+  if (!DEMOS[id]) fail('missing demo', `"${id}" has no entry in demos.js`);
+  if (!CUES[id]) fail('missing cues', `"${id}" has no entry in cues.js`);
+}
+for (const id of Object.keys(DEMOS)) if (!idSet.has(id)) fail('orphan demo', id);
+for (const id of Object.keys(CUES)) if (!idSet.has(id)) fail('orphan cue', id);
+
+for (const m of MUSCLES) {
+  for (const id of m.exos) if (!idSet.has(id)) fail('broken muscle exo', `muscle "${m.id}" points at "${id}"`);
+}
+const inAMuscle = new Set(MUSCLES.flatMap((m) => m.exos));
+for (const id of ids) {
+  if (!inAMuscle.has(id)) fail('unreachable exercise', `"${id}" belongs to no muscle, so the body map cannot surface it`);
+}
+for (const p of PROGRAMS) {
+  for (const id of p.exos) if (!idSet.has(id)) fail('broken program exo', `program "${p.id}" points at "${id}"`);
+  if (!p.exos.length) fail('empty program', p.id);
+}
+
+// The zone bridge only works if every muscle name it lists is one an exercise
+// actually records — otherwise a priority zone can never be hit.
+const musclesLogged = new Set(EXERCISES.map((e) => e.muscle.split(' · ')[0]));
+for (const z of ZONES) {
+  const known = z.muscles.filter((m) => musclesLogged.has(m));
+  if (!known.length) fail('unreachable zone', `"${z.label}" lists no muscle any exercise records`);
+}
+
+// --- Voice cues ------------------------------------------------------------
+
+for (const [id, cue] of Object.entries(CUES)) {
+  if (!Array.isArray(cue.seq) || !cue.seq.length) fail('empty cue', id);
+  if (!(cue.beat > 0)) fail('cue beat', `"${id}" has no positive beat`);
+  // `say()` cancels whatever is still speaking, so a cue longer than one beat
+  // is cut off by the next one.
+  for (const line of cue.seq || []) {
+    if (String(line).split(/\s+/).length > 4) fail('long cue', `"${id}" says "${line}" — keep it to three words`);
+  }
+}
+
+// --- Demos -----------------------------------------------------------------
+
+for (const [id, demo] of Object.entries(DEMOS)) {
+  if (!Array.isArray(demo.frames) || !demo.frames.length) fail('empty demo', id);
+  for (const f of demo.frames || []) {
+    // A pose is `hip: [x, y]` plus one angle per joint (see demos.js).
+    if (!Array.isArray(f.hip) || f.hip.length !== 2 || f.hip.some((n) => typeof n !== 'number')) {
+      fail('demo frame', `"${id}" has a frame whose hip is not [x, y]`);
+    }
+    if (typeof f.torso !== 'number') fail('demo frame', `"${id}" has a frame without a torso angle`);
+  }
+}
+
+// --- Icons -----------------------------------------------------------------
+
+const registry = readFileSync(new URL('../src/components/ui/Icon.jsx', import.meta.url), 'utf8');
+// The registry packs several entries per line, so this matches pairs anywhere
+// rather than at the start of a line.
+const registered = new Set([...registry.matchAll(/(?:^|[{,]\s*)'?([a-z][a-z0-9-]*)'?\s*:\s*[A-Z]/g)].map((m) => m[1]));
+const iconUsers = [
+  ...EXERCISES.map((e) => [`exercise "${e.id}"`, e.icon]),
+  ...PROGRAMS.map((p) => [`program "${p.id}"`, p.icon]),
+  ...BADGE_DEFS.map((b) => [`badge "${b.id}"`, b.icon]),
+  ...MEALS.map((m) => [`meal "${m.key}"`, m.icon]),
+];
+for (const [where, icon] of iconUsers) {
+  if (icon && !registered.has(icon)) fail('unregistered icon', `${where} uses "${icon}" — add it to Icon.jsx`);
+}
+
+// --- Body map zones --------------------------------------------------------
+
+const bodyMap = readFileSync(new URL('../src/overlays/BodyMap.jsx', import.meta.url), 'utf8');
+for (const m of MUSCLES) {
+  if (!new RegExp(`id: '${m.id}'`).test(bodyMap)) {
+    fail('muscle without zone', `"${m.id}" has no zone in BodyMap.jsx, so it cannot be selected`);
+  }
+}
+
+// --- Report ----------------------------------------------------------------
+
+console.log(`${EXERCISES.length} exercises · ${Object.keys(DEMOS).length} demos · ${Object.keys(CUES).length} cues · ${MUSCLES.length} muscles · ${PROGRAMS.length} programs`);
+if (problems.length) {
+  console.error(`\n${problems.length} problem${problems.length > 1 ? 's' : ''}:`);
+  for (const p of problems) console.error('  ✗', p);
+  process.exit(1);
+}
+console.log('✓ catalogue consistent');
