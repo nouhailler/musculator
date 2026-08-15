@@ -144,7 +144,7 @@ export default function ImportMeals() {
                       <div key={w.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, fontSize: 11.5 }}>
                         <span style={{ color: 'var(--color-neutral-200)' }}>{w.km > 0 ? `${w.km} km` : `${w.minutes} min`}</span>
                         <span style={{ color: 'var(--color-neutral-500)', fontVariantNumeric: 'tabular-nums' }}>
-                          {walkKcal({ km: w.km, minutes: w.minutes, poids: poidsOf(state.profile) })} kcal
+                          {walkKcal({ km: w.km, minutes: w.minutes, poids: poidsOf(state.profile), type: w.type })} kcal
                         </span>
                       </div>
                     ))}

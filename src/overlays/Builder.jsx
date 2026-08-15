@@ -1,11 +1,12 @@
 import { useApp } from '../state/context.js';
 import { exById, exercisesByPattern } from '../data/exercises.js';
+import { OBJECTIFS } from '../data/programs.js';
 import Icon from '../components/ui/Icon.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';
 import { Field, TextInput } from '../components/ui/Field.jsx';
 import { SecondaryButton, PrimaryButton, IconCircleButton } from '../components/ui/Button.jsx';
 
-const OBJ_OPTS = ['Prise de masse', 'Force', 'Tonus', 'Endurance'];
+
 
 export default function Builder() {
   const { state, actions } = useApp();
@@ -30,7 +31,7 @@ export default function Builder() {
           </Field>
         </div>
         <Field label="Objectif" style={{ marginBottom: 6 }} />
-        <PillGroup options={OBJ_OPTS} value={b.objectif} onChange={(v) => actions.builderSetField('objectif', v)} style={{ marginBottom: 20 }} />
+        <PillGroup options={OBJECTIFS} value={b.objectif} onChange={(v) => actions.builderSetField('objectif', v)} style={{ marginBottom: 20 }} />
 
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 10 }}>
           <h6 style={{ color: 'var(--color-neutral-400)', margin: 0 }}>Exercices</h6>

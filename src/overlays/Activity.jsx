@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useApp } from '../state/context.js';
-import { SOURCES } from '../data/activity.js';
-import { dayActivity, paceKmh, paceLabel, poidsOf, trackStep, walkKcal } from '../lib/activity.js';
+import { DEFAULT_WALK_TYPE, SOURCES, WALK_TYPES, walkType } from '../data/activity.js';
+import {
+  dayActivity, estimateFromDuration, paceKmh, paceLabel, poidsOf, tailleOf, trackStep, walkKcal,
+} from '../lib/activity.js';
 import { parseActivityFile } from '../lib/importActivity.js';
 import { dateKey, fmt, nowHM } from '../lib/format.js';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
 import { Field } from '../components/ui/Field.jsx';
+import { PillGroup } from '../components/ui/Pill.jsx';
 import { PrimaryButton, SecondaryButton, IconCircleButton } from '../components/ui/Button.jsx';
 
 const km1 = (n) => (Math.round(n * 100) / 100).toLocaleString('fr-FR', { maximumFractionDigits: 2 });
@@ -115,13 +118,39 @@ export default function Activity() {
   const [jour, setJour] = useState(dateKey());
   const [km, setKm] = useState('');
   const [minutes, setMinutes] = useState('');
+  const [type, setType] = useState(DEFAULT_WALK_TYPE);
+  // The distance is derived from the duration until the user types one of
+  // their own — a measured distance always beats an estimated one.
+  const [kmAuto, setKmAuto] = useState(true);
   const [heure, setHeure] = useState(nowHM());
   const [mode, setMode] = useState('form');
   const [imported, setImported] = useState(null);
   const [error, setError] = useState('');
 
   const day = dayActivity(state.activityLog, jour, state.profile);
-  const previewKcal = walkKcal({ km, minutes, poids });
+  const previewKcal = walkKcal({ km, minutes, poids, type });
+  const tailleConnue = Number(state.profile.taille) > 0;
+  const estime = (mins, gait) => estimateFromDuration({
+    minutes: mins, taille: tailleOf(state.profile), sexe: state.profile.sexe, type: gait,
+  });
+  const apercu = Number(minutes) > 0 ? estime(minutes, type) : null;
+
+  // Duration in, distance out — recomputed on every change to either the
+  // duration or the gait, unless a real distance has been typed.
+  const onMinutes = (v) => {
+    setMinutes(v);
+    if (kmAuto) setKm(Number(v) > 0 ? String(estime(v, type).km) : '');
+  };
+  const onType = (label) => {
+    const t = WALK_TYPES.find((x) => x.label === label)?.key || DEFAULT_WALK_TYPE;
+    setType(t);
+    if (kmAuto && Number(minutes) > 0) setKm(String(estime(minutes, t).km));
+  };
+  const onKm = (v) => { setKm(v); setKmAuto(false); };
+  const rederive = () => {
+    setKmAuto(true);
+    setKm(Number(minutes) > 0 ? String(estime(minutes, type).km) : '');
+  };
 
   const addManual = () => {
     if (!(Number(km) > 0) && !(Number(minutes) > 0)) {
@@ -129,8 +158,8 @@ export default function Activity() {
       return;
     }
     setError('');
-    actions.addActivity({ km, minutes, heure, source: 'manuel' }, jour);
-    setKm(''); setMinutes('');
+    actions.addActivity({ km, minutes, heure, type, source: 'manuel' }, jour);
+    setKm(''); setMinutes(''); setKmAuto(true);
   };
 
   const saveTracked = ({ km: trackedKm, minutes: trackedMin }) => {
@@ -171,14 +200,21 @@ export default function Activity() {
             </PrimaryButton>
 
             <div className="section-label">Saisie manuelle</div>
+            <Field label="Type de marche" style={{ marginBottom: 4 }} />
+            <PillGroup
+              options={WALK_TYPES.map((t) => t.label)}
+              value={walkType(type).label}
+              onChange={onType}
+              style={{ marginBottom: 12 }}
+            />
             <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
-              <Field label="Distance (km)" style={{ flex: 1 }}>
-                <input className="input" type="number" inputMode="decimal" step="0.1" value={km}
-                  onChange={(e) => setKm(e.target.value)} placeholder="6" style={{ textAlign: 'center' }} />
-              </Field>
               <Field label="Durée (min)" style={{ flex: 1 }}>
                 <input className="input" type="number" inputMode="numeric" value={minutes}
-                  onChange={(e) => setMinutes(e.target.value)} placeholder="70" style={{ textAlign: 'center' }} />
+                  onChange={(e) => onMinutes(e.target.value)} placeholder="70" style={{ textAlign: 'center' }} />
+              </Field>
+              <Field label="Distance (km)" style={{ flex: 1 }}>
+                <input className="input" type="number" inputMode="decimal" step="0.1" value={km}
+                  onChange={(e) => onKm(e.target.value)} placeholder="6" style={{ textAlign: 'center' }} />
               </Field>
               <Field label="Heure" style={{ flex: 1 }}>
                 <input className="input" type="time" value={heure} onChange={(e) => setHeure(e.target.value)} />
@@ -187,13 +223,32 @@ export default function Activity() {
             <Field label="Jour" style={{ marginBottom: 10 }}>
               <input className="input" type="date" value={jour} max={dateKey()} onChange={(e) => setJour(e.target.value)} />
             </Field>
+            {/* How the distance was arrived at, so an estimated number never
+                looks like a measured one. */}
+            {apercu && kmAuto && (
+              <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', marginBottom: 8, lineHeight: 1.5 }}>
+                Distance déduite de la durée : pas de {apercu.pasM} cm × {walkType(type).cadence} pas/min,
+                soit ≈ {apercu.pas.toLocaleString('fr-FR')} pas et {apercu.kmh.toLocaleString('fr-FR')} km/h.
+                {!tailleConnue && ' Taille non renseignée : calcul sur 170 cm par défaut.'}
+                {' '}Corrige la distance si tu la connais.
+              </div>
+            )}
+            {apercu && !kmAuto && (
+              <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', marginBottom: 8, lineHeight: 1.5 }}>
+                Distance saisie à la main.{' '}
+                <button type="button" onClick={rederive}
+                  style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', fontSize: 11, color: 'var(--color-accent-200)', cursor: 'pointer' }}>
+                  Redéduire de la durée
+                </button>
+              </div>
+            )}
             {(Number(km) > 0 || Number(minutes) > 0) && (
               <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', marginBottom: 10, lineHeight: 1.5 }}>
                 ≈ {previewKcal} kcal
                 {Number(km) > 0
-                  ? ` (0,5 kcal × ${poids} kg × ${km1(Number(km))} km)`
-                  : ' estimées depuis la durée, à allure normale'}
-                {paceKmh({ km, minutes }) ? ` · allure ${paceKmh({ km, minutes }).toFixed(1)} km/h (${paceLabel(paceKmh({ km, minutes }))})` : ''}
+                  ? ` (${String(walkType(type).kcalPerKgKm).replace('.', ',')} kcal × ${poids} kg × ${km1(Number(km))} km)`
+                  : ' estimées depuis la durée'}
+                {paceKmh({ km, minutes }) ? ` · allure ${paceKmh({ km, minutes }).toFixed(1).replace('.', ',')} km/h (${paceLabel(paceKmh({ km, minutes }))})` : ''}
               </div>
             )}
             {error && <div style={{ fontSize: 12, color: 'var(--color-warn)', marginBottom: 10 }}>{error}</div>}
@@ -255,8 +310,8 @@ export default function Activity() {
                       {e.km > 0 && e.minutes > 0 && <span style={{ color: 'var(--color-neutral-400)', fontWeight: 400 }}> · {e.minutes} min</span>}
                     </div>
                     <div style={{ fontSize: 10, color: 'var(--color-neutral-500)' }}>
-                      {SOURCES[e.source] || e.source}{e.heure ? ` · ${e.heure}` : ''}{e.note ? ` · ${e.note}` : ''}
-                      {' · '}{walkKcal({ km: e.km, minutes: e.minutes, poids })} kcal
+                      {walkType(e.type).label} · {SOURCES[e.source] || e.source}{e.heure ? ` · ${e.heure}` : ''}{e.note ? ` · ${e.note}` : ''}
+                      {' · '}{walkKcal({ km: e.km, minutes: e.minutes, poids, type: e.type })} kcal
                     </div>
                   </div>
                   <IconCircleButton icon="trash" size={26} title="Supprimer"

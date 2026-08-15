@@ -33,6 +33,36 @@ grouped by date and reference the commit they landed in.
     new session for that day (live or added after the fact) evicts the cached entry, since it
     would otherwise describe a day that has since changed.
 
+- **A walk's distance can be deduced from its duration** — type the minutes and the distance
+  fills itself in from height and gait.
+  - Step length is height × coefficient (0.415 men, 0.413 women), but a step length alone
+    cannot turn minutes into kilometres: it takes a cadence too. Each gait therefore carries
+    both, calibrated so the resulting speed lands where that gait actually sits — flânerie
+    ≈ 3.3 km/h, normale ≈ 4.7, rapide ≈ 5.7, course ≈ 10.3.
+  - The sex coefficient is applied relative to the reference the gait numbers are expressed
+    against, which keeps it the 0.5 % adjustment it really is rather than a second opinion
+    on the whole estimate.
+  - **A typed distance always wins** over a derived one, and the estimate shows its workings
+    (step length, cadence, step count, resulting speed) so it never reads as a measurement.
+    "Redéduire de la durée" comes back.
+  - Running is stored as its own gait and costs ~0.9 kcal/kg/km instead of a walk's 0.5 —
+    logging a run at the walking rate would have halved it.
+
+- **"Recomposition corporelle"**, as a training objective and as its own nutrition goal.
+  - Losing fat and building muscle at once is not either neighbour: `maintien` asks too
+    little protein to build while losing, and `seche`'s deficit is too deep to build at all.
+    The new goal is a light deficit (−5 %) with 2 g of protein per kilo — the protein does
+    the muscle side, the deficit does the fat side. Targets land between the two: 2 470 kcal
+    and 156 g of protein where Maintien gives 2 600 / 125 and Sèche 2 132 / 156.
+  - Each nutrition goal now carries its own explanation, shown under the picker. The
+    difference between four pills is not guessable from their labels, and this one is worth
+    stating plainly: fat does not turn into muscle, the two run in parallel.
+  - The progress analysis knows it: recomposition is the one goal broken by an excursion in
+    *either* direction, and walking reads as the right tool for it.
+  - The objective list was duplicated between the profile and the workout builder; it is now
+    one `OBJECTIFS` in `data/programs.js`, so a saved workout cannot carry an objective the
+    profile is unable to express.
+
 - **An update button, and a visible version** — a new Netlify deploy could take many reloads
   to reach an installed phone, with no way to tell whether it had landed.
   - The service worker is now registered by the app (`src/lib/pwa.js`, `registerType:
@@ -335,6 +365,10 @@ grouped by date and reference the commit they landed in.
   parti !". Affects the 10 names that have one; the displayed name is unchanged.
 
 ### Fixed
+
+- `goalDef()` and the profile fell back to `GOALS[1]` for an unknown nutrition goal — a
+  positional index into a list that is ordered for the picker, so inserting Recomposition
+  into it silently changed the fallback. Both resolve by key now.
 
 - **Deleting a session left the day's cached AI analysis in place**, still describing a day
   that had since changed — adding one already evicted it. `withStaleAnalysisFor` is now

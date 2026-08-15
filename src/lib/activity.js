@@ -12,8 +12,9 @@
 // itself: it is shown next to the intake, the way the journal shows training
 // kcal, and nothing here presents a net balance.
 import {
-  DEFAULT_KMH, FALLBACK_WEIGHT, KCAL_PER_KG_KM, MAX_ACCURACY_M, MAX_JUMP_M,
-  MIN_STEP_M, PACE_METS,
+  DEFAULT_KMH, DEFAULT_WALK_TYPE, FALLBACK_TAILLE, FALLBACK_WEIGHT, KCAL_PER_KG_KM,
+  MAX_ACCURACY_M, MAX_JUMP_M, MIN_STEP_M, PACE_METS, STEP_COEF_BY_SEX, STEP_COEF_REF,
+  walkType,
 } from '../data/activity.js';
 
 const num = (v) => {
@@ -22,6 +23,41 @@ const num = (v) => {
 };
 
 export const poidsOf = (profile) => num(profile?.poids) || FALLBACK_WEIGHT;
+export const tailleOf = (profile) => num(profile?.taille) || FALLBACK_TAILLE;
+
+// --- Turning a duration into a distance ------------------------------------
+
+/**
+ * Step length in metres, from height and gait.
+ *
+ * The gait coefficient does the work — a stroll and a run differ by a factor
+ * of two — and the sex coefficient is applied relative to the reference the
+ * gait numbers are expressed against, which makes it the 0.5 % adjustment it
+ * really is rather than a second opinion on the whole estimate.
+ */
+export function stepLength({ taille, sexe, type }) {
+  const t = num(taille) || FALLBACK_TAILLE;
+  const gait = walkType(type);
+  const sexCoef = STEP_COEF_BY_SEX[sexe] ?? STEP_COEF_REF;
+  return (t / 100) * gait.stepCoef * (sexCoef / STEP_COEF_REF);
+}
+
+/**
+ * Distance a duration covers at a given gait: step length × cadence × minutes.
+ * A step length alone cannot answer this — how often the step is taken is half
+ * the question, which is why each gait carries its own cadence.
+ *
+ * @returns {{ km, pas, kmh, pasM }} the estimate and what it was built from,
+ * so the UI can show its workings instead of a number out of nowhere.
+ */
+export function estimateFromDuration({ minutes, taille, sexe, type }) {
+  const m = num(minutes);
+  const gait = walkType(type);
+  const pasM = stepLength({ taille, sexe, type });
+  const pas = Math.round(gait.cadence * m);
+  const km = Math.round((pas * pasM) / 10) / 100;
+  return { km, pas, pasM: Math.round(pasM * 100), kmh: m ? Math.round((km / m) * 60 * 10) / 10 : 0 };
+}
 
 /** Walking pace in km/h, or null when one of the two is missing. */
 export function paceKmh({ km, minutes }) {
@@ -39,10 +75,13 @@ export const paceLabel = (kmh) => (kmh ? PACE_METS.find((p) => kmh < p.maxKmh)?.
  * about pace. A duration alone falls back to METs at the pace it implies (or
  * a default one), minus the resting MET so both paths measure the same thing.
  */
-export function walkKcal({ km, minutes, poids }) {
+export function walkKcal({ km, minutes, poids, type }) {
   const kg = num(poids) || FALLBACK_WEIGHT;
   const d = num(km);
-  if (d) return Math.round(KCAL_PER_KG_KM * kg * d);
+  // Per-kilometre cost depends on the gait: running is about twice a walk's,
+  // and entries logged before types existed simply read as a normal walk.
+  const perKm = walkType(type).kcalPerKgKm ?? KCAL_PER_KG_KM;
+  if (d) return Math.round(perKm * kg * d);
 
   const t = num(minutes);
   if (!t) return 0;
@@ -52,11 +91,12 @@ export function walkKcal({ km, minutes, poids }) {
 }
 
 /** A stored entry, from whatever the UI collected. */
-export function makeActivityEntry({ km, minutes, source, heure, note }) {
+export function makeActivityEntry({ km, minutes, source, heure, note, type }) {
   return {
     id: `act-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     km: Math.round(num(km) * 100) / 100,
     minutes: Math.round(num(minutes)),
+    type: type || DEFAULT_WALK_TYPE,
     source: source || 'manuel',
     heure: heure || null,
     note: note || null,
@@ -71,7 +111,7 @@ export function dayActivity(activityLog, dateKey, profile) {
   // Recomputed from the current weight rather than summed from what was stored:
   // a corrected weight should fix past estimates, not leave them frozen.
   const poids = poidsOf(profile);
-  const kcal = list.reduce((a, e) => a + walkKcal({ km: e.km, minutes: e.minutes, poids }), 0);
+  const kcal = list.reduce((a, e) => a + walkKcal({ km: e.km, minutes: e.minutes, poids, type: e.type }), 0);
   return { km: Math.round(km * 100) / 100, minutes, kcal, entries: list, count: list.length };
 }
 
@@ -91,7 +131,7 @@ export function activityWindow(activityLog, days, profile, from = new Date()) {
     for (const e of list) {
       km += num(e.km);
       minutes += num(e.minutes);
-      kcal += walkKcal({ km: e.km, minutes: e.minutes, poids });
+      kcal += walkKcal({ km: e.km, minutes: e.minutes, poids, type: e.type });
     }
   }
   return {

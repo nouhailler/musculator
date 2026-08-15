@@ -250,7 +250,12 @@ the day is scored out of 80 rather than punished for Open Food Facts' gaps.
 
 Targets come from the training profile the app already collects (Mifflin-St Jeor scaled by
 the weekly training frequency), shifted by a nutrition goal that is deliberately separate
-from the training objective — you can train for force while cutting. Each of the four
+from the training objective — you can train for force while cutting. Four goals: *Prise de
+masse*, *Recomposition*, *Maintien*, *Sèche*. Recomposition — losing fat and building muscle
+at the same time — has its own numbers rather than borrowing a neighbour's, since Maintien
+asks too little protein to build while losing and Sèche's deficit is too deep to build at
+all; it pairs a light 5 % deficit with 2 g of protein per kilo. Each goal explains itself
+under the picker. Each of the four
 (calories, protein, carbs, fat) can also be set by hand under *Mon profil & objectifs →
 Objectifs quotidiens*; the computed value stays visible as the field's placeholder, so an
 override is never a one-way door.

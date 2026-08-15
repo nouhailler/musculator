@@ -1,5 +1,6 @@
 import { useApp } from '../state/context.js';
-import { GOALS, DEFAULT_GOAL } from '../data/nutrition.js';
+import { GOALS, DEFAULT_GOAL, goalDef } from '../data/nutrition.js';
+import { OBJECTIFS } from '../data/programs.js';
 import { autoTargets, dailyTargets } from '../lib/macros.js';
 import { DEFAULT_KM_TARGET } from '../data/activity.js';
 import { BUILD_ID, BUILD_TIME } from '../lib/pwa.js';
@@ -10,7 +11,7 @@ import { SecondaryButton, PrimaryButton } from '../components/ui/Button.jsx';
 import Icon from '../components/ui/Icon.jsx';
 
 const SEXE_OPTS = ['Homme', 'Femme', 'Autre'];
-const OBJ_OPTS = ['Prise de masse', 'Force', 'Tonus', 'Endurance'];
+
 const ZONE_OPTS = ['Pectoraux', 'Dos', 'Jambes', 'Épaules', 'Bras', 'Abdos'];
 const EXP_OPTS = ['Débutant', 'Intermédiaire', 'Avancé'];
 const NUTRI_GOAL_OPTS = GOALS.map((g) => g.label);
@@ -146,7 +147,7 @@ export default function Profile() {
         </div>
 
         <Field label="Objectif principal" style={{ marginBottom: 6 }} />
-        <PillGroup options={OBJ_OPTS} value={p.objectif} onChange={set('objectif')} style={{ marginBottom: 16 }} />
+        <PillGroup options={OBJECTIFS} value={p.objectif} onChange={set('objectif')} style={{ marginBottom: 16 }} />
 
         <Field label="Zones musculaires prioritaires" style={{ marginBottom: 6 }} />
         <PillGroup options={ZONE_OPTS} value={p.zones} onChange={actions.toggleZone} multi style={{ marginBottom: 18 }} />
@@ -164,10 +165,16 @@ export default function Profile() {
         <Field label="Objectif nutrition" style={{ marginBottom: 6 }} />
         <PillGroup
           options={NUTRI_GOAL_OPTS}
-          value={(GOALS.find((g) => g.key === (p.objectifNutrition || DEFAULT_GOAL)) || GOALS[1]).label}
+          value={goalDef(p.objectifNutrition || DEFAULT_GOAL).label}
           onChange={(label) => actions.setProfileField('objectifNutrition', GOALS.find((g) => g.label === label)?.key || DEFAULT_GOAL)}
-          style={{ marginBottom: 16 }}
+          style={{ marginBottom: 6 }}
         />
+        {/* What the chosen goal actually does to the targets — the difference
+            between "Recomposition" and its neighbours is not guessable from a
+            pill label. */}
+        <p style={{ fontSize: 11, color: 'var(--color-neutral-400)', margin: '0 0 16px', lineHeight: 1.5 }}>
+          {goalDef(p.objectifNutrition || DEFAULT_GOAL).aide}
+        </p>
 
         <TargetFields />
 

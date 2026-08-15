@@ -249,6 +249,12 @@ feeds the carb/fat split, so the plate stays coherent with what the user set. `a
 returns the pure calculation, which the profile screen shows as the field's placeholder so an
 override is always reversible. `targets.manuel` says which are set by hand.
 
+`GOALS` is ordered for the picker, so **nothing may resolve a goal by position** — `goalDef()`
+falls back by key. Each goal carries its own `aide`, shown under the picker: four pills whose
+difference is a calorie delta and a protein ratio are not self-explanatory, and
+`recomp` in particular has to say what body recomposition is (two processes at once, not fat
+turning into muscle) and who it works for.
+
 Every tunable number — score weights, micronutrient references, protein g/kg, calorie
 tolerance, activity multipliers — lives in `data/nutrition.js`. Don't scatter them back into
 the maths or the UI.
@@ -311,6 +317,11 @@ never stored twice.
   nothing presents a net balance.
 - `dayActivity` recomputes kcal from the **current** weight rather than summing what was
   stored, so correcting a weight fixes past estimates instead of leaving them frozen.
+- **A duration can stand in for a distance.** `estimateFromDuration` multiplies step length
+  (height × gait coefficient, nudged by sex) by the gait's cadence — a step length alone
+  cannot answer "how far in 40 minutes", which is why `WALK_TYPES` carries both and the pair
+  is calibrated against the speed that gait really implies. A typed distance always wins, and
+  the UI shows the workings so an estimate never passes for a measurement.
 - **No background step counting exists for a PWA**, so the app does not pretend to have it:
   the GPS mode is an explicit "suivre ma marche" that only runs with the app open. Fixes are
   filtered by `trackStep` (accuracy, minimum step, jump) — a phone standing still reports a

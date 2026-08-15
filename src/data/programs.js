@@ -41,3 +41,14 @@ export function soloProgram(ex) {
     isSolo: true,
   };
 }
+
+// The training objectives the profile and the workout builder both offer. One
+// list, because a value that exists in one and not the other would let a saved
+// workout carry an objective the profile cannot express.
+//
+// "Recomposition corporelle" is losing fat and building muscle at the same
+// time — two distinct processes, not fat "turning into" muscle. It is its own
+// objective because what it asks for is neither: enough volume to grow, and an
+// energy balance that stays close to maintenance rather than swinging either
+// way. See GOALS in data/nutrition.js for the nutrition side of it.
+export const OBJECTIFS = ['Prise de masse', 'Recomposition corporelle', 'Force', 'Tonus', 'Endurance'];

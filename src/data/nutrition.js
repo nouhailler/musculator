@@ -17,14 +17,38 @@ export const mealLabel = (key) => MEALS.find((m) => m.key === key)?.label || key
 // Nutrition goal, kept separate from the training `objectif` (Prise de masse /
 // Force / Tonus / Endurance) because they answer different questions — you can
 // train for force while cutting.
+// `recomp` is losing fat and building muscle at once — two processes running
+// together, not fat converting into muscle. It needs its own numbers because
+// neither neighbour fits: `maintien` asks too little protein to build while
+// losing, and `seche`'s deficit is too deep to build at all. A light deficit
+// carries the fat side, and the protein does the muscle side — which is why
+// this goal is the one where the protein target matters more than the calorie
+// one. It works best for someone new, returning, or carrying more fat; for a
+// lean advanced lifter it is slow, and the app says so in the profile.
 export const GOALS = [
-  { key: 'masse', label: 'Prise de masse', kcalDelta: +0.12, proteinPerKg: 1.8 },
-  { key: 'maintien', label: 'Maintien', kcalDelta: 0, proteinPerKg: 1.6 },
-  { key: 'seche', label: 'Sèche', kcalDelta: -0.18, proteinPerKg: 2.0 },
+  {
+    key: 'masse', label: 'Prise de masse', kcalDelta: +0.12, proteinPerKg: 1.8,
+    aide: "Surplus de 12 % et 1,8 g de protéines par kilo : construire, en acceptant de prendre un peu de gras au passage.",
+  },
+  {
+    key: 'recomp', label: 'Recomposition', kcalDelta: -0.05, proteinPerKg: 2.0,
+    aide: "Déficit léger de 5 % et 2 g de protéines par kilo : perdre du gras et gagner du muscle en même temps. Le gras ne se transforme pas en muscle — ce sont deux processus menés de front, et ici c'est la protéine qui fait le travail, pas l'écart calorique. Efficace en reprise, en début de pratique ou avec du gras à perdre ; lent si tu es déjà sec et entraîné.",
+  },
+  {
+    key: 'maintien', label: 'Maintien', kcalDelta: 0, proteinPerKg: 1.6,
+    aide: "Ni surplus ni déficit, 1,6 g de protéines par kilo : tenir son poids et sa masse musculaire.",
+  },
+  {
+    key: 'seche', label: 'Sèche', kcalDelta: -0.18, proteinPerKg: 2.0,
+    aide: "Déficit franc de 18 % et 2 g de protéines par kilo : perdre du gras vite, en préservant le muscle. Trop creusé pour en gagner.",
+  },
 ];
 
 export const DEFAULT_GOAL = 'maintien';
-export const goalDef = (key) => GOALS.find((g) => g.key === key) || GOALS[1];
+// Resolved by key, never by position: GOALS is ordered for the picker, so a
+// positional fallback silently changes meaning the day a goal is inserted.
+export const goalDef = (key) => GOALS.find((g) => g.key === key)
+  || GOALS.find((g) => g.key === DEFAULT_GOAL);
 
 // Activity multiplier applied to BMR, picked from the profile's weekly training
 // frequency — the app already asks for it, so there is nothing new to fill in.

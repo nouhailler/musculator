@@ -49,6 +49,8 @@ export const HELP = {
     intro: "Les kilomètres parcourus comptent dans ta dépense du jour, au même titre qu'une séance.",
     points: [
       ['Trois façons', "Saisir la distance à la main, suivre la marche au GPS, ou importer une trace GPX / un export CSV (Strava, Apple Santé, Google Fit)."],
+      ['Distance déduite', "Entre seulement la durée : la distance se calcule depuis ta taille et le type de marche (longueur du pas × cadence). Le détail du calcul est affiché. Si tu connais la distance réelle, saisis-la — elle prend le dessus."],
+      ['Type de marche', "Flânerie, normale, rapide ou course à pied. Il change la longueur du pas et la cadence, donc la distance — et pour la course, le coût par kilomètre, environ deux fois celui de la marche."],
       ['Suivi GPS', "Il ne tourne que l'app ouverte, écran allumé — aucun navigateur ne compte les pas en arrière-plan. Il exige une connexion sécurisée (HTTPS) et ton autorisation."],
       ['Calcul', "0,5 kcal par kilo et par kilomètre, net du métabolisme de repos. Sans distance, la durée est convertie à allure normale."],
       ['Pas dans la cible', "La marche s'ajoute à ta dépense, jamais à ta cible calorique : celle-ci contient déjà ton activité quotidienne, elle serait comptée deux fois."],

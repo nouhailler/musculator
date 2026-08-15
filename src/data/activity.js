@@ -18,8 +18,43 @@ export const PACE_METS = [
   { maxKmh: Infinity, met: 5.0, label: 'très rapide' },
 ];
 
-// Assumed when only a duration is known.
+// Assumed when only a duration is known and nothing better can be derived.
 export const DEFAULT_KMH = 4.8;
+
+// ---------------------------------------------------------------------------
+// Deducing a distance from a duration
+// ---------------------------------------------------------------------------
+//
+// Step length scales with height, and the usual coefficients are 0.415 for men
+// and 0.413 for women — a 0.5 % difference, which is why the *gait* is what
+// really drives the estimate here and the sex only nudges it.
+//
+// A step length alone cannot turn minutes into kilometres, though: it takes a
+// cadence too. Each type therefore carries both, and the pair is calibrated so
+// the resulting speed lands where that gait actually sits — a stroll near
+// 3.3 km/h, a normal walk near 4.7, a brisk one near 5.7, a run near 10.3.
+export const WALK_TYPES = [
+  { key: 'flanerie', label: 'Flânerie', stepCoef: 0.35, cadence: 95, kcalPerKgKm: 0.5 },
+  { key: 'normale', label: 'Normale', stepCoef: 0.414, cadence: 110, kcalPerKgKm: 0.5 },
+  { key: 'rapide', label: 'Rapide', stepCoef: 0.45, cadence: 125, kcalPerKgKm: 0.5 },
+  // Running costs roughly twice as much per kilometre as walking, and unlike
+  // walking the cost barely moves with speed. Logging a run at the walking
+  // rate would halve it.
+  { key: 'course', label: 'Course à pied', stepCoef: 0.65, cadence: 155, kcalPerKgKm: 0.9 },
+];
+
+export const DEFAULT_WALK_TYPE = 'normale';
+export const walkType = (key) => WALK_TYPES.find((t) => t.key === key)
+  || WALK_TYPES.find((t) => t.key === DEFAULT_WALK_TYPE);
+
+// Applied on top of the gait's coefficient, relative to the "normale"
+// reference it is expressed against.
+export const STEP_COEF_BY_SEX = { Homme: 0.415, Femme: 0.413, Autre: 0.414 };
+export const STEP_COEF_REF = 0.414;
+
+// Median adult height, used only to keep the estimate working before the
+// profile is filled in — the UI says when it is falling back to it.
+export const FALLBACK_TAILLE = 170;
 
 // Fallback weight when the profile has none, same value nutrition uses.
 export const FALLBACK_WEIGHT = 70;

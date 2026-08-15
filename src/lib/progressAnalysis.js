@@ -116,6 +116,7 @@ function tendance(now, before, unite) {
 
 const OBJECTIF_ATTENDU = {
   'Prise de masse': 'du volume et un apport calorique au-dessus de la dépense',
+  'Recomposition corporelle': "du volume, beaucoup de protéines, et un apport calorique proche de l'équilibre — c'est le seul objectif où la régularité compte plus que l'écart calorique",
   Force: 'des séries lourdes et peu nombreuses, avec du repos entre elles',
   Tonus: 'de la régularité plus que des séances longues',
   Endurance: 'des séances fréquentes et une durée qui monte progressivement',
@@ -223,6 +224,11 @@ export function generateProgressAnalysis({ profile, sessionLog, nutriLog, target
     if (kcalPart != null && n.objectif === 'Prise de masse' && kcalPart < 95) {
       aFaire.push(`Prise de masse et ${kcalPart} % de ta cible calorique ne vont pas ensemble : il manque environ ${n.cibleKcal - n.kcal} kcal par jour.`);
     }
+    // Recomposition lives near the target, on either side: an excursion in
+    // *either* direction is what breaks it, unlike the two one-way goals.
+    if (kcalPart != null && n.objectif === 'Recomposition' && Math.abs(kcalPart - 100) > 15) {
+      aFaire.push(`Recomposition : tu es à ${kcalPart} % de ta cible calorique, or elle demande de rester proche de l'équilibre. C'est la protéine qui fait le muscle ici, pas le surplus.`);
+    }
     if (kcalPart != null && n.objectif === 'Sèche' && kcalPart > 105) {
       aFaire.push(`Sèche et ${kcalPart} % de ta cible calorique ne vont pas ensemble : environ ${n.kcal - n.cibleKcal} kcal de trop par jour.`);
     }
@@ -239,7 +245,9 @@ export function generateProgressAnalysis({ profile, sessionLog, nutriLog, target
       ? ` En prise de masse, ces ${m.kcalParSemaine} kcal par semaine mangent ton surplus : compense-les dans l'assiette.`
       : s.nutrition.objectif === 'Sèche'
         ? ` En sèche, c'est ton levier le moins coûteux : ${m.kcalParSemaine} kcal par semaine sans fatigue supplémentaire.`
-        : '';
+        : s.nutrition.objectif === 'Recomposition'
+          ? ` En recomposition, c'est exactement le bon outil : ${m.kcalParSemaine} kcal par semaine creusées sans empiéter sur ta récupération en salle.`
+          : '';
     points.push({
       key: 'marche',
       titre: 'Marche',
