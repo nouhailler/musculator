@@ -63,6 +63,24 @@ grouped by date and reference the commit they landed in.
     one `OBJECTIFS` in `data/programs.js`, so a saved workout cannot carry an objective the
     profile is unable to express.
 
+- **The dictated import reads three more shapes an assistant actually produces.** ChatGPT
+  answered `"repas": { "petit_dejeuner": [...] }` — meals as a *map* keyed by meal rather
+  than a list — which the parser rejected outright with "aucun repas exploitable".
+  - A meal map is now folded back into blocks, its key being the meal.
+  - A composed dish that nests its ingredients (`"frittata", composition: [...]`) has them
+    flattened into the meal. Left nested, the dish was dropped for having no values of its
+    own and its four ingredients went with it.
+  - Any remaining `…kcal…100…` key is read as the per-100 g energy: the "100" anchors it, so
+    it cannot pick up a portion total by mistake.
+  - CIQUAL matching gained *soft* tokens — descriptive words and figures that qualify a food
+    without identifying it ("fraîches", "bio", "nature", "82 %"). They are no longer required
+    of a candidate, which was rejecting "figues fraîches" against "Figue, crue", but they
+    still count in its favour when present, which is what makes "riz basmati cuit" pick the
+    cooked entry over the raw one.
+  - The prompt now says not to nest a dish's ingredients. Nine of the eleven foods in the
+    failing example import; the two that do not are genuinely absent from CIQUAL and are
+    named as such.
+
 - **Export and restore, for data that exists in exactly one place** — no account, no server,
   so a cleaned browser or a replaced phone took the whole journal with it and there was
   nothing to say but "don't do that".

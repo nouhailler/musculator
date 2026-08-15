@@ -24,8 +24,9 @@ RÈGLES GÉNÉRALES
 - N'invente aucun aliment qui n'a pas été cité. Si une quantité est vraiment impossible à
   estimer, pose UNE question au lieu de deviner.
 - Français, noms d'aliments courts et précis : « Riz basmati cuit », « Blanc de poulet grillé ».
-- Un plat composé peut être décrit soit ingrédient par ingrédient (plus précis), soit comme un
-  seul aliment portant ses valeurs moyennes.
+- Un plat composé se décrit soit ingrédient par ingrédient — chaque ingrédient étant un aliment
+  de la liste "aliments", au même niveau que les autres —, soit comme un seul aliment portant
+  ses valeurs moyennes. N'imbrique jamais une liste d'ingrédients dans un aliment.
 - Date : champ "date" au format "AAAA-MM-JJ" (par défaut aujourd'hui ; « hier » = la veille).
   Plusieurs journées sont possibles dans "days".
 

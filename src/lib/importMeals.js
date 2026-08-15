@@ -87,6 +87,16 @@ function parseMicros(raw) {
   return out;
 }
 
+// Any remaining "…kcal…100…" key: the 100 anchors it to a per-100 g figure,
+// so this cannot pick up a portion total by accident.
+function perHundredEnergy(o) {
+  const key = Object.keys(o || {}).find((k) => {
+    const n = norm(k);
+    return n.includes('100') && (n.includes('kcal') || n.includes('energie') || n.includes('calorie'));
+  });
+  return key ? o[key] : null;
+}
+
 const slug = (s) => norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40);
 
 function parseFood(raw, warnings, seq) {
@@ -126,7 +136,8 @@ function parseFood(raw, warnings, seq) {
   const proteines = Math.max(0, round1(num(src.proteines) ?? num(src.proteins) ?? 0));
   const glucides = Math.max(0, round1(num(src.glucides) ?? num(src.carbs) ?? 0));
   const lipides = Math.max(0, round1(num(src.lipides) ?? num(src.fat) ?? 0));
-  const declared = num(src.kcal) ?? num(src.calories) ?? num(src.energie) ?? num(src.kcal_per_100g);
+  const declared = num(src.kcal) ?? num(src.calories) ?? num(src.energie)
+    ?? num(src.kcal_per_100g) ?? num(src.energie_kcal) ?? num(perHundredEnergy(src));
   // Same rule as the CIQUAL table: a food with macros but no energy gets the
   // Atwater estimate rather than a 0 kcal line that would wreck the day's score.
   const kcal = declared > 0
@@ -173,7 +184,17 @@ function parseMealBlock(raw, fallbackMeal, warnings, counter) {
     return null;
   }
   const list = [raw.aliments, raw.foods, raw.items, raw.plats].find(Array.isArray) || [];
-  const entries = list.map((f) => parseFood(f, warnings, counter.n++)).filter(Boolean);
+  // A composed dish ("frittata de légumes") often arrives with its ingredients
+  // nested instead of its own composition. The ingredients are the food here:
+  // flattened, they are logged; left nested, the whole dish is dropped for
+  // having no nutritional values of its own.
+  const flat = list.flatMap((f) => {
+    const inner = f && typeof f === 'object'
+      ? [f.composition, f.ingredients, f.ingredients_list].find(Array.isArray)
+      : null;
+    return inner?.length ? inner : [f];
+  });
+  const entries = flat.map((f) => parseFood(f, warnings, counter.n++)).filter(Boolean);
   if (!entries.length) {
     warnings.push('Repas sans aliment exploitable ignoré.');
     return null;
@@ -223,6 +244,16 @@ function parseWalks(raw, warnings) {
   return out;
 }
 
+// `{ petit_dejeuner: [...] }` → `[{ repas: 'petit_dejeuner', aliments: [...] }]`.
+// Returns null rather than [] so the caller's `||` chain keeps looking.
+function mapToBlocks(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const blocks = Object.entries(value)
+    .filter(([, list]) => Array.isArray(list))
+    .map(([key, list]) => ({ repas: key, aliments: list }));
+  return blocks.length ? blocks : null;
+}
+
 function parseDay(raw, fallbackDate, fallbackMeal, warnings, counter) {
   if (!raw || typeof raw !== 'object') return null;
 
@@ -232,6 +263,10 @@ function parseDay(raw, fallbackDate, fallbackMeal, warnings, counter) {
   else if (rawDate !== undefined) warnings.push(`Date « ${String(rawDate)} » ignorée (format attendu AAAA-MM-JJ).`);
 
   const blocks = [raw.meals, raw.repas].find(Array.isArray)
+    // Meals as a map — `"repas": { "petit_dejeuner": [...], "dejeuner": [...] }`
+    // — is at least as natural a shape as a list, and ChatGPT reaches for it.
+    // The key *is* the meal, so it is folded back into the block.
+    || mapToBlocks(raw.repas) || mapToBlocks(raw.meals)
     // A day that skipped the meals array and listed foods directly is one meal.
     || ([raw.aliments, raw.foods, raw.items].find(Array.isArray) ? [raw] : []);
 

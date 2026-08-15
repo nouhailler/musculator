@@ -308,6 +308,15 @@ meal keys and micronutrient list from `data/nutrition.js` instead of restating t
   imported empty. A resolved one keeps the dictated wording as its label and carries
   `ciqualNom`, which the preview shows — the table has no plain "chocolat noir" and cannot
   tell cooked rice from raw, so the entry used has to be visible before the import lands.
+- **Assistants keep inventing shapes, so the parser widens rather than the prompt.** Meals
+  arrive as a list *or* as a map keyed by meal; a composed dish's nested `composition` is
+  flattened into the meal, since the ingredients are the food and the wrapper has no values
+  of its own. Three rounds of real ChatGPT output are in this file's history — assume a
+  fourth.
+- **`matchCiqual` splits query tokens into hard and soft.** A word or figure that qualifies
+  a food without identifying it ("fraîches", "bio", "82 %") must not be required of a
+  candidate — that rejected "figues fraîches" against "Figue, crue" — but it scores in
+  favour when present, which is what makes "riz basmati cuit" choose the cooked entry.
 - **A bare `quantity` is never read as grams.** Models write `quantity_g` when they mean a
   weight and `quantity` for a count of pieces ("quantity": 1 for one egg) or for prose
   ("petite quantité"); reading that as grams logged one gram of egg. It falls back to 100 g

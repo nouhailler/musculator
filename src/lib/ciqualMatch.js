@@ -15,6 +15,15 @@ import { fromCiqual, loadCiqual } from './food.js';
 // and their presence in a query would wrongly force a candidate to contain them.
 const STOP = new Set(['de', 'du', 'des', 'd', 'a', 'au', 'aux', 'en', 'la', 'le', 'les', 'l', 'et', 'ou', 'avec', 'sans']);
 
+// Words and figures that describe a product without identifying it. Requiring
+// them rejects a good match — CIQUAL says "Figue, crue" where someone says
+// "figues fraîches", and carries no entry at all for "82 %" cocoa. They are
+// not required, but they still count in favour of a candidate that has them,
+// which is what lets "chocolat noir 70 %" find its exact entry while "82 %"
+// falls back to the generic one.
+const SOFT = new Set(['frais', 'fraiche', 'fraichement', 'nature', 'bio', 'maison', 'environ', 'cru', 'crue', 'cuit', 'cuite']);
+const isSoft = (w) => SOFT.has(w) || /^\d+([.,]\d+)?%?$/.test(w);
+
 const norm = (s) => String(s || '')
   .toLowerCase()
   .normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -25,8 +34,12 @@ const norm = (s) => String(s || '')
 // "riz" survive.
 const singular = (w) => (w.length > 3 && /(s|x)$/.test(w) ? w.slice(0, -1) : w);
 
+// The percent sign is dropped rather than kept as a token: on its own it
+// carries nothing, and glued to a figure it stops "70%" in a CIQUAL name from
+// meeting the "70" someone typed.
 const tokens = (s) => norm(s)
   .split(/[^a-z0-9%]+/)
+  .map((w) => w.replace(/%/g, ''))
   .filter((w) => w && !STOP.has(w))
   .map(singular);
 
@@ -45,7 +58,10 @@ const related = (a, b) => (
 
 function scoreCandidate(qt, name) {
   const nt = tokens(name);
-  if (!qt.every((q) => nt.some((w) => related(w, q)))) return -1;
+  const hits = (q) => nt.some((w) => related(w, q));
+  const hard = qt.filter((q) => !isSoft(q));
+  if (!hard.length) return -1;
+  if (!hard.every(hits)) return -1;
 
   const ht = headTokens(name);
   // Guard against a compound product that merely mentions the food: "Cookie
@@ -57,9 +73,11 @@ function scoreCandidate(qt, name) {
   if (!qt.some((q) => related(ht[0], q))) return -1;
 
   let score = related(ht[0], qt[0]) ? 1000 : 400;
+  // A soft token that did land is a better match, not a requirement.
+  score += qt.filter((q) => isSoft(q) && hits(q)).length * 60;
   // Every word beyond the query is a more specific product than what was
   // asked for: "Amande (avec peau)" over "Amande, grillée, salée".
-  score -= Math.max(0, nt.length - qt.length) * 40;
+  score -= Math.max(0, nt.length - hard.length) * 40;
   score -= name.length * 0.15;
   return score;
 }
