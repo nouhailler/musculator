@@ -276,6 +276,34 @@ meal keys and micronutrient list from `data/nutrition.js` instead of restating t
 silently (verified). It identifies the app with OFF's `app_name`/`app_version` query
 parameters instead. If this is ever reused from React Native, send a real header there.
 
+### The Progress screen
+
+Every figure on it is derived from `sessionLog` — nothing is seeded. The four zones are
+reachable rather than decorative: the total tile expands the full history, a chart bar filters
+it to that rolling week (`weeklySessions` in `useDerived`, from `sessionsByWeek`), and the two
+totals open a breakdown from `lib/sessionStats.js`. Week labels are computed from how many
+buckets the chart got, so changing `weeksBack` cannot desync them from a hand-written list.
+
+### "Analyse IA des progrès"
+
+A second, separate engine pair from the day's analysis, answering a different question: is
+what you *do* taking you towards what you *said you wanted*? So it is framed by the profile's
+objectives — `objectif`, `zones`, `objectifNutrition` and the daily targets, plus
+`contraintes` — over a 4-week window compared against the 4 before it.
+
+- `lib/progressAnalysis.js` computes it on-device; `requestProgressAnalysis` in
+  `openrouter.js` asks a configured model instead, from **the same `progressStats()` object**
+  the local engine works from, so the two answer from identical facts. Failure falls back to
+  local and says why, exactly like the day's analysis.
+- **It is never persisted.** The day's analysis is cached because a past day stops changing;
+  this one reads a window that moves daily, so a stored copy would age into a wrong answer.
+- A theme with no data is reported as unmeasured and **its weight leaves the score's
+  denominator** — the same rule as the nutrition score, for the same reason.
+- `data/muscles.js` carries the `ZONES` bridge: `profile.zones` holds coarse labels
+  ("Jambes") while a session's `muscles` holds primary muscle names ("Quadriceps"). The two
+  vocabularies never match by string, so the mapping is explicit and `sessionHitsZone()` is
+  the only thing that should compare them.
+
 ### "Analyse IA"
 
 Two engines behind one shape (`resume/energie/tonus/progression/aFaire/ameliorer`), chosen

@@ -64,6 +64,8 @@ export const HELP = {
       ['Badges', "Ils se débloquent depuis ton usage réel : nombre de séances, série de jours, séance matinale, HIIT…"],
       ['Historique', "Les séances partielles y apparaissent avec une icône de pause et la mention « partielle », les séances ajoutées après coup avec un crayon."],
       ['Corriger le passé', "Chaque ligne de l'historique se modifie ou se supprime — c'est le seul endroit qui atteint les séances des jours précédents."],
+      ['Tout est cliquable', "« Séances au total » déroule l'historique complet, une barre du graphe montre les séances de cette semaine-là, et « Temps total » comme « Calories » ouvrent leur détail (moyenne, 30 derniers jours, répartition par programme)."],
+      ['Analyse IA des progrès', "Elle compare tes 4 dernières semaines à ce que tu as déclaré : objectif principal, zones prioritaires, objectif et cibles nutritionnels, contraintes. Un thème sans données est signalé comme non mesuré, jamais compté comme un échec."],
     ],
   },
 

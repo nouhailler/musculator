@@ -5,7 +5,9 @@ import { dateKey, fmt, nowHM, startOfWeekKey } from '../lib/format.js';
 import { AppContext } from './context.js';
 import { effRepos, effSeries, baseReps, baseCharge } from '../lib/workout.js';
 import { generateAnalysis } from '../lib/analysis.js';
-import { fetchFreeModels, checkKey, requestAnalysis } from '../lib/openrouter.js';
+import { fetchFreeModels, checkKey, requestAnalysis, requestProgressAnalysis } from '../lib/openrouter.js';
+import { generateProgressAnalysis, progressStats } from '../lib/progressAnalysis.js';
+import { dailyTargets } from '../lib/macros.js';
 import { startCadence, stopSpeaking, say } from '../lib/voice.js';
 import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme.js';
 import { MEALS } from '../data/nutrition.js';
@@ -77,6 +79,9 @@ function initialState() {
     completeSummary: null,
     analysis: cachedAnalysis ? cachedAnalysis.analysis : null, analysisLoading: false, analysisError: '',
     analysisSource: cachedAnalysis ? cachedAnalysis.source : null,
+    // Progress analysis — never persisted: it reads a window that moves daily,
+    // so a stored copy would age into a wrong answer.
+    progressAnalysis: null, progressLoading: false, progressError: '', progressSource: null,
     // Transient model-picker state: fetched live, never persisted.
     orModels: [], orLoading: false, orError: '', orStatus: '',
     // Nutrition: the day being viewed, plus transient search state.
@@ -521,6 +526,15 @@ function reducer(state, action) {
         analysisLog: { ...state.analysisLog, [dateKey()]: { analysis: action.analysis, source: action.source } },
       };
 
+    // Progress analysis: transient, unlike the day's. It reads a 4-week window
+    // that moves on its own, so a cached copy would age into a wrong answer;
+    // recomputing costs nothing locally and the OpenRouter path is behind an
+    // explicit tap.
+    case 'PROGRESS_START':
+      return { ...state, progressLoading: true, progressAnalysis: null, progressError: '' };
+    case 'PROGRESS_DONE':
+      return { ...state, progressLoading: false, progressAnalysis: action.analysis, progressSource: action.source };
+
     // --- Journal ------------------------------------------------------------
     case 'DELETE_SESSION': {
       const gone = state.sessionLog.find((s) => s.id === action.id);
@@ -795,7 +809,33 @@ export function AppProvider({ children }) {
         dispatch({ type: 'PATCH', payload: { analysisError: `${e.message || 'Appel OpenRouter impossible.'} Analyse locale utilisée à la place.` } });
       }
     },
-  }), [state.workout, state.sessionLog, state.profile, state.openrouter, state.nutriDate]);
+
+    // Same two engines as the day's analysis, over a 4-week window and framed
+    // by the profile's objectives rather than by today's sessions.
+    runProgressAnalysis: async () => {
+      const input = {
+        profile: state.profile,
+        sessionLog: state.sessionLog,
+        nutriLog: state.nutriLog,
+        targets: dailyTargets(state.profile),
+      };
+      dispatch({ type: 'PROGRESS_START' });
+      const local = () => generateProgressAnalysis(input);
+      const { key, model } = state.openrouter;
+
+      if (!key || !model) {
+        setTimeout(() => dispatch({ type: 'PROGRESS_DONE', analysis: local(), source: 'local' }), 700);
+        return;
+      }
+      try {
+        const analysis = await requestProgressAnalysis({ key, model, stats: progressStats(input) });
+        dispatch({ type: 'PROGRESS_DONE', analysis, source: 'openrouter' });
+      } catch (e) {
+        dispatch({ type: 'PROGRESS_DONE', analysis: local(), source: 'local' });
+        dispatch({ type: 'PATCH', payload: { progressError: `${e.message || 'Appel OpenRouter impossible.'} Analyse locale utilisée à la place.` } });
+      }
+    },
+  }), [state.workout, state.sessionLog, state.profile, state.openrouter, state.nutriDate, state.nutriLog]);
 
   const value = useMemo(() => ({ state, actions }), [state, actions]);
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -135,6 +135,10 @@ the stored choice before first paint so a light-theme launch never flashes dark.
   history, which is where a session from a past day is edited or removed. Editing covers
   *when* and *how long* only: what was actually performed — exercises, sets, muscles — is the
   record the muscle map, the badges and the analysis all read as fact, so it stays read-only.
+  Every figure on the screen is a way in rather than a decoration: the session total opens the
+  whole history, a chart bar filters it to that week, and the time and calorie totals expand
+  into a breakdown (average, last 30 days, split per program). It also carries a second AI
+  analysis — see below.
 
 ---
 
@@ -247,8 +251,19 @@ override is never a one-way door.
 
 ## 🤖 About the "Analyse IA"
 
-Two engines, same output shape (`resume/energie/tonus/progression/aFaire/ameliorer`), so
-nothing downstream can tell which one answered:
+Two analyses, each with two interchangeable engines.
+
+The **journal's** one reads today. The **progress** one (*Progrès → Analyser mes progrès*)
+reads the last four weeks against the four before them, and asks a different question: is what
+you actually do taking you towards what you said you wanted? It is framed by the profile's
+objectives — objectif principal, zones prioritaires, objectif and daily nutrition targets —
+and takes any declared constraint or injury into account. Priority zones are compared against
+the muscles your sessions really worked, so "Dos fait partie de tes priorités mais n'a pas été
+travaillé depuis 28 jours" is a measurement, not a nudge. A theme with no data is reported as
+unmeasured and its weight leaves the score, rather than counting as a failure.
+
+Both share the same two engines and the same output shape, so nothing downstream can tell
+which one answered:
 
 - 📴 **On-device (default).** `src/lib/analysis.js` computes a structured, personalized
   analysis from your profile and session log. No key, no network, works offline.

@@ -63,3 +63,35 @@ export const MUSCLES = [
   },
   { id: 'mollets', nom: 'Mollets', region: 'back', exos: ['mollets-debout', 'mollets-assis', 'fentes', 'step-up'] },
 ];
+
+// ---------------------------------------------------------------------------
+// Profile zones ↔ logged muscles
+// ---------------------------------------------------------------------------
+//
+// Two vocabularies meet here. `profile.zones` holds the six coarse zones the
+// profile offers as priorities, while a session entry's `muscles` holds the
+// primary muscle of each exercise performed (the first segment of an
+// exercise's `muscle` field). The progress analysis compares one against the
+// other, so the bridge has to be explicit rather than guessed by string match:
+// "Jambes" never appears in a session log, "Quadriceps" does.
+export const ZONES = [
+  { label: 'Pectoraux', muscles: ['Pectoraux'] },
+  { label: 'Dos', muscles: ['Dos'] },
+  { label: 'Jambes', muscles: ['Quadriceps', 'Ischios', 'Fessiers', 'Moyen fessier', 'Adducteurs', 'Mollets'] },
+  { label: 'Épaules', muscles: ['Épaules'] },
+  { label: 'Bras', muscles: ['Triceps', 'Biceps'] },
+  { label: 'Abdos', muscles: ['Sangle abdominale', 'Grand droit'] },
+];
+
+export const ZONE_LABELS = ZONES.map((z) => z.label);
+
+// A full-body session trains everything, so it counts for every zone rather
+// than for none — it is what `muscles` carries for HIIT-style entries.
+export const ZONE_WILDCARD = 'Full body';
+
+/** True when a session's `muscles` list touches a zone. */
+export function sessionHitsZone(session, zoneLabel) {
+  const zone = ZONES.find((z) => z.label === zoneLabel);
+  if (!zone) return false;
+  return (session.muscles || []).some((m) => m === ZONE_WILDCARD || zone.muscles.includes(m));
+}

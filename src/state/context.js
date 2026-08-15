@@ -4,7 +4,7 @@ import { createContext, useContext, useMemo } from 'react';
 import { PROGRAMS } from '../data/programs.js';
 import { BADGE_DEFS } from '../data/badges.js';
 import { dateKey, startOfWeekKey } from '../lib/format.js';
-import { computeStreak, sessionsPerWeek } from '../lib/streak.js';
+import { computeStreak, sessionsByWeek } from '../lib/streak.js';
 
 export const AppContext = createContext(null);
 
@@ -34,10 +34,13 @@ export function useDerived() {
       unlocked: b.check({ totalSessions, streak, hasEarlySession, hasHiit }),
     }));
     const history = state.sessionLog.slice(0, 20);
-    const weekly = sessionsPerWeek(state.sessionLog, 6);
+    // Kept as the sessions themselves, not just their count: the Progress
+    // chart lets a bar be tapped to list what it counted.
+    const weeklySessions = sessionsByWeek(state.sessionLog, 6);
+    const weekly = weeklySessions.map((w) => w.length);
     return {
       today, weekStart, journalToday, weekSessions, weekTimeSec, weekKcal,
-      streak, totalSessions, badges, history, weekly,
+      streak, totalSessions, badges, history, weekly, weeklySessions,
     };
   }, [state.sessionLog]);
 }

@@ -136,22 +136,18 @@ function parseAnalysis(text) {
   };
 }
 
-/**
- * Asks the configured model for the day's analysis. Throws on any failure —
- * the caller falls back to the local engine rather than leaving the user with
- * nothing.
- */
-export async function requestAnalysis({ key, model, profile, entries, weekCount, signal }) {
+/** One round-trip to a chat completion, with the failure modes named. */
+async function complete({ key, model, system, user, maxTokens, signal }) {
   const res = await fetch(`${BASE}/chat/completions`, {
     method: 'POST',
     headers: { ...authHeaders(key), 'Content-Type': 'application/json' },
     signal,
     body: JSON.stringify({
       model,
-      max_tokens: 900,
+      max_tokens: maxTokens,
       messages: [
-        { role: 'system', content: SYSTEM },
-        { role: 'user', content: buildPrompt(profile, entries, weekCount) },
+        { role: 'system', content: system },
+        { role: 'user', content: user },
       ],
     }),
   });
@@ -163,5 +159,80 @@ export async function requestAnalysis({ key, model, profile, entries, weekCount,
   if (body.error) throw new Error(body.error.message || 'Erreur OpenRouter.');
   const text = body.choices?.[0]?.message?.content;
   if (!text) throw new Error('Réponse vide du modèle.');
-  return parseAnalysis(text);
+  return text;
+}
+
+/**
+ * Asks the configured model for the day's analysis. Throws on any failure —
+ * the caller falls back to the local engine rather than leaving the user with
+ * nothing.
+ */
+export async function requestAnalysis({ key, model, profile, entries, weekCount, signal }) {
+  return parseAnalysis(await complete({
+    key, model, signal, maxTokens: 900, system: SYSTEM,
+    user: buildPrompt(profile, entries, weekCount),
+  }));
+}
+
+// --- Progress analysis -----------------------------------------------------
+
+const PROGRESS_SHAPE = '{"resume":"","progression":0,"points":[{"titre":"","texte":"","ton":"ok|attention|info"}],"aFaire":[""],"ameliorer":[""]}';
+
+const PROGRESS_SYSTEM = [
+  "Tu es un coach de musculation qui analyse la progression d'un utilisateur sur plusieurs semaines.",
+  'Tu réponds en français, en tutoyant, de façon concrète et chiffrée à partir des seules données fournies.',
+  "Tu juges l'écart entre ce que la personne a déclaré vouloir (objectif principal, zones prioritaires, objectif et cibles nutritionnels) et ce que ses données montrent.",
+  "Tu tiens compte des contraintes ou blessures déclarées dans tes conseils, sans jamais poser de diagnostic ni donner d'avis médical.",
+  "N'invente aucun chiffre : ce qui n'est pas mesuré est signalé comme non renseigné.",
+  'Tu réponds uniquement par du JSON valide, sans texte autour et sans bloc de code.',
+].join(' ');
+
+// The same measurements the local engine works from (lib/progressAnalysis.js),
+// so the two answer the same question from the same facts.
+function buildProgressPrompt(stats) {
+  return [
+    'Voici les données de progression :',
+    JSON.stringify(stats),
+    '',
+    `Réponds uniquement par un objet JSON de cette forme : ${PROGRESS_SHAPE}`,
+    '"points" contient 3 à 6 constats, un par thème (rythme, volume, objectif principal, zones prioritaires, nutrition, contraintes) ;',
+    '"ton" vaut "ok" quand le thème est tenu, "attention" quand il y a un écart à corriger, "info" sinon.',
+    '"progression" est un entier de 0 à 100 estimant l\'adéquation entre les objectifs déclarés et les données.',
+  ].join('\n');
+}
+
+function parseProgressAnalysis(text) {
+  const raw = extractJsonObject(text);
+  if (!raw) throw new Error("Le modèle n'a pas renvoyé de JSON.");
+  const parsed = JSON.parse(raw);
+  const str = (v, fallback) => (typeof v === 'string' && v.trim() ? v.trim() : fallback);
+  const list = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === 'string' && x.trim()) : []);
+  const pct = Number(parsed.progression);
+  const points = (Array.isArray(parsed.points) ? parsed.points : [])
+    .map((p, i) => ({
+      key: `or-${i}`,
+      titre: str(p?.titre, 'Constat'),
+      texte: str(p?.texte, ''),
+      ton: ['ok', 'attention', 'info'].includes(p?.ton) ? p.ton : 'info',
+    }))
+    .filter((p) => p.texte)
+    .slice(0, 6);
+  return {
+    resume: str(parsed.resume, 'Analyse indisponible.'),
+    progression: Number.isFinite(pct) ? Math.max(0, Math.min(100, Math.round(pct))) : 0,
+    points,
+    aFaire: list(parsed.aFaire).slice(0, 4),
+    ameliorer: list(parsed.ameliorer).slice(0, 4),
+  };
+}
+
+/** Same contract as `requestAnalysis`: throws, and the caller falls back. */
+export async function requestProgressAnalysis({ key, model, stats, signal }) {
+  const parsed = parseProgressAnalysis(await complete({
+    key, model, signal, maxTokens: 1100, system: PROGRESS_SYSTEM,
+    user: buildProgressPrompt(stats),
+  }));
+  // A model that returned nothing usable must not look like a valid answer.
+  if (!parsed.points.length) throw new Error("Le modèle n'a renvoyé aucun constat exploitable.");
+  return parsed;
 }

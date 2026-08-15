@@ -23,14 +23,23 @@ export function computeStreak(sessionLog) {
   return streak;
 }
 
-export function sessionsPerWeek(sessionLog, weeksBack = 6) {
+/**
+ * The sessions of each of the last `weeksBack` rolling 7-day windows, oldest
+ * first — the chart's bars, with what each one is made of, so tapping a bar
+ * can show the sessions it counted.
+ */
+export function sessionsByWeek(sessionLog, weeksBack = 6) {
   const today = dateKey();
-  const buckets = new Array(weeksBack).fill(0);
+  const buckets = Array.from({ length: weeksBack }, () => []);
   for (const s of sessionLog) {
     const diffDays = daysBetween(s.dateKey, today);
     if (diffDays < 0) continue;
     const week = Math.floor(diffDays / 7);
-    if (week < weeksBack) buckets[weeksBack - 1 - week]++;
+    if (week < weeksBack) buckets[weeksBack - 1 - week].push(s);
   }
   return buckets;
+}
+
+export function sessionsPerWeek(sessionLog, weeksBack = 6) {
+  return sessionsByWeek(sessionLog, weeksBack).map((b) => b.length);
 }

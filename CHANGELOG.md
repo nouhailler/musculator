@@ -33,6 +33,32 @@ grouped by date and reference the commit they landed in.
     new session for that day (live or added after the fact) evicts the cached entry, since it
     would otherwise describe a day that has since changed.
 
+- **"Analyse IA de mes progrès"** — a second analysis, on the Progress screen, reading the
+  last four weeks against the four before them. Where the journal's answers "how was today",
+  this one answers "is what I do taking me where I said I wanted to go", so it is framed by
+  the profile's objectives: objectif principal, zones prioritaires, objectif nutrition and the
+  daily targets, plus any declared constraint or injury.
+  - Priority zones are checked against the muscles the sessions actually worked, through a
+    new `ZONES` bridge in `data/muscles.js` — `profile.zones` holds coarse labels ("Jambes")
+    and a session holds primary muscle names ("Quadriceps"), so the two vocabularies needed
+    an explicit mapping rather than a string match.
+  - Same two engines as the day's analysis: `lib/progressAnalysis.js` on-device, or a
+    configured OpenRouter model fed **the same `progressStats()` object** the local engine
+    works from, so both answer from identical facts. Failure falls back and says why.
+  - A theme with no data (no nutrition logged, no priority zone declared) is reported as
+    unmeasured and its weight leaves the score's denominator, rather than counting as a
+    failure — the same rule as the nutrition score.
+  - Never persisted, unlike the day's analysis: its window moves every day, so a cached copy
+    would age into a wrong answer.
+
+- **The Progress screen's figures are now ways in, not decorations** — "séances au total"
+  opens the whole history (which was capped at the last 20 with no way to see further), a
+  chart bar filters it to that rolling week, and "Temps total" and "Calories" expand into a
+  breakdown: average per session, last 30 days, longest session, split per program, best day,
+  and the kcal/min rate the estimate itself uses.
+  - The week labels and the "6 dernières" count are derived from the chart's own buckets;
+    they were a hand-written array that would have desynced if the window ever changed.
+
 - **Daily nutrition targets are settable** — *Mon profil & objectifs → Objectifs quotidiens*
   now carries the four numbers the Nutrition screen scores against: calories, protein, carbs
   and fat.
