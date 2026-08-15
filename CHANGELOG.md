@@ -33,6 +33,30 @@ grouped by date and reference the commit they landed in.
     new session for that day (live or added after the fact) evicts the cached entry, since it
     would otherwise describe a day that has since changed.
 
+- **Walking** — kilometres now count towards the day's expenditure alongside training.
+  - **Three ways in**, chosen because no web API counts steps in the background and the app
+    refuses to promise one: manual entry (distance and/or duration), a live GPS walk over
+    `watchPosition` while the app is open, and a file import — a GPX trace, or the CSV that
+    Strava, Apple Santé and Google Fit exports boil down to (`lib/importActivity.js`, which
+    also reads locale-formatted dates like "15 août 2026"). A walk can also be dictated to
+    the same assistant as the meals.
+  - **Energy is net and weight-based**: `0.5 kcal × poids × km`, or METs minus one when only
+    a duration is known. This is the first expenditure in the app that is actually
+    personalised — sessions still use a flat 9 kcal/min.
+  - **It never enters the calorie target.** That target already contains all-day activity
+    through the BMR × frequency multiplier, so adding walking to it would count the same
+    kilometres twice. It is displayed beside the intake, like training kcal, and nothing
+    presents a net balance.
+  - **`activityLog` is its own persisted slice**, not part of `sessionLog`: a walk is not a
+    workout and must not inflate the streak, "séances au total" or the weekly chart. It gets
+    its own two badges instead — 100 km cumulés and 7 jours de marche.
+  - Surfaced as a ring on the home screen (against a `kmCible` objective settable in the
+    profile), a card in the journal next to food and training, and a point in the progress
+    analysis that reads the same distance differently depending on the objective — the
+    cheapest deficit there is when cutting, a bite out of the surplus when bulking.
+  - GPS fixes are filtered by accuracy, minimum step and jump distance: a phone standing
+    still reports a wandering position that would otherwise accumulate kilometres.
+
 - **"Analyse IA de mes progrès"** — a second analysis, on the Progress screen, reading the
   last four weeks against the four before them. Where the journal's answers "how was today",
   this one answers "is what I do taking me where I said I wanted to go", so it is framed by

@@ -131,6 +131,14 @@ the stored choice before first paint so a light-theme launch never flashes dark.
   structured training analysis (energy, muscle stimulus, progress toward your goal, what to
   do next), cached per day. See below. A session you did outside the app is logged after the
   fact with its own date and time; one already logged can be corrected or deleted.
+- 🚶 **Marche** — kilometres count towards the day's expenditure the way a session does.
+  Three ways in, because a backend-less PWA has no access to a background pedometer and does
+  not pretend otherwise: type the distance, track a walk live over the Geolocation API (app
+  open, screen on), or import a GPX trace or a CSV export from Strava / Apple Santé /
+  Google Fit. Energy is `0.5 kcal × weight × km`, *net* of resting metabolism — and it is
+  shown beside the intake rather than added to the calorie target, which already contains
+  everyday activity through its activity multiplier. A walk is not a workout: it lives in its
+  own `activityLog` slice, has its own badges, and never touches the training streak.
 - 🏅 **Progrès** — streak, sessions/week chart, badges (unlock from real usage), and the full
   history, which is where a session from a past day is edited or removed. Editing covers
   *when* and *how long* only: what was actually performed — exercises, sets, muscles — is the

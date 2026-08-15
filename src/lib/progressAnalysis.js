@@ -14,6 +14,7 @@ import { ZONES, sessionHitsZone } from '../data/muscles.js';
 import { MEALS } from '../data/nutrition.js';
 import { dateKey, daysBetween } from './format.js';
 import { totals } from './macros.js';
+import { activityWindow } from './activity.js';
 
 export const WINDOW_DAYS = 28;
 
@@ -24,7 +25,7 @@ const plural = (n, one, many = `${one}s`) => `${n} ${n > 1 ? many : one}`;
  * The numbers the analysis is built on. Exported because the OpenRouter engine
  * sends exactly these to the model — one measurement, two writers.
  */
-export function progressStats({ profile, sessionLog, nutriLog, targets }) {
+export function progressStats({ profile, sessionLog, nutriLog, targets, activityLog }) {
   const p = profile || {};
   const log = sessionLog || [];
   const inWindow = (s, from, to) => {
@@ -81,12 +82,25 @@ export function progressStats({ profile, sessionLog, nutriLog, targets }) {
     objectif: targets?.goal?.label || null,
   };
 
+  // Walking over the same window. It never enters the calorie target — it is
+  // an expenditure shown beside the intake — but it is very much part of
+  // whether the week's energy balance goes where the objective needs it.
+  const w = activityWindow(activityLog, WINDOW_DAYS, p);
+  const marche = {
+    km: w.km,
+    kmParJour: w.kmParJour,
+    joursActifs: w.joursActifs,
+    kcal: w.kcal,
+    kcalParSemaine: Math.round(w.kcal / (WINDOW_DAYS / 7)),
+    cibleKm: Number(p.kmCible) > 0 ? Number(p.kmCible) : null,
+  };
+
   return {
     objectif: p.objectif || null,
     contraintes: (p.contraintes || '').trim() || null,
     fenetreJours: WINDOW_DAYS,
     seances, series, minutes, parSemaine, cibleSemaine,
-    zonesPrioritaires, parZone, partiel, nutrition,
+    zonesPrioritaires, parZone, partiel, nutrition, marche,
     total: log.length,
   };
 }
@@ -111,8 +125,8 @@ const OBJECTIF_ATTENDU = {
  * @returns {{resume, progression, points, aFaire, ameliorer}} — `points` is
  * what the screen renders as cards, each with a `ton` driving its colour.
  */
-export function generateProgressAnalysis({ profile, sessionLog, nutriLog, targets }) {
-  const s = progressStats({ profile, sessionLog, nutriLog, targets });
+export function generateProgressAnalysis({ profile, sessionLog, nutriLog, targets, activityLog }) {
+  const s = progressStats({ profile, sessionLog, nutriLog, targets, activityLog });
   const prenom = profile?.prenom?.trim() || 'Toi';
   const points = [];
   const aFaire = [];
@@ -212,6 +226,36 @@ export function generateProgressAnalysis({ profile, sessionLog, nutriLog, target
     if (kcalPart != null && n.objectif === 'Sèche' && kcalPart > 105) {
       aFaire.push(`Sèche et ${kcalPart} % de ta cible calorique ne vont pas ensemble : environ ${n.kcal - n.cibleKcal} kcal de trop par jour.`);
     }
+  }
+
+  // --- Marche ---
+  const m = s.marche;
+  if (m.km > 0) {
+    const cibleTexte = m.cibleKm ? ` pour un objectif de ${m.cibleKm} km/jour` : '';
+    // The same distance reads opposite ways depending on the objective: it is
+    // the cheapest deficit there is when cutting, and it eats the surplus when
+    // bulking. Saying which is the whole point of tying it to the objective.
+    const lecture = s.objectif === 'Prise de masse'
+      ? ` En prise de masse, ces ${m.kcalParSemaine} kcal par semaine mangent ton surplus : compense-les dans l'assiette.`
+      : s.nutrition.objectif === 'Sèche'
+        ? ` En sèche, c'est ton levier le moins coûteux : ${m.kcalParSemaine} kcal par semaine sans fatigue supplémentaire.`
+        : '';
+    points.push({
+      key: 'marche',
+      titre: 'Marche',
+      ton: m.cibleKm && m.kmParJour < m.cibleKm * 0.8 ? 'attention' : 'ok',
+      texte: `${m.kmParJour} km par jour en moyenne sur ${s.fenetreJours} jours${cibleTexte} — ${m.km} km au total, ${plural(m.joursActifs, 'journée')} avec au moins une sortie, environ ${m.kcalParSemaine} kcal par semaine.${lecture}`,
+    });
+    if (m.cibleKm && m.kmParJour < m.cibleKm * 0.8) {
+      aFaire.push(`Marcher ${Math.round((m.cibleKm - m.kmParJour) * 10) / 10} km de plus par jour pour tenir ton objectif de ${m.cibleKm} km.`);
+    }
+  } else {
+    points.push({
+      key: 'marche',
+      titre: 'Marche',
+      ton: 'info',
+      texte: "Aucun kilomètre consigné sur la période. La marche est la dépense la moins coûteuse à ajouter à une journée — elle se saisit depuis l'accueil ou le journal.",
+    });
   }
 
   // --- Contraintes ---

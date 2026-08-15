@@ -1,0 +1,158 @@
+// Walking: the energy model, and reading the day out of `activityLog`.
+//
+// The slice is `{ [dateKey]: entry[] }` — a list per day rather than one
+// aggregate, because a day can hold a tracked walk, a manual correction and an
+// imported file at once, and each has to stay deletable on its own. The
+// `{ km, minutes, kcal }` view of a day is derived (`dayActivity`), never
+// stored twice.
+//
+// Energy is deliberately *net* — above resting metabolism. The daily calorie
+// target already contains the resting side through the BMR, so a gross figure
+// would count it twice. This is also why walking never touches the target
+// itself: it is shown next to the intake, the way the journal shows training
+// kcal, and nothing here presents a net balance.
+import {
+  DEFAULT_KMH, FALLBACK_WEIGHT, KCAL_PER_KG_KM, MAX_ACCURACY_M, MAX_JUMP_M,
+  MIN_STEP_M, PACE_METS,
+} from '../data/activity.js';
+
+const num = (v) => {
+  const n = Number(v);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+};
+
+export const poidsOf = (profile) => num(profile?.poids) || FALLBACK_WEIGHT;
+
+/** Walking pace in km/h, or null when one of the two is missing. */
+export function paceKmh({ km, minutes }) {
+  const d = num(km);
+  const t = num(minutes);
+  return d && t ? (d / t) * 60 : null;
+}
+
+export const paceLabel = (kmh) => (kmh ? PACE_METS.find((p) => kmh < p.maxKmh)?.label || 'très rapide' : null);
+
+/**
+ * Net kcal for a walk.
+ *
+ * Distance wins whenever it is known: `0.5 × poids × km` needs no assumption
+ * about pace. A duration alone falls back to METs at the pace it implies (or
+ * a default one), minus the resting MET so both paths measure the same thing.
+ */
+export function walkKcal({ km, minutes, poids }) {
+  const kg = num(poids) || FALLBACK_WEIGHT;
+  const d = num(km);
+  if (d) return Math.round(KCAL_PER_KG_KM * kg * d);
+
+  const t = num(minutes);
+  if (!t) return 0;
+  const kmh = DEFAULT_KMH;
+  const met = PACE_METS.find((p) => kmh < p.maxKmh)?.met || 3.5;
+  return Math.round(((met - 1) * 3.5 * kg) / 200 * t);
+}
+
+/** A stored entry, from whatever the UI collected. */
+export function makeActivityEntry({ km, minutes, source, heure, note }) {
+  return {
+    id: `act-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    km: Math.round(num(km) * 100) / 100,
+    minutes: Math.round(num(minutes)),
+    source: source || 'manuel',
+    heure: heure || null,
+    note: note || null,
+  };
+}
+
+/** The day's totals — the `{ km, minutes, kcal }` shape everything reads. */
+export function dayActivity(activityLog, dateKey, profile) {
+  const list = (activityLog || {})[dateKey] || [];
+  const km = list.reduce((a, e) => a + num(e.km), 0);
+  const minutes = list.reduce((a, e) => a + num(e.minutes), 0);
+  // Recomputed from the current weight rather than summed from what was stored:
+  // a corrected weight should fix past estimates, not leave them frozen.
+  const poids = poidsOf(profile);
+  const kcal = list.reduce((a, e) => a + walkKcal({ km: e.km, minutes: e.minutes, poids }), 0);
+  return { km: Math.round(km * 100) / 100, minutes, kcal, entries: list, count: list.length };
+}
+
+/** Totals over the last `days` days, for the progress analysis and badges. */
+export function activityWindow(activityLog, days, profile, from = new Date()) {
+  const poids = poidsOf(profile);
+  let km = 0;
+  let minutes = 0;
+  let kcal = 0;
+  let joursActifs = 0;
+  for (let i = 0; i < days; i++) {
+    const d = new Date(from.getTime() - i * 86400000);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const list = (activityLog || {})[key] || [];
+    if (!list.length) continue;
+    joursActifs++;
+    for (const e of list) {
+      km += num(e.km);
+      minutes += num(e.minutes);
+      kcal += walkKcal({ km: e.km, minutes: e.minutes, poids });
+    }
+  }
+  return {
+    jours: days,
+    joursActifs,
+    km: Math.round(km * 10) / 10,
+    minutes,
+    kcal,
+    kmParJour: joursActifs ? Math.round((km / days) * 10) / 10 : 0,
+  };
+}
+
+/** Every kilometre ever logged. */
+export function totalKm(activityLog) {
+  return Math.round(Object.values(activityLog || {})
+    .flat()
+    .reduce((a, e) => a + num(e.km), 0) * 10) / 10;
+}
+
+/** Consecutive days ending today (or yesterday) with something walked. */
+export function walkStreak(activityLog, from = new Date()) {
+  const key = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const has = (d) => ((activityLog || {})[key(d)] || []).length > 0;
+  const today = new Date(from);
+  let cursor = has(today) ? today : new Date(today.getTime() - 86400000);
+  if (!has(cursor)) return 0;
+  let streak = 0;
+  while (has(cursor)) {
+    streak++;
+    cursor = new Date(cursor.getTime() - 86400000);
+  }
+  return streak;
+}
+
+// --- GPS ------------------------------------------------------------------
+
+const R_EARTH_M = 6371000;
+
+/** Great-circle distance in metres between two fixes. */
+export function haversine(a, b) {
+  const toRad = (x) => (x * Math.PI) / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLon = toRad(b.lon - a.lon);
+  const s = Math.sin(dLat / 2) ** 2
+    + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLon / 2) ** 2;
+  return 2 * R_EARTH_M * Math.asin(Math.min(1, Math.sqrt(s)));
+}
+
+/**
+ * Distance to add for a new fix, and whether to keep it as the new anchor.
+ *
+ * A phone standing still still reports a wandering position, so a fix only
+ * counts once it is both precise enough and far enough from the last one —
+ * otherwise a walk that never happened accumulates kilometres.
+ */
+export function trackStep(previous, fix) {
+  if (fix.accuracy != null && fix.accuracy > MAX_ACCURACY_M) return { metres: 0, anchor: previous };
+  if (!previous) return { metres: 0, anchor: fix };
+  const d = haversine(previous, fix);
+  if (d < MIN_STEP_M) return { metres: 0, anchor: previous };
+  // A jump is a re-lock, not a sprint: move the anchor without crediting it.
+  if (d > MAX_JUMP_M) return { metres: 0, anchor: fix };
+  return { metres: d, anchor: fix };
+}

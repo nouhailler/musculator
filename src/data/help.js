@@ -44,6 +44,18 @@ export const HELP = {
       ['Objectifs', "Ils sont calculés depuis ton profil (poids, taille, âge, fréquence) et ton objectif nutrition. Complète-les pour un calcul personnalisé, ou fixe tes propres cibles dans le profil — elles s'affichent alors « cibles perso »."],
     ],
   },
+  activity: {
+    titre: 'Marche',
+    intro: "Les kilomètres parcourus comptent dans ta dépense du jour, au même titre qu'une séance.",
+    points: [
+      ['Trois façons', "Saisir la distance à la main, suivre la marche au GPS, ou importer une trace GPX / un export CSV (Strava, Apple Santé, Google Fit)."],
+      ['Suivi GPS', "Il ne tourne que l'app ouverte, écran allumé — aucun navigateur ne compte les pas en arrière-plan. Il exige une connexion sécurisée (HTTPS) et ton autorisation."],
+      ['Calcul', "0,5 kcal par kilo et par kilomètre, net du métabolisme de repos. Sans distance, la durée est convertie à allure normale."],
+      ['Pas dans la cible', "La marche s'ajoute à ta dépense, jamais à ta cible calorique : celle-ci contient déjà ton activité quotidienne, elle serait comptée deux fois."],
+      ['Pas une séance', "Elle a ses propres badges et n'entre ni dans ta série de jours, ni dans « séances au total »."],
+    ],
+  },
+
   journal: {
     titre: 'Journal',
     intro: "Le récapitulatif de tes séances du jour, et l'analyse de ta journée d'entraînement.",
@@ -52,6 +64,7 @@ export const HELP = {
       ['Ajouter une séance', "Tu t'es entraîné hors appli ? « Ajouter une séance » l'ajoute au journal après coup, avec ou sans programme. La date et l'heure se règlent : une séance d'hier se consigne aujourd'hui."],
       ['Modifier une séance', "Le crayon corrige la date, l'heure et la durée — et le nom d'une séance libre. Ce qui a été fait (exercices, séries, muscles) n'est pas modifiable : c'est la trace de ta séance réelle."],
       ['Supprimer une séance', "La corbeille demande confirmation, puis retire définitivement la séance. Le Journal ne montre qu'aujourd'hui : pour une séance passée, passe par l'historique dans Progrès."],
+      ['Marche du jour', "Distance, calories et durée du jour, avec « Ajouter une marche » pour la saisir, la suivre au GPS ou l'importer."],
       ['Alimentation du jour', "Reprend ce que tu as consigné côté Nutrition. Ce n'est pas un bilan calorique complet : la dépense de repos n'y entre pas."],
       ['Analyse IA', "Par défaut elle est calculée sur l'appareil, sans réseau. Tu peux brancher un modèle OpenRouter dans ton profil. Le résultat est gardé pour la journée, pas recalculé à chaque visite."],
       ['Portée', "L'analyse ne remplace pas l'avis d'un professionnel de santé."],
@@ -61,7 +74,7 @@ export const HELP = {
     titre: 'Progrès',
     intro: "Ton historique, tes badges et l'évolution de ton rythme sur les dernières semaines.",
     points: [
-      ['Badges', "Ils se débloquent depuis ton usage réel : nombre de séances, série de jours, séance matinale, HIIT…"],
+      ['Badges', "Ils se débloquent depuis ton usage réel : nombre de séances, série de jours, séance matinale, HIIT — et deux pour la marche, 100 km cumulés et 7 jours d'affilée."],
       ['Historique', "Les séances partielles y apparaissent avec une icône de pause et la mention « partielle », les séances ajoutées après coup avec un crayon."],
       ['Corriger le passé', "Chaque ligne de l'historique se modifie ou se supprime — c'est le seul endroit qui atteint les séances des jours précédents."],
       ['Tout est cliquable', "« Séances au total » déroule l'historique complet, une barre du graphe montre les séances de cette semaine-là, et « Temps total » comme « Calories » ouvrent leur détail (moyenne, 30 derniers jours, répartition par programme)."],
@@ -102,6 +115,7 @@ export const HELP = {
     points: [
       ['Poids, taille, âge', "Sans eux, les objectifs caloriques retombent sur une valeur par défaut au lieu d'être calculés."],
       ['Objectif nutrition', "Distinct de l'objectif d'entraînement : on peut viser la force tout en séchant."],
+      ['Marche (km/jour)', "Objectif de distance quotidienne. Rien ne le calcule : vide, il n'y a pas d'objectif et l'anneau de l'accueil affiche la suggestion."],
       ['Objectifs quotidiens', "Calories, protéines, glucides et lipides sont calculés depuis ton profil. Renseigne un champ pour imposer ta propre cible ; vide, il reste automatique. « Tout recalculer » revient au calcul."],
       ['Thème', "Sombre, clair, ou « Système » pour suivre le réglage de ton téléphone. Le choix s'applique tout de suite et reste sur cet appareil."],
       ['OpenRouter', "Facultatif. La clé est enregistrée en clair sur cet appareil — n'utilise pas une clé partagée."],

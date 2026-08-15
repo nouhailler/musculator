@@ -4,6 +4,7 @@ import { mealLabel } from '../data/nutrition.js';
 import { MEAL_IMPORT_PROMPT } from '../lib/mealPrompt.js';
 import { countImport, parseMealsImport } from '../lib/importMeals.js';
 import { scale } from '../lib/food.js';
+import { poidsOf, walkKcal } from '../lib/activity.js';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
 import { PrimaryButton, SecondaryButton } from '../components/ui/Button.jsx';
@@ -136,6 +137,19 @@ export default function ImportMeals() {
                   <span style={{ fontSize: 13, fontWeight: 600 }}>{d.date}</span>
                   {d.date === state.nutriDate && <Tag variant="neutral">Jour affiché</Tag>}
                 </div>
+                {d.marche?.length > 0 && (
+                  <div style={{ marginBottom: 8 }}>
+                    <div style={{ fontSize: 11, color: 'var(--color-accent-200)', marginBottom: 4 }}>Marche</div>
+                    {d.marche.map((w) => (
+                      <div key={w.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, fontSize: 11.5 }}>
+                        <span style={{ color: 'var(--color-neutral-200)' }}>{w.km > 0 ? `${w.km} km` : `${w.minutes} min`}</span>
+                        <span style={{ color: 'var(--color-neutral-500)', fontVariantNumeric: 'tabular-nums' }}>
+                          {walkKcal({ km: w.km, minutes: w.minutes, poids: poidsOf(state.profile) })} kcal
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 {d.meals.map((m) => (
                   <div key={m.key} style={{ marginBottom: 8 }}>
                     <div style={{ fontSize: 11, color: 'var(--color-accent-200)', marginBottom: 4 }}>{mealLabel(m.key)}</div>

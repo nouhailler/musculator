@@ -49,9 +49,9 @@ The split between the two files in `src/state/` is load-bearing:
 are recomputed by `useDerived()` (memoized on `state.sessionLog`). Don't add computed fields
 to reducer state; add them to `useDerived` or to a `lib/` helper.
 
-**Persistence covers 11 slices only** — `profile`, `customWorkouts`, `sessionLog`,
+**Persistence covers 12 slices only** — `profile`, `customWorkouts`, `sessionLog`,
 `disclaimerAcked`, `voiceOn`, `openrouter`, `nutriLog`, `foodCache`, `theme`, `dayNotes`,
-`analysisLog`, under the key `musculator:v1`. Everything else (current tab,
+`analysisLog`, `activityLog`, under the key `musculator:v1`. Everything else (current tab,
 filters, in-progress workout) is deliberately ephemeral. Adding a durable field means
 touching both `loadPersisted()` and the persist effect in `store.jsx`.
 
@@ -275,6 +275,27 @@ meal keys and micronutrient list from `data/nutrition.js` instead of restating t
 `lib/off.js` cannot send a `User-Agent`: it is a forbidden header name and browsers drop it
 silently (verified). It identifies the app with OFF's `app_name`/`app_version` query
 parameters instead. If this is ever reused from React Native, send a real header there.
+
+### Walking (`activityLog`)
+
+A separate persisted slice, `{ [dateKey]: entry[] }`, deliberately **not** part of `sessionLog`:
+a walk is not a workout, and letting it in would inflate the streak, the badges and the weekly
+chart. It has its own two badges instead. `lib/activity.js` owns the model, `data/activity.js`
+every tunable number, and the day's `{ km, minutes, kcal }` is always derived (`dayActivity`),
+never stored twice.
+
+- **Energy is net, and never touches the calorie target.** `0.5 kcal × poids × km` above
+  resting metabolism; a duration without a distance falls back to METs *minus one* so both
+  paths measure the same thing. The daily target already contains all-day activity through
+  the BMR × frequency multiplier, so adding walking to it would count the same kilometres
+  twice — walking is shown *beside* the intake, the way training kcal already are, and
+  nothing presents a net balance.
+- `dayActivity` recomputes kcal from the **current** weight rather than summing what was
+  stored, so correcting a weight fixes past estimates instead of leaving them frozen.
+- **No background step counting exists for a PWA**, so the app does not pretend to have it:
+  the GPS mode is an explicit "suivre ma marche" that only runs with the app open. Fixes are
+  filtered by `trackStep` (accuracy, minimum step, jump) — a phone standing still reports a
+  wandering position that would otherwise accumulate kilometres.
 
 ### The Progress screen
 

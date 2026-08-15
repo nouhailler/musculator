@@ -8,5 +8,9 @@ export const BADGE_DEFS = [
   { id: 'hiit', icon: 'mountains', nom: 'HIIT', check: (s) => s.hasHiit },
   { id: 'streak30', icon: 'crown-simple', nom: '30 jours', check: (s) => s.streak >= 30 },
   { id: 'sessions100', icon: 'lightning', nom: '100 séances', check: (s) => s.totalSessions >= 100 },
+  // Walking earns its own badges rather than feeding the training ones: a walk
+  // is not a session, so it must not unlock "10 séances" or the day streak.
+  { id: 'walk7', icon: 'person-simple-walk', nom: '7 jours de marche', check: (s) => s.walkStreak >= 7 },
+  { id: 'km100', icon: 'sneaker-move', nom: '100 km', check: (s) => s.kmTotal >= 100 },
   { id: 'elite', icon: 'medal', nom: 'Élite', check: (s) => s.totalSessions >= 200 && s.streak >= 30 },
 ];

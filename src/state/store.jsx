@@ -8,6 +8,7 @@ import { generateAnalysis } from '../lib/analysis.js';
 import { fetchFreeModels, checkKey, requestAnalysis, requestProgressAnalysis } from '../lib/openrouter.js';
 import { generateProgressAnalysis, progressStats } from '../lib/progressAnalysis.js';
 import { dailyTargets } from '../lib/macros.js';
+import { makeActivityEntry } from '../lib/activity.js';
 import { startCadence, stopSpeaking, say } from '../lib/voice.js';
 import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme.js';
 import { MEALS } from '../data/nutrition.js';
@@ -24,6 +25,9 @@ const defaultProfile = {
   // Daily nutrition targets. Empty means "keep deriving it from the profile";
   // a value overrides the calculation in lib/macros.js.
   kcalCible: '', protCible: '', glucCible: '', lipCible: '',
+  // Daily walking distance. Nothing derives it, so empty simply means "no
+  // objective set" and the rings show the suggested value as a placeholder.
+  kmCible: '',
 };
 
 function loadPersisted() {
@@ -48,6 +52,10 @@ function loadPersisted() {
       foodCache: (p.foodCache && typeof p.foodCache === 'object') ? p.foodCache : {},
       // Free-text notes, one per day, kept independent of the session log.
       dayNotes: (p.dayNotes && typeof p.dayNotes === 'object') ? p.dayNotes : {},
+      // Walking, kept out of sessionLog on purpose: a walk is not a workout,
+      // and letting it count as one would inflate the streak, the badges and
+      // the weekly chart. { [dateKey]: entry[] }, like nutriLog.
+      activityLog: (p.activityLog && typeof p.activityLog === 'object') ? p.activityLog : {},
       // Cached AI analysis per day, so it survives a reload. Invalidated
       // whenever a new session is logged for that day (see finishWorkout).
       analysisLog: (p.analysisLog && typeof p.analysisLog === 'object') ? p.analysisLog : {},
@@ -61,7 +69,7 @@ function initialState() {
   const persisted = loadPersisted() || {
     profile: defaultProfile, customWorkouts: [], sessionLog: [], disclaimerAcked: false, voiceOn: true,
     openrouter: { key: '', model: '' }, nutriLog: {}, foodCache: {}, theme: DEFAULT_THEME,
-    dayNotes: {}, analysisLog: {},
+    dayNotes: {}, analysisLog: {}, activityLog: {},
   };
   // A cached analysis for today survives a reload — it is invalidated
   // (see finishWorkout) the moment a new session makes it stale.
@@ -262,9 +270,17 @@ function reducer(state, action) {
     case 'IMPORT_MEAL_DAYS': {
       const foodCache = { ...state.foodCache };
       for (const f of importedFoods(action.days)) foodCache[f.id] = f;
+      // A dictated day can carry a walk alongside its meals. Walking is always
+      // appended, never replaced: 'replace' is about the meals the import
+      // names, and it must not wipe a walk tracked by GPS the same day.
+      const activityLog = { ...state.activityLog };
+      for (const day of action.days) {
+        if (day.marche?.length) activityLog[day.date] = [...(activityLog[day.date] || []), ...day.marche];
+      }
       return {
         ...state,
         foodCache,
+        activityLog,
         nutriLog: applyImport(state.nutriLog, action.days, action.mode),
         nutriDate: action.days[0]?.date || state.nutriDate,
         view: null,
@@ -581,6 +597,28 @@ function reducer(state, action) {
         ...withStaleAnalysisFor(state, before.dateKey, after.dateKey),
       };
     }
+    // --- Marche -------------------------------------------------------------
+    case 'ADD_ACTIVITY': {
+      const day = state.activityLog[action.dateKey] || [];
+      return { ...state, activityLog: { ...state.activityLog, [action.dateKey]: [...day, action.entry] } };
+    }
+    case 'DELETE_ACTIVITY': {
+      const day = (state.activityLog[action.dateKey] || []).filter((e) => e.id !== action.id);
+      const activityLog = { ...state.activityLog };
+      if (day.length) activityLog[action.dateKey] = day;
+      else delete activityLog[action.dateKey];
+      return { ...state, activityLog };
+    }
+    // Bulk, from a GPX/CSV file or a dictated import: days already logged are
+    // added to, never replaced — an import must not wipe a tracked walk.
+    case 'IMPORT_ACTIVITY': {
+      const activityLog = { ...state.activityLog };
+      for (const [d, entries] of Object.entries(action.log)) {
+        activityLog[d] = [...(activityLog[d] || []), ...entries];
+      }
+      return { ...state, activityLog };
+    }
+
     case 'SET_DAY_NOTE':
       return { ...state, dayNotes: { ...state.dayNotes, [action.dateKey]: action.text } };
 
@@ -609,13 +647,15 @@ export function AppProvider({ children }) {
         foodCache: state.foodCache,
         theme: state.theme,
         dayNotes: state.dayNotes,
+        activityLog: state.activityLog,
         analysisLog: state.analysisLog,
       }));
     } catch {
       // storage unavailable (private mode / quota) — app still works, just without persistence
     }
   }, [state.profile, state.customWorkouts, state.sessionLog, state.disclaimerAcked, state.voiceOn,
-      state.openrouter, state.nutriLog, state.foodCache, state.theme, state.dayNotes, state.analysisLog]);
+      state.openrouter, state.nutriLog, state.foodCache, state.theme, state.dayNotes, state.analysisLog,
+      state.activityLog]);
 
   // Puts the chosen palette in force. Under 'système' the teardown unsubscribes
   // from the OS setting, so switching away stops following it.
@@ -734,6 +774,15 @@ export function AppProvider({ children }) {
     editSession: (id, patch) => dispatch({ type: 'EDIT_SESSION', id, patch }),
     setDayNote: (text) => dispatch({ type: 'SET_DAY_NOTE', dateKey: dateKey(), text }),
 
+    openActivity: () => dispatch({ type: 'OPEN_VIEW', view: 'activity' }),
+    addActivity: (patch, d) => dispatch({
+      type: 'ADD_ACTIVITY',
+      dateKey: d || dateKey(),
+      entry: makeActivityEntry(patch),
+    }),
+    deleteActivity: (id, d) => dispatch({ type: 'DELETE_ACTIVITY', id, dateKey: d || dateKey() }),
+    importActivity: (log) => dispatch({ type: 'IMPORT_ACTIVITY', log }),
+
     setTheme: (theme) => dispatch({ type: 'SET_THEME', theme }),
     setOpenRouter: (patch) => dispatch({ type: 'SET_OPENROUTER', patch }),
 
@@ -817,6 +866,7 @@ export function AppProvider({ children }) {
         profile: state.profile,
         sessionLog: state.sessionLog,
         nutriLog: state.nutriLog,
+        activityLog: state.activityLog,
         targets: dailyTargets(state.profile),
       };
       dispatch({ type: 'PROGRESS_START' });
@@ -835,7 +885,7 @@ export function AppProvider({ children }) {
         dispatch({ type: 'PATCH', payload: { progressError: `${e.message || 'Appel OpenRouter impossible.'} Analyse locale utilisée à la place.` } });
       }
     },
-  }), [state.workout, state.sessionLog, state.profile, state.openrouter, state.nutriDate, state.nutriLog]);
+  }), [state.workout, state.sessionLog, state.profile, state.openrouter, state.nutriDate, state.nutriLog, state.activityLog]);
 
   const value = useMemo(() => ({ state, actions }), [state, actions]);
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

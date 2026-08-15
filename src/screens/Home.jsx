@@ -1,6 +1,8 @@
 import { useApp, useDerived, allPrograms } from '../state/context.js';
 import { progById } from '../data/programs.js';
-import { shortMin } from '../lib/format.js';
+import { dateKey, shortMin } from '../lib/format.js';
+import { dayActivity } from '../lib/activity.js';
+import { DEFAULT_KM_TARGET } from '../data/activity.js';
 import Icon from '../components/ui/Icon.jsx';
 import { PrimaryButton, IconCircleButton } from '../components/ui/Button.jsx';
 
@@ -24,6 +26,9 @@ export default function Home() {
   const today = progById('fullbody');
   const freqTarget = Math.min(7, Math.max(1, Number(state.profile.frequence) || 4));
   const filled = Math.min(weekSessions.length, freqTarget);
+  const marche = dayActivity(state.activityLog, dateKey(), state.profile);
+  const kmCible = Number(state.profile.kmCible) > 0 ? Number(state.profile.kmCible) : DEFAULT_KM_TARGET;
+  const marchePart = Math.min(1, marche.km / kmCible);
 
   return (
     <div className="screen mscroll">
@@ -55,6 +60,38 @@ export default function Home() {
           <div><div style={{ fontSize: 22, fontWeight: 600, fontFamily: 'var(--font-heading)' }}>{weekKcal}</div><div style={{ fontSize: 11, color: 'var(--color-neutral-400)' }}>kcal estimées</div></div>
         </div>
       </div>
+
+      {/* Walking, next to training rather than mixed into it: same day, other
+          kind of effort. Tapping it opens where a walk is logged. */}
+      <button
+        type="button" onClick={actions.openActivity}
+        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 13, textAlign: 'left', font: 'inherit',
+          cursor: 'pointer', color: 'var(--color-text)', background: 'var(--color-surface)',
+          border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', padding: 13, marginBottom: 16 }}
+      >
+        <div style={{ position: 'relative', width: 54, height: 54, flex: 'none' }}>
+          <svg width="54" height="54" viewBox="0 0 54 54">
+            <circle cx="27" cy="27" r="23" fill="none" stroke="var(--color-neutral-800)" strokeWidth="6" />
+            <circle
+              cx="27" cy="27" r="23" fill="none" stroke="var(--color-accent)" strokeWidth="6" strokeLinecap="round"
+              strokeDasharray={2 * Math.PI * 23} strokeDashoffset={2 * Math.PI * 23 * (1 - marchePart)}
+              transform="rotate(-90 27 27)" style={{ transition: 'stroke-dashoffset .5s ease' }}
+            />
+          </svg>
+          <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', color: 'var(--color-accent-200)' }}>
+            <Icon name="person-simple-walk" weight="fill" size={20} />
+          </div>
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 14, fontWeight: 600 }}>
+            {marche.km.toLocaleString('fr-FR')} km <span style={{ fontSize: 12, color: 'var(--color-neutral-400)', fontWeight: 400 }}>/ {kmCible} km</span>
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--color-neutral-400)' }}>
+            {marche.kcal > 0 ? `${marche.kcal} kcal dépensées en marchant` : "Marche du jour — rien de consigné"}
+          </div>
+        </div>
+        <Icon name="caret-right" size={16} color="var(--color-neutral-500)" />
+      </button>
 
       <PrimaryButton icon="play-circle" size="lg" onClick={() => actions.startWorkout('fullbody')} style={{ marginBottom: 8 }}>
         Commencer une séance

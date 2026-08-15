@@ -3,6 +3,7 @@ import { useApp, useDerived } from '../state/context.js';
 import { exById } from '../data/exercises.js';
 import { MEALS } from '../data/nutrition.js';
 import { totals } from '../lib/macros.js';
+import { dayActivity } from '../lib/activity.js';
 import { fmt, todayLabel } from '../lib/format.js';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
@@ -23,6 +24,7 @@ export default function Journal() {
 
   const nutriEntries = useMemo(() => MEALS.flatMap((m) => state.nutriLog[today]?.[m.key] || []), [state.nutriLog, today]);
   const nutriTotals = useMemo(() => totals(nutriEntries), [nutriEntries]);
+  const marche = useMemo(() => dayActivity(state.activityLog, today, state.profile), [state.activityLog, today, state.profile]);
 
   return (
     <div className="screen mscroll">
@@ -60,6 +62,33 @@ export default function Journal() {
               {dayKcal > 0
                 ? `${nutriTotals.kcal} kcal mangées pour ${dayKcal} kcal brûlées à l'entraînement — pas un bilan calorique complet, la dépense de repos n'y est pas.`
                 : `${nutriTotals.kcal} kcal mangées aujourd'hui.`}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Walking sits next to food and training, and like them it is shown
+          rather than netted off: the day's expenditure is not a balance. */}
+      <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 13, marginBottom: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: marche.km || marche.minutes ? 10 : 4 }}>
+          <span style={{ fontSize: 13, fontWeight: 600 }}>Marche du jour</span>
+          <button type="button" onClick={actions.openActivity}
+            style={{ background: 'none', border: 'none', color: 'var(--color-accent-200)', fontSize: 11, cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Icon name="plus" size={13} />Ajouter une marche
+          </button>
+        </div>
+        {!marche.km && !marche.minutes ? (
+          <div style={{ fontSize: 12, color: 'var(--color-neutral-400)' }}>Rien parcouru aujourd'hui.</div>
+        ) : (
+          <>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+              <div className="stat-box"><div className="stat-value">{marche.km.toLocaleString('fr-FR')}</div><div className="stat-label">km</div></div>
+              <div className="stat-box"><div className="stat-value">{marche.kcal}</div><div className="stat-label">kcal</div></div>
+              <div className="stat-box"><div className="stat-value">{marche.minutes}</div><div className="stat-label">minutes</div></div>
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--color-neutral-500)', lineHeight: 1.5 }}>
+              {marche.count} sortie{marche.count > 1 ? 's' : ''} · estimation nette à 0,5 kcal par kilo et par kilomètre.
+              Elle s'ajoute à ta dépense, pas à ta cible calorique.
             </div>
           </>
         )}

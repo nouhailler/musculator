@@ -13,6 +13,7 @@
 import { MEALS, MICROS } from '../data/nutrition.js';
 import { extractJsonObject } from './json.js';
 import { matchCiqual } from './ciqualMatch.js';
+import { makeActivityEntry } from './activity.js';
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME_RE = /^(\d{1,2})\s*[:h]\s*(\d{2})?$/;
@@ -194,6 +195,34 @@ function parseMealBlock(raw, fallbackMeal, warnings, counter) {
   return { key, entries };
 }
 
+// Walking dictated alongside the meals: "j'ai marché 7 km". Accepted as a bare
+// number of kilometres, an object, or a list of outings — a day is a day, and
+// the assistant should not have to guess which shape the app wanted.
+function parseWalks(raw, warnings) {
+  const src = [raw.marche, raw.activites, raw.activity, raw.walks].find((v) => v !== undefined);
+  if (src === undefined) return [];
+  const list = Array.isArray(src) ? src : [src];
+  const out = [];
+  for (const item of list) {
+    const o = typeof item === 'number' || typeof item === 'string' ? { km: item } : item;
+    if (!o || typeof o !== 'object') continue;
+    const km = num(o.km) ?? num(o.distance) ?? num(o.kilometres);
+    const minutes = num(o.minutes) ?? num(o.duree) ?? num(o.duration);
+    if (!(km > 0) && !(minutes > 0)) {
+      warnings.push('Marche ignorée : ni distance ni durée exploitable.');
+      continue;
+    }
+    out.push(makeActivityEntry({
+      km: km > 0 ? km : 0,
+      minutes: minutes > 0 ? minutes : 0,
+      heure: /^\d{1,2}[:h]\d{2}$/.test(String(o.heure ?? o.time ?? '')) ? String(o.heure ?? o.time).replace('h', ':') : null,
+      source: 'dictee',
+      note: typeof o.note === 'string' ? o.note.slice(0, 40) : null,
+    }));
+  }
+  return out;
+}
+
 function parseDay(raw, fallbackDate, fallbackMeal, warnings, counter) {
   if (!raw || typeof raw !== 'object') return null;
 
@@ -207,7 +236,9 @@ function parseDay(raw, fallbackDate, fallbackMeal, warnings, counter) {
     || ([raw.aliments, raw.foods, raw.items].find(Array.isArray) ? [raw] : []);
 
   const parsed = blocks.map((m) => parseMealBlock(m, fallbackMeal, warnings, counter)).filter(Boolean);
-  if (!parsed.length) return null;
+  const marche = parseWalks(raw, warnings);
+  // A day that only carries a walk is still a day worth importing.
+  if (!parsed.length && !marche.length) return null;
 
   // Two blocks can land on the same meal (a model splitting a snack in two);
   // they are one meal in the log, so they are merged here rather than downstream.
@@ -218,7 +249,7 @@ function parseDay(raw, fallbackDate, fallbackMeal, warnings, counter) {
   }
   // Kept in the app's meal order so the preview reads like the Nutrition screen.
   const meals = MEAL_KEYS.filter((k) => byKey.has(k)).map((k) => byKey.get(k));
-  return { date, meals };
+  return { date, meals, marche };
 }
 
 /**
@@ -262,7 +293,7 @@ async function resolveLookups(days, warnings) {
   for (const nom of missing) {
     warnings.push(`« ${nom} » ignoré : aucune valeur fournie et introuvable dans la table CIQUAL — ajoute-le à la main.`);
   }
-  return days.filter((d) => d.meals.length);
+  return days.filter((d) => d.meals.length || d.marche.length);
 }
 
 /**

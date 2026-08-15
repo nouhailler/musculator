@@ -5,6 +5,7 @@ import { PROGRAMS } from '../data/programs.js';
 import { BADGE_DEFS } from '../data/badges.js';
 import { dateKey, startOfWeekKey } from '../lib/format.js';
 import { computeStreak, sessionsByWeek } from '../lib/streak.js';
+import { totalKm, walkStreak } from '../lib/activity.js';
 
 export const AppContext = createContext(null);
 
@@ -29,9 +30,11 @@ export function useDerived() {
     const totalSessions = state.sessionLog.length;
     const hasEarlySession = state.sessionLog.some((s) => s.heure < '08:00');
     const hasHiit = state.sessionLog.some((s) => s.programId === 'hiit');
+    const kmTotal = totalKm(state.activityLog);
+    const kmStreak = walkStreak(state.activityLog);
     const badges = BADGE_DEFS.map((b) => ({
       ...b,
-      unlocked: b.check({ totalSessions, streak, hasEarlySession, hasHiit }),
+      unlocked: b.check({ totalSessions, streak, hasEarlySession, hasHiit, kmTotal, walkStreak: kmStreak }),
     }));
     const history = state.sessionLog.slice(0, 20);
     // Kept as the sessions themselves, not just their count: the Progress
@@ -41,8 +44,9 @@ export function useDerived() {
     return {
       today, weekStart, journalToday, weekSessions, weekTimeSec, weekKcal,
       streak, totalSessions, badges, history, weekly, weeklySessions,
+      kmTotal, kmStreak,
     };
-  }, [state.sessionLog]);
+  }, [state.sessionLog, state.activityLog]);
 }
 
 export function allPrograms(customWorkouts) {

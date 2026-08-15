@@ -63,6 +63,11 @@ plutôt que « carrés de chocolat ». Ce n'est qu'un filet de sécurité : un a
 table est ignoré à l'import, et la table ne connaît ni marques ni recettes. Donne "pour100g"
 dès que tu peux, et toujours pour un produit de marque ou un plat composé.
 
+MARCHE (facultatif, par jour) — si la personne dit avoir marche, ajoute au jour un champ
+"marche" : { "km": nombre, "minutes": nombre } — ou une liste s'il y a eu plusieurs sorties.
+Donne au moins l'un des deux. « J'ai marche 7 km » -> "marche": { "km": 7 }.
+Musculator en deduit les calories depensees a partir du poids de la personne.
+
 FORMAT DE SORTIE
 ```json
 {

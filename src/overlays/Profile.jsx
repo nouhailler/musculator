@@ -1,6 +1,7 @@
 import { useApp } from '../state/context.js';
 import { GOALS, DEFAULT_GOAL } from '../data/nutrition.js';
 import { autoTargets, dailyTargets } from '../lib/macros.js';
+import { DEFAULT_KM_TARGET } from '../data/activity.js';
 import { DEFAULT_THEME, THEMES, themeLabel } from '../lib/theme.js';
 import { Field, TextInput, TextArea, RangeInput } from '../components/ui/Field.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';
@@ -61,6 +62,19 @@ function TargetFields() {
           </Field>
         ))}
       </div>
+      {/* Walking has no calculation to fall back on — nothing in the profile
+          implies a distance — so the suggestion is a placeholder, not a
+          derived value, and an empty field simply means "no objective". */}
+      <Field label="Marche (km / jour)" style={{ marginBottom: 8, maxWidth: 160 }}>
+        <input
+          className="input" type="number" inputMode="decimal" step="0.5"
+          value={p.kmCible || ''}
+          placeholder={String(DEFAULT_KM_TARGET)}
+          onChange={(e) => actions.setProfileField('kmCible', e.target.value === '' ? '' : Number(e.target.value))}
+          style={{ textAlign: 'center' }}
+        />
+      </Field>
+
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
         <span style={{ fontSize: 11, color: 'var(--color-neutral-500)', lineHeight: 1.5, flex: '1 1 100%' }}>
           Calcul automatique : {auto.kcal} kcal · P {auto.proteines} g · G {auto.glucides} g · L {auto.lipides} g
