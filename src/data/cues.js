@@ -155,6 +155,46 @@ export const CUES = {
   // Lombaires
   'superman': { beat: 1600, seq: ['Décolle', 'Repose'] },
   'back-extension-sol': { beat: 1500, seq: ['Monte', 'Descends'] },
+  'suitcase-carry': { beat: 1200, seq: ['Avance', 'Buste droit'] },
+  'reverse-hyperextension': { beat: 1700, seq: ['Monte', 'Descends'] },
+
+  // Grand dorsal : compléments
+  'tirage-horizontal-elastique-assis': { beat: 1500, seq: ['Tire', 'Reviens'] },
+  'traction-supination': { beat: 2000, seq: ['Tire', 'Descends'] },
+  'traction-neutre': { beat: 2000, seq: ['Tire', 'Descends'] },
+  'traction-negative': { beat: 2600, seq: ['En haut', 'Retiens la descente'] },
+  'traction-assistee-elastique': { beat: 1900, seq: ['Tire', 'Descends'] },
+  'straight-arm-pulldown-elastique': { beat: 1500, seq: ['Tire', 'Remonte'] },
+  'pulldown-genoux-elastique': { beat: 1500, seq: ['Tire', 'Remonte'] },
+
+  // Trapèzes : compléments
+  'trap-3-raise': { beat: 1500, seq: ['Monte', 'Descends'] },
+  'prone-t-raise': { beat: 1500, seq: ['Monte', 'Descends'] },
+  'prone-w-raise': { beat: 1600, seq: ['Ouvre', 'Reviens'] },
+  'scapular-push-up': { beat: 1600, seq: ['Enfonce', 'Repousse'] },
+  'scapular-pull-up': { beat: 1500, seq: ['Tire les omoplates', 'Relâche'] },
+
+  // Abdominaux suspendus
+  'hanging-knee-raise': { beat: 1600, seq: ['Monte', 'Descends'] },
+  'hanging-leg-raise': { beat: 1800, seq: ['Monte', 'Descends'] },
+  'toes-to-bar': { beat: 1800, seq: ['Monte', 'Descends'] },
+  'hanging-windshield-wipers': { beat: 1600, seq: ['À gauche', 'À droite'] },
+  'ab-wheel-rollout': { beat: 1800, seq: ['Roule', 'Reviens'] },
+
+  // Mollets : compléments
+  'seated-tibialis-raise': { beat: 1300, seq: ['Orteils haut', 'Descends'] },
+  'pogo-jumps': { beat: 500, seq: ['Rebondis', 'Léger'] },
+
+  // Moyen fessier : compléments
+  'step-down-lateral': { beat: 1800, seq: ['Descends', 'Remonte'] },
+
+  // Pectoraux : compléments
+  'pompes-elastique': { beat: 1500, seq: ['En bas', 'En haut'] },
+
+  // Avant-bras : compléments
+  'wrist-roller': { beat: 1400, seq: ['Enroule', 'Déroule'] },
+  'pronation-supination-haltere': { beat: 1400, seq: ['Tourne', 'Reviens'] },
+  'plate-wrist-curl': { beat: 1200, seq: ['Ferme', 'Déroule'] },
 };
 
 export const ENCOURAGEMENTS = [
