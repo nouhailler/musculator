@@ -171,6 +171,25 @@ The voice coach effect compares a computed signature string (`view|phase|index|p
 against a ref before restarting cadence — without it, every tick would cancel and restart
 speech.
 
+### Dictated programmes
+
+`lib/programPrompt.js` + `lib/importProgram.js`, same two-halves-of-one-format rule as the
+meals import. The invariant that shapes everything: **an imported session refers to catalogue
+ids, never to invented exercises.** An exercise is cross-referenced by `demos.js`, `cues.js`
+and `muscles.js`; one conjured by a model would have no demo, no voice cues and no place on
+the body map — five features degraded to gain a name.
+
+- The prompt therefore **embeds the whole catalogue** (45 lines, ~4 KB, generated from
+  `EXERCISES` so it cannot drift). The parser resolves in three steps, each reported: id,
+  then name, then substitution.
+- **Substitution requires the muscle the assistant named.** A name that already failed to
+  match is not a signal — that is how "rameur ergomètre" was once proposed as mountain
+  climbers. A primary muscle outweighs a secondary (`0.35`), or lateral raises land on the
+  push-up instead of the overhead press. `MUSCLES` bridges the everyday vocabulary
+  ("abdominaux") to the catalogue's ("Sangle abdominale") with a curated `exos` list.
+- An imported session is an ordinary `customWorkouts` entry, in the exact shape
+  `SAVE_WORKOUT` produces, so nothing downstream can tell the difference.
+
 ### Data catalogues (`src/data/`)
 
 Static content, all cross-referenced by exercise id. Invariants that aren't enforced by any

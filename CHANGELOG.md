@@ -63,6 +63,25 @@ grouped by date and reference the commit they landed in.
     one `OBJECTIFS` in `data/programs.js`, so a saved workout cannot carry an objective the
     profile is unable to express.
 
+- **"Importer un programme dicté"** on the Programmes screen — ask Claude or ChatGPT for a
+  training plan, paste the JSON, and each session of the plan becomes a custom workout with
+  the prescribed sets, reps, load and rest.
+  - **The assistant picks from the catalogue, it never invents an exercise.** An exercise here
+    is an id cross-referenced by its animated demo, its voice cues and the muscle map; an
+    invented one would arrive with none of those and quietly degrade five features to gain a
+    name. The prompt therefore embeds all 45 exercises (~4 KB, generated from the data so it
+    cannot drift), and the parser resolves an id, then a name, then the nearest exercise
+    working the same muscle.
+  - **A substitution is always shown before it lands** — "presse à cuisses → remplacé par
+    Squats (Quadriceps)". It changes the session, so it is not something to discover later.
+    Substitution requires the muscle the assistant named: a name that failed to match is not
+    a signal, which is what stopped a rowing machine being proposed as mountain climbers. A
+    primary muscle outweighs a secondary one, so lateral raises land on the overhead press
+    rather than the push-up, and the body map's own vocabulary bridges "abdominaux" to
+    "Sangle abdominale".
+  - A plan arrives as several sessions at once, since a Musculator session is one workout and
+    a weekly programme is four. `PROMPT-PROGRAMME.md` mirrors the prompt at the root.
+
 - **A dictated food is looked up in your own foods before CIQUAL.** A product you scanned
   carries its brand's real values and is one you actually eat; no generic can beat that. It
   also closes a gap the previous change left open — scanning the two foods CIQUAL did not

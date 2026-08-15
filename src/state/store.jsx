@@ -9,6 +9,7 @@ import { fetchFreeModels, checkKey, requestAnalysis, requestProgressAnalysis } f
 import { generateProgressAnalysis, progressStats } from '../lib/progressAnalysis.js';
 import { dailyTargets } from '../lib/macros.js';
 import { makeActivityEntry } from '../lib/activity.js';
+import { toCustomWorkouts } from '../lib/importProgram.js';
 import {
   backupFilename, buildBackup, deliverBackup, mergeBackup, replaceFromBackup,
 } from '../lib/backup.js';
@@ -377,6 +378,18 @@ function reducer(state, action) {
     }
     case 'SAVE_PROFILE':
       return { ...state, view: null, tab: 'journal' };
+
+    // Dictated sessions land as ordinary custom workouts — same shape as the
+    // builder's, so everything downstream treats them identically.
+    case 'IMPORT_PROGRAMS': {
+      const added = toCustomWorkouts(action.seances);
+      return {
+        ...state,
+        customWorkouts: [...state.customWorkouts, ...added],
+        view: null,
+        tab: 'programs',
+      };
+    }
 
     case 'OPEN_BUILDER':
       return { ...state, view: 'builder', builder: { name: '', duree: 30, objectif: 'Prise de masse', exos: [], pickerOpen: false } };
@@ -759,6 +772,8 @@ export function AppProvider({ children }) {
     openProfile: () => dispatch({ type: 'OPEN_VIEW', view: 'profile' }),
 
     openBuilder: () => dispatch({ type: 'OPEN_BUILDER' }),
+    openProgramImport: () => dispatch({ type: 'OPEN_VIEW', view: 'importProgram' }),
+    importPrograms: (seances) => dispatch({ type: 'IMPORT_PROGRAMS', seances }),
     builderSetField: (key, value) => dispatch({ type: 'BUILDER_SET_FIELD', key, value }),
     builderTogglePicker: (open) => dispatch({ type: 'BUILDER_TOGGLE_PICKER', open }),
     builderAddExo: (id) => dispatch({ type: 'BUILDER_ADD_EXO', id }),

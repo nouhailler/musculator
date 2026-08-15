@@ -14,10 +14,22 @@ export const HELP = {
       ['Chiffres réels', "Tout ce qui s'affiche vient de tes séances enregistrées — rien n'est simulé."],
     ],
   },
+  importProgram: {
+    titre: 'Importer un programme dicté',
+    intro: "Demande un programme à Claude ou ChatGPT, colle ici le JSON : chaque séance du plan devient une séance perso.",
+    points: [
+      ['Le prompt', "Il contient les 45 exercices de l'app. L'assistant choisit dedans au lieu d'inventer — un exercice inventé n'aurait ni démo animée, ni coach vocal, ni place dans la cartographie musculaire."],
+      ['Substitutions', "Un mouvement absent du catalogue est remplacé par le plus proche travaillant le même muscle, et l'aperçu le dit : « presse à cuisses → remplacé par Squats »."],
+      ['Réglages conservés', "Séries, répétitions, charge et repos dictés sont repris tels quels dans la séance guidée."],
+      ['Plusieurs séances', "Un programme hebdomadaire arrive en plusieurs séances d'un coup ; elles s'ajoutent toutes à tes séances perso."],
+    ],
+  },
+
   programs: {
     titre: 'Programmes',
     intro: "Les séances toutes faites, filtrables, et le constructeur pour composer les tiennes.",
     points: [
+      ['Programme dicté', "« Importer un programme dicté » fait composer un plan par une IA à partir du catalogue de l'app, et le transforme en séances perso."],
       ['Filtres', "Durée, niveau et matériel se combinent. Si plus rien n'apparaît, élargis un filtre."],
       ['Créer une séance', "Choisis tes exercices puis règle séries, répétitions, charge, repos et ordre. La séance est enregistrée sur l'appareil et réutilisable."],
       ['Pendant la séance', "Tu peux modifier répétitions et charge à la volée sans toucher au programme d'origine."],

@@ -21,6 +21,7 @@ import FoodSearch from './overlays/FoodSearch.jsx';
 import FoodEntry from './overlays/FoodEntry.jsx';
 import ImportMeals from './overlays/ImportMeals.jsx';
 import Activity from './overlays/Activity.jsx';
+import ImportProgram from './overlays/ImportProgram.jsx';
 import Workout from './overlays/Workout.jsx';
 import WorkoutComplete from './overlays/WorkoutComplete.jsx';
 
@@ -28,7 +29,7 @@ const TAB_SCREENS = { home: Home, programs: Programs, library: Library, nutritio
 const OVERLAYS = {
   exercise: ExerciseDetail, program: ProgramDetail, bodymap: BodyMap, profile: Profile,
   builder: Builder, foodSearch: FoodSearch, foodEntry: FoodEntry, importMeals: ImportMeals,
-  activity: Activity,
+  activity: Activity, importProgram: ImportProgram,
 };
 
 export default function App() {

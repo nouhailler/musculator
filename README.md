@@ -113,8 +113,13 @@ the stored choice before first paint so a light-theme launch never flashes dark.
   (Web Speech API) that calls out reps in rhythm and encouragement, per exercise.
 - 🚪 **Sortie de séance** — closing a session offers to save what you have already done rather
   than discarding it; a partial session is logged from the sets actually performed.
-- 📋 **Programmes** — filterable by duration/level/equipment, plus a workout builder to compose
-  and save custom sessions (exercises, series, reps, charge, rest, order).
+- 📋 **Programmes** — filterable by duration/level/equipment, a workout builder to compose and
+  save custom sessions (exercises, series, reps, charge, rest, order), and **"Importer un
+  programme dicté"**: ask an assistant for a plan and each of its sessions becomes a custom
+  workout. The prompt embeds all 45 exercises so the assistant picks from the catalogue rather
+  than inventing — an invented exercise would have no animated demo, no voice cues and no
+  place on the muscle map. A movement the catalogue lacks is replaced by the nearest one
+  working the same muscle, and the preview says so before anything is saved.
 - 📚 **Bibliothèque** — searchable exercise catalogue (45 exercises) grouped by movement
   pattern, with full technique sheets (setup, movement, breathing, common mistakes, safety
   tips, easier/harder variants), an animated demo of every movement, and a "Muscle ciblé"

@@ -1,6 +1,7 @@
 import { useApp } from '../state/context.js';
 import { PROGRAMS } from '../data/programs.js';
 import Icon from '../components/ui/Icon.jsx';
+import { SecondaryButton } from '../components/ui/Button.jsx';
 import Tag from '../components/ui/Tag.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';
 
@@ -34,6 +35,15 @@ export default function Programs() {
       >
         <Icon name="plus-circle" size={18} />Créer une séance
       </button>
+
+      {/* Dictating a plan is the other way to get a session: the assistant
+          picks from the same catalogue the builder offers. */}
+      <SecondaryButton
+        icon="sparkle" onClick={actions.openProgramImport}
+        style={{ width: '100%', padding: 10, justifyContent: 'center', fontSize: 13, marginBottom: 18 }}
+      >
+        Importer un programme dicté
+      </SecondaryButton>
 
       {state.customWorkouts.length > 0 && (
         <>
