@@ -55,6 +55,20 @@ to reducer state; add them to `useDerived` or to a `lib/` helper.
 filters, in-progress workout) is deliberately ephemeral. Adding a durable field means
 touching both `loadPersisted()` and the persist effect in `store.jsx`.
 
+### Backups
+
+`lib/backup.js` writes and reads every persisted slice, because that data exists in exactly
+one place and nothing else can recover it.
+
+- **The OpenRouter key is excluded from the export** — a backup travels, a secret should not.
+  The model is kept, and `replaceFromBackup` keeps whatever key the device already had.
+- **`deliverBackup` tries the share sheet before a download link.** In an installed iOS app
+  `<a download>` frequently does nothing at all; sharing reaches Fichiers and Mail. The
+  clipboard is the last resort so the data can always be extracted.
+- Merge unions the logs by entry id and leaves settings alone (a device keeps its own
+  profile); replace takes the file wholesale. Anything shaped unexpectedly is skipped and
+  named rather than trusted.
+
 ### Updating an installed app
 
 `registerType: 'prompt'` with `injectRegister: null` — the app registers the worker itself

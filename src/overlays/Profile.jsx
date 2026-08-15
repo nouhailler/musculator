@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useApp } from '../state/context.js';
 import { GOALS, DEFAULT_GOAL, goalDef } from '../data/nutrition.js';
 import { OBJECTIFS } from '../data/programs.js';
 import { autoTargets, dailyTargets } from '../lib/macros.js';
 import { DEFAULT_KM_TARGET } from '../data/activity.js';
 import { BUILD_ID, BUILD_TIME } from '../lib/pwa.js';
+import { backupSummary, parseBackup } from '../lib/backup.js';
 import { DEFAULT_THEME, THEMES, themeLabel } from '../lib/theme.js';
 import { Field, TextInput, TextArea, RangeInput } from '../components/ui/Field.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';
@@ -114,6 +116,99 @@ const buildLabel = (() => {
   }
 })();
 
+/**
+ * Export and restore. The app has no account and no server, so this file is
+ * the only copy of a journal that exists — hence a summary before restoring,
+ * and a choice between adding to what is here and replacing it.
+ */
+function BackupSection() {
+  const { state, actions } = useApp();
+  const [pending, setPending] = useState(null);
+  const [error, setError] = useState('');
+
+  const read = (file) => {
+    setError(''); setPending(null);
+    file.text().then((text) => {
+      try {
+        const parsed = parseBackup(text);
+        setPending({ ...parsed, summary: backupSummary(parsed.data) });
+      } catch (e) {
+        setError(e.message || 'Fichier illisible.');
+      }
+    });
+  };
+
+  const restore = (mode) => {
+    const s = pending.summary;
+    actions.restoreBackup(pending.data, mode, mode === 'replace'
+      ? `Sauvegarde restaurée : ${s.seances} séances, ${s.joursNutrition} jours de nutrition.`
+      : `Sauvegarde fusionnée : ${s.seances} séances et ${s.joursNutrition} jours de nutrition ajoutés à ce qui était là.`);
+    setPending(null);
+  };
+
+  return (
+    <>
+      <h5 style={{ margin: '0 0 4px' }}>Sauvegarde de mes données</h5>
+      <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 12px', lineHeight: 1.55 }}>
+        Tout est stocké sur cet appareil et nulle part ailleurs : un navigateur nettoyé ou un
+        téléphone changé et le journal disparaît. Exporte un fichier de temps en temps, et
+        garde-le ailleurs que sur le téléphone.
+      </p>
+      <SecondaryButton icon="arrow-fat-lines-down" onClick={actions.exportBackup}
+        style={{ width: '100%', padding: 11, justifyContent: 'center', marginBottom: 10 }}>
+        Exporter mes données
+      </SecondaryButton>
+      {state.backupStatus && (
+        <div style={{ fontSize: 12, color: 'var(--color-good)', marginBottom: 10, lineHeight: 1.5 }}>{state.backupStatus}</div>
+      )}
+
+      <label htmlFor="backup-file"
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer',
+          padding: 11, borderRadius: 'var(--radius-md)', background: 'var(--color-surface)',
+          border: '1px solid var(--color-divider)', color: 'var(--color-text)', fontSize: 13, marginBottom: 10 }}
+      >
+        <Icon name="arrow-bend-up-right" size={16} />Restaurer une sauvegarde
+      </label>
+      <input id="backup-file" type="file" accept=".json,application/json" style={{ display: 'none' }}
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) read(f); e.target.value = ''; }} />
+      {error && <div style={{ fontSize: 12, color: 'var(--color-warn)', marginBottom: 10, lineHeight: 1.5 }}>{error}</div>}
+
+      {pending && (
+        <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 12, marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+            Sauvegarde du {pending.exportedAt ? new Date(pending.exportedAt).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : 'date inconnue'}
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--color-neutral-300)', lineHeight: 1.6, marginBottom: 10 }}>
+            {pending.summary.seances} séances · {pending.summary.programmes} séances perso ·{' '}
+            {pending.summary.joursNutrition} jours de nutrition · {pending.summary.joursMarche} jours de marche ·{' '}
+            {pending.summary.notes} notes{pending.summary.profil ? ' · profil' : ''}
+          </div>
+          {pending.warnings.length > 0 && (
+            <ul style={{ margin: '0 0 10px', padding: '0 0 0 16px', fontSize: 11, color: 'var(--color-warn)', lineHeight: 1.5 }}>
+              {pending.warnings.map((w) => <li key={w}>{w}</li>)}
+            </ul>
+          )}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+            <SecondaryButton onClick={() => setPending(null)} style={{ flex: 1, justifyContent: 'center' }}>Annuler</SecondaryButton>
+            <SecondaryButton onClick={() => restore('merge')} style={{ flex: 1, justifyContent: 'center' }}>Fusionner</SecondaryButton>
+          </div>
+          <PrimaryButton icon="arrow-counter-clockwise" onClick={() => restore('replace')}>
+            Tout remplacer
+          </PrimaryButton>
+          <div style={{ fontSize: 11, color: 'var(--color-neutral-500)', marginTop: 8, lineHeight: 1.5 }}>
+            « Fusionner » ajoute ce qui manque sans rien perdre de ce qui est ici (et garde ton profil actuel).
+            « Tout remplacer » écrase les données de cet appareil par celles du fichier.
+          </div>
+        </div>
+      )}
+      <div style={{ display: 'flex', gap: 8, fontSize: 11, color: 'var(--color-neutral-500)', lineHeight: 1.5, marginBottom: 12 }}>
+        <Icon name="info" size={13} style={{ flex: 'none', marginTop: 1 }} />
+        <span>La clé OpenRouter n'est pas exportée — une sauvegarde se promène, pas un secret. Le modèle choisi, lui, est conservé.</span>
+      </div>
+    </>
+  );
+}
+
 export default function Profile() {
   const { state, actions } = useApp();
   const p = state.profile;
@@ -199,6 +294,10 @@ export default function Profile() {
           onChange={(label) => actions.setTheme(THEMES.find((t) => t.label === label)?.key || DEFAULT_THEME)}
           style={{ marginBottom: 6 }}
         />
+
+        <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
+
+        <BackupSection />
 
         <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
 

@@ -120,6 +120,7 @@ export const HELP = {
       ['Marche (km/jour)', "Objectif de distance quotidienne. Rien ne le calcule : vide, il n'y a pas d'objectif et l'anneau de l'accueil affiche la suggestion."],
       ['Objectifs quotidiens', "Calories, protéines, glucides et lipides sont calculés depuis ton profil. Renseigne un champ pour imposer ta propre cible ; vide, il reste automatique. « Tout recalculer » revient au calcul."],
       ['Thème', "Sombre, clair, ou « Système » pour suivre le réglage de ton téléphone. Le choix s'applique tout de suite et reste sur cet appareil."],
+      ['Sauvegarde', "Tes données ne sont que sur cet appareil. « Exporter » produit un fichier JSON à garder ailleurs ; « Restaurer » le relit, en fusionnant avec ce qui est là ou en remplaçant tout. La clé OpenRouter n'est pas exportée."],
       ['Version & mise à jour', "L'app installée garde sa version tant qu'elle n'est pas redémarrée. Le bouton cherche la dernière version publiée et l'applique tout de suite ; le numéro affiché te dit sur laquelle tu es. Impossible pendant une séance : la mise à jour recharge l'app."],
       ['Si rien ne bouge', "« Forcer le rechargement complet » vide le cache de l'app et retélécharge tout. Tes données restent intactes — ne vide jamais les données du site depuis les réglages du téléphone, ça effacerait ton journal."],
       ['OpenRouter', "Facultatif. La clé est enregistrée en clair sur cet appareil — n'utilise pas une clé partagée."],

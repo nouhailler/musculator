@@ -297,6 +297,15 @@ than leaving you with nothing.
 
 ---
 
+## 💾 Backups
+
+Everything lives in `localStorage` on one device, so *Mon profil & objectifs → Sauvegarde de
+mes données* exports every persisted slice to a JSON file and reads one back — merged into
+what is already there (logs unioned by entry id) or replacing it wholesale, after showing what
+the file contains. The OpenRouter key is deliberately left out: a backup is a file people mail
+to themselves. Export goes through the share sheet first, since an installed iOS app often
+ignores a download link.
+
 ## 🔄 Updating an installed app
 
 A PWA on a home screen is reopened, not reloaded, so a fresh deploy can sit installed in the

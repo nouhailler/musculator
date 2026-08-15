@@ -63,6 +63,23 @@ grouped by date and reference the commit they landed in.
     one `OBJECTIFS` in `data/programs.js`, so a saved workout cannot carry an objective the
     profile is unable to express.
 
+- **Export and restore, for data that exists in exactly one place** — no account, no server,
+  so a cleaned browser or a replaced phone took the whole journal with it and there was
+  nothing to say but "don't do that".
+  - *Mon profil & objectifs → Sauvegarde de mes données* writes every persisted slice to a
+    JSON file, and reads one back either by **merging** it into what is already here (logs
+    unioned by id, so the same entry on two devices stays one entry, and the device keeps its
+    own profile and settings) or by **replacing** everything. A summary of what the file
+    holds is shown before either.
+  - **The OpenRouter key is never exported.** A backup is a file people mail to themselves
+    and drop in cloud storage; a secret does not belong in it. The chosen model is kept, so
+    restoring only asks for the key again.
+  - Delivery adapts to the device: the **share sheet first**, since in an installed iOS app a
+    download link frequently does nothing while sharing opens Fichiers, Mail and AirDrop;
+    then a download link; then the clipboard, so the data can always be got out somehow.
+  - Reading is defensive — a slice with an unexpected shape is skipped and named, so a
+    partial or hand-edited file still restores what it does carry.
+
 - **An update button, and a visible version** — a new Netlify deploy could take many reloads
   to reach an installed phone, with no way to tell whether it had landed.
   - The service worker is now registered by the app (`src/lib/pwa.js`, `registerType:

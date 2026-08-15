@@ -9,9 +9,12 @@ import { fetchFreeModels, checkKey, requestAnalysis, requestProgressAnalysis } f
 import { generateProgressAnalysis, progressStats } from '../lib/progressAnalysis.js';
 import { dailyTargets } from '../lib/macros.js';
 import { makeActivityEntry } from '../lib/activity.js';
+import {
+  backupFilename, buildBackup, deliverBackup, mergeBackup, replaceFromBackup,
+} from '../lib/backup.js';
 import { startCadence, stopSpeaking, say } from '../lib/voice.js';
 import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme.js';
-import { applyUpdate, checkForUpdate, hardReload, onUpdateStatus, updateAvailable } from '../lib/pwa.js';
+import { applyUpdate, BUILD_ID, checkForUpdate, hardReload, onUpdateStatus, updateAvailable } from '../lib/pwa.js';
 import { MEALS } from '../data/nutrition.js';
 import { mergeLog, parseNutritorCSV } from '../lib/importNutritor.js';
 import { applyImport, importedFoods } from '../lib/importMeals.js';
@@ -100,6 +103,7 @@ function initialState() {
     // Service-worker update state: whether a new build is waiting, and what the
     // settings button is currently saying.
     updateReady: updateAvailable(), updateChecking: false, updateStatus: '',
+    backupStatus: '',
     online: typeof navigator !== 'undefined' ? navigator.onLine : true,
   };
 }
@@ -601,6 +605,20 @@ function reducer(state, action) {
         ...withStaleAnalysisFor(state, before.dateKey, after.dateKey),
       };
     }
+    // A restore replaces or merges the persisted slices wholesale; the live
+    // analysis is dropped because the day it described may no longer be the
+    // one on file.
+    case 'RESTORE_BACKUP':
+      return {
+        ...state,
+        ...(action.mode === 'replace'
+          ? replaceFromBackup(state, action.data)
+          : mergeBackup(state, action.data)),
+        analysis: null, analysisSource: null, progressAnalysis: null,
+        view: null,
+        backupStatus: action.message,
+      };
+
     // --- Marche -------------------------------------------------------------
     case 'ADD_ACTIVITY': {
       const day = state.activityLog[action.dateKey] || [];
@@ -635,6 +653,10 @@ function reducer(state, action) {
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, undefined, initialState);
   const cadenceStopRef = useRef(null);
+  // Every persisted slice at once, for the backup — more than the action
+  // memo's dependency list carries, and it has to be the current one.
+  const stateRef = useRef(state);
+  stateRef.current = state;
   const cadenceSigRef = useRef('');
 
   // Persist the durable slices only.
@@ -790,6 +812,21 @@ export function AppProvider({ children }) {
     }),
     deleteActivity: (id, d) => dispatch({ type: 'DELETE_ACTIVITY', id, dateKey: d || dateKey() }),
     importActivity: (log) => dispatch({ type: 'IMPORT_ACTIVITY', log }),
+
+    // --- Sauvegarde ---------------------------------------------------------
+    exportBackup: async () => {
+      const text = JSON.stringify(buildBackup(stateRef.current, BUILD_ID), null, 2);
+      const how = await deliverBackup(text, backupFilename());
+      const said = {
+        share: 'Sauvegarde partagée — enregistre-la dans Fichiers ou envoie-la-toi par mail.',
+        download: 'Sauvegarde téléchargée.',
+        clipboard: 'Téléchargement impossible ici : la sauvegarde est dans le presse-papier, colle-la dans une note.',
+        cancelled: '',
+      }[how];
+      dispatch({ type: 'PATCH', payload: { backupStatus: said } });
+    },
+    restoreBackup: (data, mode, message) => dispatch({ type: 'RESTORE_BACKUP', data, mode, message }),
+    setBackupStatus: (backupStatus) => dispatch({ type: 'PATCH', payload: { backupStatus } }),
 
     setTheme: (theme) => dispatch({ type: 'SET_THEME', theme }),
 
