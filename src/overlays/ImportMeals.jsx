@@ -108,7 +108,7 @@ export default function ImportMeals() {
         />
 
         {error && (
-          <div style={{ fontSize: 12, color: '#f0a35e', marginBottom: 12, lineHeight: 1.5 }}>{error}</div>
+          <div style={{ fontSize: 12, color: 'var(--color-warn)', marginBottom: 12, lineHeight: 1.5 }}>{error}</div>
         )}
 
         {!parsed ? (
@@ -176,7 +176,7 @@ export default function ImportMeals() {
 
             {parsed.warnings.length > 0 && (
               <div style={{ border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 11, marginBottom: 14 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11.5, color: '#f0a35e', marginBottom: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11.5, color: 'var(--color-warn)', marginBottom: 6 }}>
                   <Icon name="warning-circle" size={14} />
                   {parsed.warnings.length} avertissement{parsed.warnings.length > 1 ? 's' : ''}
                 </div>

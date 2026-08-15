@@ -7,6 +7,7 @@ import { effRepos, effSeries, baseReps, baseCharge } from '../lib/workout.js';
 import { generateAnalysis } from '../lib/analysis.js';
 import { fetchFreeModels, checkKey, requestAnalysis } from '../lib/openrouter.js';
 import { startCadence, stopSpeaking, say } from '../lib/voice.js';
+import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme.js';
 import { MEALS } from '../data/nutrition.js';
 import { mergeLog, parseNutritorCSV } from '../lib/importNutritor.js';
 import { applyImport, importedFoods } from '../lib/importMeals.js';
@@ -35,6 +36,7 @@ function loadPersisted() {
         key: typeof p.openrouter?.key === 'string' ? p.openrouter.key : '',
         model: typeof p.openrouter?.model === 'string' ? p.openrouter.model : '',
       },
+      theme: isTheme(p.theme) ? p.theme : DEFAULT_THEME,
       // { [dateKey]: { [mealKey]: entry[] } }
       nutriLog: (p.nutriLog && typeof p.nutriLog === 'object') ? p.nutriLog : {},
       // Every food ever fetched, kept so it can be re-added with no network.
@@ -48,7 +50,7 @@ function loadPersisted() {
 function initialState() {
   const persisted = loadPersisted() || {
     profile: defaultProfile, customWorkouts: [], sessionLog: [], disclaimerAcked: false, voiceOn: true,
-    openrouter: { key: '', model: '' }, nutriLog: {}, foodCache: {},
+    openrouter: { key: '', model: '' }, nutriLog: {}, foodCache: {}, theme: DEFAULT_THEME,
   };
   return {
     ...persisted,
@@ -166,6 +168,9 @@ function reducer(state, action) {
       return { ...state, disclaimerAcked: true };
     case 'SHOW_DISCLAIMER':
       return { ...state, disclaimerAcked: false };
+
+    case 'SET_THEME':
+      return { ...state, theme: isTheme(action.theme) ? action.theme : DEFAULT_THEME };
 
     case 'SET_OPENROUTER':
       return { ...state, openrouter: { ...state.openrouter, ...action.patch }, orStatus: '', orError: '' };
@@ -464,12 +469,17 @@ export function AppProvider({ children }) {
         openrouter: state.openrouter,
         nutriLog: state.nutriLog,
         foodCache: state.foodCache,
+        theme: state.theme,
       }));
     } catch {
       // storage unavailable (private mode / quota) — app still works, just without persistence
     }
   }, [state.profile, state.customWorkouts, state.sessionLog, state.disclaimerAcked, state.voiceOn,
-      state.openrouter, state.nutriLog, state.foodCache]);
+      state.openrouter, state.nutriLog, state.foodCache, state.theme]);
+
+  // Puts the chosen palette in force. Under 'système' the teardown unsubscribes
+  // from the OS setting, so switching away stops following it.
+  useEffect(() => applyTheme(state.theme), [state.theme]);
 
   // 1s workout ticker.
   useEffect(() => {
@@ -577,6 +587,7 @@ export function AppProvider({ children }) {
     quitWorkout: () => { stopSpeaking(); dispatch({ type: 'QUIT_WORKOUT' }); },
     finishHome: () => dispatch({ type: 'FINISH_HOME' }),
 
+    setTheme: (theme) => dispatch({ type: 'SET_THEME', theme }),
     setOpenRouter: (patch) => dispatch({ type: 'SET_OPENROUTER', patch }),
 
     setNutriDate: (d) => dispatch({ type: 'SET_NUTRI_DATE', dateKey: d }),

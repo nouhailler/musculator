@@ -1,6 +1,16 @@
 /* Nocturne design tokens — ported from the Claude Design handoff
-   (project/_ds/nocturne-…/styles.css). Dark theme is the only theme this
-   app ships; tokens are not redefined per color-scheme. */
+   (project/_ds/nocturne-…/styles.css).
+
+   Dark is the default and lives on bare `:root`; the light theme is the
+   `[data-theme='light']` block at the bottom of this file and redefines
+   colours only. `data-theme` is set from the persisted profile setting (see
+   the theme effect in state/store.jsx) and pre-applied by the inline script in
+   index.html so a light-theme user never sees a dark first paint.
+
+   The ramps are read as roles, not as lightnesses: steps 100–600 are text,
+   steps 800–900 are fills (verified — no token is used as both). The light
+   theme therefore *inverts* each ramp rather than shifting it, which is what
+   lets several hundred inline `var(--color-…)` usages theme themselves. */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
@@ -53,7 +63,77 @@
   --shadow-md: 0 0 0 1px #595d6c, 0 6px 18px rgba(0,0,0,0.55);
   --shadow-lg: 0 0 0 1px #9397ab, 0 16px 40px rgba(0,0,0,0.65);
 
+  /* The ground the phone-width app floats on (app.css `.app-shell`). */
+  --color-shell-1: #1c1f33;
+  --color-shell-2: #0c0d15;
+
+  /* Muscle-map sollicitation ramp (lib/muscleStats.js + BodyMap's legend).
+     Its own tokens because the ordering has to hold in both themes: mirroring
+     the accent ramp would make "faible" paler than an untouched muscle. */
+  --color-load-none: var(--color-neutral-800);
+  --color-load-low: var(--color-accent-900);
+  --color-load-mid: var(--color-accent-700);
+  --color-load-high: var(--color-accent-500);
+
   color-scheme: dark;
+}
+
+/* — Light theme —
+   Same hues, ramps inverted. The accent itself is darkened from #9184d9 to
+   #6b5cc4: it is also a text and border colour (links, ghost buttons, focus
+   rings), and the dark-theme value only reaches ~2.6:1 on a white ground. */
+:root[data-theme='light'] {
+  --color-bg: #f4f5fb;
+  --color-surface: #ffffff;
+  --color-text: #1a1c28;
+  --color-accent: #6b5cc4;
+  --color-accent-2: #7f74cc;
+  --color-divider: color-mix(in srgb, #1a1c28 14%, transparent);
+
+  --color-neutral-100: #1a1c28;
+  --color-neutral-200: #2b2e3c;
+  --color-neutral-300: #414553;
+  --color-neutral-400: #585c6c;
+  /* 500 and 600 carry the small faint text (wordmark, section labels, locked
+     badges, footnotes); the mirror of the dark ramp lands them near 3:1 on a
+     light ground, so they are darkened past the mirror rather than at it. */
+  --color-neutral-500: #64687a;
+  --color-neutral-600: #7e8294;
+  --color-neutral-700: #a3a7b8;
+  --color-neutral-800: #dcdeea;
+  --color-neutral-900: #edeef6;
+
+  --color-accent-100: #241f3f;
+  --color-accent-200: #3b3272;
+  --color-accent-300: #52469a;
+  --color-accent-400: #7566c9;
+  --color-accent-500: #8b7fd6;
+  --color-accent-600: #a99ee2;
+  --color-accent-700: #c6bdee;
+  --color-accent-800: #ddd7f7;
+  --color-accent-900: #eeebfc;
+
+  /* Darkened from the dark theme's #f0a35e / #5fd08a, which are unreadable
+     as text on a white ground. */
+  --color-warn: #a55d0c;
+  --color-good: #1c7a49;
+
+  --shadow-sm: 0 0 0 1px #dcdeea;
+  --shadow-md: 0 0 0 1px #c9ccdb, 0 6px 18px rgba(26,28,40,0.10);
+  --shadow-lg: 0 0 0 1px #b9bccb, 0 16px 40px rgba(26,28,40,0.16);
+
+  --color-shell-1: #e4e6f4;
+  --color-shell-2: #f4f5fb;
+
+  /* Ordered light-to-dark, so more work reads as more colour. "none" stays on
+     the silhouette's own fill in both themes — an untouched muscle should
+     disappear into the body rather than draw a shape of its own. */
+  --color-load-none: var(--color-neutral-800);
+  --color-load-low: #d8cff6;
+  --color-load-mid: #ab9de6;
+  --color-load-high: #7263cb;
+
+  color-scheme: light;
 }
 
 *, *::before, *::after { box-sizing: border-box; }

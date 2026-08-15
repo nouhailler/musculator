@@ -44,8 +44,8 @@ The split between the two files in `src/state/` is load-bearing:
 are recomputed by `useDerived()` (memoized on `state.sessionLog`). Don't add computed fields
 to reducer state; add them to `useDerived` or to a `lib/` helper.
 
-**Persistence covers 8 slices only** — `profile`, `customWorkouts`, `sessionLog`,
-`disclaimerAcked`, `voiceOn`, `openrouter`, `nutriLog`, `foodCache`, under the key `musculator:v1`. Everything else (current tab,
+**Persistence covers 9 slices only** — `profile`, `customWorkouts`, `sessionLog`,
+`disclaimerAcked`, `voiceOn`, `openrouter`, `nutriLog`, `foodCache`, `theme`, under the key `musculator:v1`. Everything else (current tab,
 filters, in-progress workout) is deliberately ephemeral. Adding a durable field means
 touching both `loadPersisted()` and the persist effect in `store.jsx`.
 
@@ -247,10 +247,20 @@ Two things about the OpenRouter integration are deliberate:
 
 - **UI strings are French.** Data fields use French names too (`nom`, `niveau`, `mat`,
   `series`, `repos`, `erreurs`…). Code, comments and commit messages are English.
-- **Styling** is dark-theme-only Nocturne tokens (`src/styles/tokens.css`) plus a small set
-  of shared classes in `app.css` (`.screen`, `.overlay`, `.row-card`, `.section-label`,
-  `.empty-state`…). Everything else is inline styles. Colors, radii and shadows always go
-  through `var(--color-…)` tokens; spacing is written as plain numbers inline.
+- **Styling** is Nocturne tokens (`src/styles/tokens.css`) plus a small set of shared classes
+  in `app.css` (`.screen`, `.overlay`, `.row-card`, `.section-label`, `.empty-state`…).
+  Everything else is inline styles. Colors, radii and shadows always go through
+  `var(--color-…)` tokens; spacing is written as plain numbers inline.
+- **Two themes, one rule: never write a colour outside the tokens.** Dark lives on bare
+  `:root`, light under `:root[data-theme='light']`, and *the light theme inverts each ramp
+  rather than shifting it* — steps 100–600 are text roles and 800–900 are fills (verified: no
+  token is used as both), which is what lets several hundred inline `var(--color-…)` usages
+  theme themselves with no component change. A hardcoded hex is now a bug in one of the two
+  themes; `--color-warn` / `--color-good` exist for the orange and green that used to be
+  written inline. The exceptions are deliberate and documented where they sit: the
+  Nutri-Score palette (a standardised scale) and the camera viewfinder.
+  `src/lib/theme.js` owns the vocabulary and is the only place that writes `data-theme`;
+  `index.html` pre-applies it before first paint from the same persisted key.
   `project/_ds/nocturne-…/_adherence.oxlintrc.json` is the design handoff's adherence config
   — it is *not* wired into `npm run lint`.
 - `project/` and `chats/` are the original Claude Design handoff (exported prototype and the

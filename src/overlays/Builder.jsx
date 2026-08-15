@@ -53,7 +53,7 @@ export default function Builder() {
                   <div style={{ flex: 1, minWidth: 0, fontSize: 14, fontWeight: 600 }}>{ex.nom}</div>
                   <IconCircleButton icon="caret-up" size={28} onClick={() => actions.builderMoveExo(i, -1)} />
                   <IconCircleButton icon="caret-down" size={28} onClick={() => actions.builderMoveExo(i, 1)} />
-                  <IconCircleButton icon="trash" size={28} onClick={() => actions.builderRemoveExo(i)} style={{ color: '#f0a35e' }} />
+                  <IconCircleButton icon="trash" size={28} onClick={() => actions.builderRemoveExo(i)} style={{ color: 'var(--color-warn)' }} />
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <Field label="Séries" style={{ flex: 1 }}><TextInput type="number" value={e.series} onChange={(v) => actions.builderUpdateExo(i, 'series', v)} textAlign="center" /></Field>

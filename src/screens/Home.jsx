@@ -34,7 +34,7 @@ export default function Home() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--color-accent-900)', border: '1px solid var(--color-accent-800)', color: 'var(--color-accent-200)', padding: '6px 11px', borderRadius: 999, fontSize: 13, fontWeight: 600 }}>
-            <Icon name="fire" weight="fill" size={16} color="#f0a35e" />{streak}
+            <Icon name="fire" weight="fill" size={16} color="var(--color-warn)" />{streak}
           </div>
           <IconCircleButton icon="gear-six" title="Profil & objectifs" onClick={actions.openProfile} size={36} />
         </div>
@@ -102,8 +102,8 @@ export default function Home() {
         })}
       </div>
 
-      <div style={{ display: 'flex', gap: 10, marginTop: 20, background: 'color-mix(in srgb,#f0a35e 10%,transparent)', border: '1px solid color-mix(in srgb,#f0a35e 32%,transparent)', borderRadius: 'var(--radius-md)', padding: 12 }}>
-        <Icon name="warning-circle" weight="fill" size={20} color="#f0a35e" style={{ flex: 'none' }} />
+      <div style={{ display: 'flex', gap: 10, marginTop: 20, background: 'color-mix(in srgb,var(--color-warn) 10%,transparent)', border: '1px solid color-mix(in srgb,var(--color-warn) 32%,transparent)', borderRadius: 'var(--radius-md)', padding: 12 }}>
+        <Icon name="warning-circle" weight="fill" size={20} color="var(--color-warn)" style={{ flex: 'none' }} />
         <div style={{ fontSize: 11, lineHeight: 1.5, color: 'var(--color-neutral-300)' }}>
           Avant tout programme, consulte un professionnel de santé — surtout en cas de problème de santé, blessure ou douleur.{' '}
           <span onClick={actions.showDisclaimer} style={{ color: 'var(--color-accent)', cursor: 'pointer' }}>En savoir plus</span>

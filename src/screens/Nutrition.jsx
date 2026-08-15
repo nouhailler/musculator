@@ -32,12 +32,12 @@ function Bar({ label, value, target, unit, color }) {
     <div style={{ marginBottom: 10 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
         <span style={{ color: 'var(--color-neutral-300)' }}>{label}</span>
-        <span style={{ color: over ? '#f0a35e' : 'var(--color-neutral-400)', fontVariantNumeric: 'tabular-nums' }}>
+        <span style={{ color: over ? 'var(--color-warn)' : 'var(--color-neutral-400)', fontVariantNumeric: 'tabular-nums' }}>
           {Math.round(value)} / {target} {unit}
         </span>
       </div>
       <div style={{ height: 7, background: 'var(--color-neutral-800)', borderRadius: 4, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${pct}%`, background: over ? '#f0a35e' : color, borderRadius: 4, transition: 'width .35s ease' }} />
+        <div style={{ height: '100%', width: `${pct}%`, background: over ? 'var(--color-warn)' : color, borderRadius: 4, transition: 'width .35s ease' }} />
       </div>
     </div>
   );
@@ -48,7 +48,7 @@ function Gauge({ score, vide }) {
   const R = 52;
   const C = 2 * Math.PI * R;
   const pct = vide ? 0 : score / 100;
-  const stroke = score >= 75 ? '#5fd08a' : score >= 45 ? 'var(--color-accent)' : '#f0a35e';
+  const stroke = score >= 75 ? 'var(--color-good)' : score >= 45 ? 'var(--color-accent)' : 'var(--color-warn)';
   return (
     <div style={{ position: 'relative', width: 132, height: 132, flex: 'none' }}>
       <svg width="132" height="132" viewBox="0 0 132 132">
@@ -154,11 +154,11 @@ export default function Nutrition() {
           <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>{targets.goal.label}</span>
         </div>
         <Bar label="Calories" value={t.kcal} target={targets.kcal} unit="kcal" color="var(--color-accent)" />
-        <Bar label="Protéines" value={t.proteines} target={targets.proteines} unit="g" color="#5fd08a" />
+        <Bar label="Protéines" value={t.proteines} target={targets.proteines} unit="g" color="var(--color-good)" />
         <Bar label="Glucides" value={t.glucides} target={targets.glucides} unit="g" color="var(--color-accent-400)" />
-        <Bar label="Lipides" value={t.lipides} target={targets.lipides} unit="g" color="#f0a35e" />
+        <Bar label="Lipides" value={t.lipides} target={targets.lipides} unit="g" color="var(--color-warn)" />
         {targets.estime && (
-          <div style={{ fontSize: 10, color: '#f0a35e', marginTop: 8, lineHeight: 1.45 }}>
+          <div style={{ fontSize: 10, color: 'var(--color-warn)', marginTop: 8, lineHeight: 1.45 }}>
             Objectifs par défaut : complète poids, taille et âge dans ton profil pour un calcul personnalisé.
           </div>
         )}

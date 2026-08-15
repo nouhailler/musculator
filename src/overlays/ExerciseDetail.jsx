@@ -96,10 +96,10 @@ export default function ExerciseDetail({ exId, onBack }) {
           <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', marginBottom: 11 }}>
             Aussi sollicités : <span style={{ color: 'var(--color-neutral-200)' }}>{ex.secondaires.join(' · ')}</span>
           </div>
-          <div style={{ display: 'flex', gap: 9, padding: '9px 10px', borderRadius: 'var(--radius-md)', background: 'var(--color-neutral-900)', border: '1px solid color-mix(in srgb,#f0a35e 30%,transparent)' }}>
-            <Icon name="warning-circle" weight="fill" size={15} color="#f0a35e" style={{ flex: 'none', marginTop: 1 }} />
+          <div style={{ display: 'flex', gap: 9, padding: '9px 10px', borderRadius: 'var(--radius-md)', background: 'var(--color-neutral-900)', border: '1px solid color-mix(in srgb,var(--color-warn) 30%,transparent)' }}>
+            <Icon name="warning-circle" weight="fill" size={15} color="var(--color-warn)" style={{ flex: 'none', marginTop: 1 }} />
             <div>
-              <div style={{ fontSize: 11, fontWeight: 600, color: '#f0a35e', marginBottom: 3 }}>Éviter la surcharge</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-warn)', marginBottom: 3 }}>Éviter la surcharge</div>
               <div style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--color-neutral-200)' }}>{ex.surcharge}</div>
             </div>
           </div>
@@ -115,7 +115,7 @@ export default function ExerciseDetail({ exId, onBack }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 18 }}>
           {ex.erreurs.map((er) => (
             <div key={er} style={{ display: 'flex', gap: 9, fontSize: 12, lineHeight: 1.5, color: 'var(--color-neutral-200)' }}>
-              <Icon name="x-circle" weight="fill" size={15} color="#f0a35e" style={{ flex: 'none', marginTop: 1 }} /><span>{er}</span>
+              <Icon name="x-circle" weight="fill" size={15} color="var(--color-warn)" style={{ flex: 'none', marginTop: 1 }} /><span>{er}</span>
             </div>
           ))}
         </div>
@@ -132,7 +132,7 @@ export default function ExerciseDetail({ exId, onBack }) {
         <h6 style={{ color: 'var(--color-neutral-400)', marginBottom: 8 }}>Variantes</h6>
         <div style={{ display: 'flex', gap: 8, marginBottom: 18 }}>
           <div style={{ flex: 1, background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 11 }}>
-            <div style={{ fontSize: 11, color: '#5fd08a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}><Icon name="arrow-bend-down-left" weight="fill" size={13} />Plus facile</div>
+            <div style={{ fontSize: 11, color: 'var(--color-good)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}><Icon name="arrow-bend-down-left" weight="fill" size={13} />Plus facile</div>
             <div style={{ fontSize: 12, color: 'var(--color-neutral-300)', lineHeight: 1.5 }}>{ex.variFacile}</div>
           </div>
           <div style={{ flex: 1, background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 11 }}>

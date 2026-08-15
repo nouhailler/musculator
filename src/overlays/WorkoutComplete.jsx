@@ -29,8 +29,8 @@ export default function WorkoutComplete() {
         </div>
         <div className="stat-box" style={{ padding: '13px 4px' }}><div className="stat-value" style={{ fontSize: 20 }}>{c.kcal}</div><div className="stat-label">kcal</div></div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'color-mix(in srgb,#f0a35e 12%,transparent)', border: '1px solid color-mix(in srgb,#f0a35e 32%,transparent)', borderRadius: 999, padding: '8px 14px', marginBottom: 30, fontSize: 12 }}>
-        <Icon name="fire" weight="fill" size={16} color="#f0a35e" />Série de {streak} jours — continue !
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'color-mix(in srgb,var(--color-warn) 12%,transparent)', border: '1px solid color-mix(in srgb,var(--color-warn) 32%,transparent)', borderRadius: 999, padding: '8px 14px', marginBottom: 30, fontSize: 12 }}>
+        <Icon name="fire" weight="fill" size={16} color="var(--color-warn)" />Série de {streak} jours — continue !
       </div>
       <div style={{ width: '100%', maxWidth: 320 }}>
         <PrimaryButton onClick={actions.finishHome}>Terminer</PrimaryButton>

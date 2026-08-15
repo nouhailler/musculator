@@ -1,5 +1,6 @@
 import { useApp } from '../state/context.js';
 import { GOALS, DEFAULT_GOAL } from '../data/nutrition.js';
+import { DEFAULT_THEME, THEMES, themeLabel } from '../lib/theme.js';
 import { Field, TextInput, TextArea, RangeInput } from '../components/ui/Field.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';
 import { SecondaryButton, PrimaryButton } from '../components/ui/Button.jsx';
@@ -10,6 +11,7 @@ const OBJ_OPTS = ['Prise de masse', 'Force', 'Tonus', 'Endurance'];
 const ZONE_OPTS = ['Pectoraux', 'Dos', 'Jambes', 'Épaules', 'Bras', 'Abdos'];
 const EXP_OPTS = ['Débutant', 'Intermédiaire', 'Avancé'];
 const NUTRI_GOAL_OPTS = GOALS.map((g) => g.label);
+const THEME_OPTS = THEMES.map((t) => t.label);
 
 export default function Profile() {
   const { state, actions } = useApp();
@@ -75,6 +77,22 @@ export default function Profile() {
 
         <div style={{ height: 1, background: 'var(--color-divider)', margin: '26px 0 20px' }} />
 
+        {/* An app setting, not a profile field — hence below "Enregistrer",
+            which saves the form above. It applies on tap. */}
+        <h5 style={{ margin: '0 0 4px' }}>Apparence</h5>
+        <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 12px', lineHeight: 1.55 }}>
+          Le thème s'applique tout de suite et reste enregistré sur cet appareil.
+          « Système » suit le réglage clair / sombre de ton téléphone.
+        </p>
+        <PillGroup
+          options={THEME_OPTS}
+          value={themeLabel(state.theme)}
+          onChange={(label) => actions.setTheme(THEMES.find((t) => t.label === label)?.key || DEFAULT_THEME)}
+          style={{ marginBottom: 6 }}
+        />
+
+        <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
+
         <h5 style={{ margin: '0 0 4px' }}>Importer depuis Nutritor</h5>
         <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 12px', lineHeight: 1.55 }}>
           Reprends ton historique de repas depuis un export CSV de journal Nutritor. Les jours déjà
@@ -97,8 +115,8 @@ export default function Profile() {
             e.target.value = '';
           }}
         />
-        {state.importError && <div style={{ fontSize: 12, color: '#f0a35e', marginBottom: 12, lineHeight: 1.5 }}>{state.importError}</div>}
-        {state.importStatus && <div style={{ fontSize: 12, color: '#5fd08a', marginBottom: 12, lineHeight: 1.5 }}>{state.importStatus}</div>}
+        {state.importError && <div style={{ fontSize: 12, color: 'var(--color-warn)', marginBottom: 12, lineHeight: 1.5 }}>{state.importError}</div>}
+        {state.importStatus && <div style={{ fontSize: 12, color: 'var(--color-good)', marginBottom: 12, lineHeight: 1.5 }}>{state.importStatus}</div>}
 
         <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
 
@@ -117,7 +135,7 @@ export default function Profile() {
           />
         </Field>
         <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start', fontSize: 11, color: 'var(--color-neutral-400)', lineHeight: 1.5, marginBottom: 14 }}>
-          <Icon name="warning-circle" weight="fill" size={14} color="#f0a35e" style={{ flex: 'none', marginTop: 1 }} />
+          <Icon name="warning-circle" weight="fill" size={14} color="var(--color-warn)" style={{ flex: 'none', marginTop: 1 }} />
           <span>
             La clé est enregistrée en clair sur cet appareil et envoyée directement à OpenRouter depuis
             ton navigateur — l'app n'a pas de serveur. N'utilise pas une clé partagée, et pense à lui
@@ -145,10 +163,10 @@ export default function Profile() {
         </div>
 
         {state.orError && (
-          <div style={{ fontSize: 12, color: '#f0a35e', marginBottom: 12, lineHeight: 1.5 }}>{state.orError}</div>
+          <div style={{ fontSize: 12, color: 'var(--color-warn)', marginBottom: 12, lineHeight: 1.5 }}>{state.orError}</div>
         )}
         {state.orStatus && (
-          <div style={{ fontSize: 12, color: '#5fd08a', marginBottom: 12, lineHeight: 1.5 }}>{state.orStatus}</div>
+          <div style={{ fontSize: 12, color: 'var(--color-good)', marginBottom: 12, lineHeight: 1.5 }}>{state.orStatus}</div>
         )}
 
         {/* Fetched live rather than hard-coded: OpenRouter's free line-up

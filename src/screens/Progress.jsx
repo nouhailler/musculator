@@ -17,7 +17,7 @@ export default function Progress() {
 
       <div style={{ display: 'flex', gap: 10, marginBottom: 18 }}>
         <div style={{ flex: 1, background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 13 }}>
-          <Icon name="fire" weight="fill" size={20} color="#f0a35e" />
+          <Icon name="fire" weight="fill" size={20} color="var(--color-warn)" />
           <div style={{ fontSize: 22, fontWeight: 600, fontFamily: 'var(--font-heading)', marginTop: 4 }}>{streak}</div>
           <div style={{ fontSize: 11, color: 'var(--color-neutral-400)' }}>jours consécutifs</div>
         </div>
@@ -79,14 +79,14 @@ export default function Progress() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
         {history.map((h) => (
           <div key={h.id} style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: '11px 13px' }}>
-            <div className="icon-tile" style={{ width: 36, height: 36, color: h.partial ? '#f0a35e' : undefined }}>
+            <div className="icon-tile" style={{ width: 36, height: 36, color: h.partial ? 'var(--color-warn)' : undefined }}>
               <Icon name={h.partial ? 'pause' : 'check-fat'} weight={h.partial ? 'fill' : 'regular'} size={17} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 13, fontWeight: 600 }}>{h.programNom}</div>
               <div style={{ fontSize: 11, color: 'var(--color-neutral-400)' }}>
                 {relativeDayLabel(h.dateKey)} · {h.exerciseIds.length} exercice{h.exerciseIds.length > 1 ? 's' : ''}
-                {h.partial && <span style={{ color: '#f0a35e' }}> · partielle</span>}
+                {h.partial && <span style={{ color: 'var(--color-warn)' }}> · partielle</span>}
               </div>
             </div>
             <div style={{ fontSize: 12, color: 'var(--color-neutral-300)', fontFamily: 'var(--font-heading)' }}>{fmt(h.elapsedSec)}</div>

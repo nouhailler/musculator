@@ -86,9 +86,9 @@ export default function BodyMap() {
             </g>
           </svg>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 12, fontSize: 10, color: 'var(--color-neutral-400)', padding: '4px 8px 2px', flexWrap: 'wrap' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: 'var(--color-accent-500)', display: 'inline-block' }} />Élevée</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: 'var(--color-accent-700)', display: 'inline-block' }} />Modérée</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: 'var(--color-accent-900)', display: 'inline-block' }} />Faible</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: 'var(--color-load-high)', display: 'inline-block' }} />Élevée</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: 'var(--color-load-mid)', display: 'inline-block' }} />Modérée</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: 'var(--color-load-low)', display: 'inline-block' }} />Faible</span>
           </div>
         </div>
 

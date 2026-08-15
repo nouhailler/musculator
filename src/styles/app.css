@@ -2,7 +2,7 @@
   min-height: 100dvh;
   display: flex;
   justify-content: center;
-  background: radial-gradient(1200px 700px at 50% -10%, #1c1f33 0%, #0c0d15 60%);
+  background: radial-gradient(1200px 700px at 50% -10%, var(--color-shell-1) 0%, var(--color-shell-2) 60%);
 }
 
 .app {

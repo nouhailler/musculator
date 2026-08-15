@@ -39,6 +39,12 @@ somewhere (profile & settings, muscle map, workout builder) plus the voice toggl
 medical disclaimer. The help sheet describes whatever is on screen — the overlay when one is
 open, the tab underneath otherwise — and its content lives in `src/data/help.js`.
 
+**Dark or light**, picked under *Mon profil & objectifs → Apparence*: Sombre (the default and
+the app's original look), Clair, or Système to follow the phone. The palettes are the two
+token blocks in `src/styles/tokens.css` — light inverts each ramp rather than shifting it, so
+the whole UI themes itself without a per-component light variant — and `index.html` applies
+the stored choice before first paint so a light-theme launch never flashes dark.
+
 - **Accueil** — today's progress ring, week streak, one-tap "Commencer une séance", quick
   tips, recommended programs, medical disclaimer.
 - **Exercice seul** — a big "Faire cet exercice maintenant" button on any exercise sheet

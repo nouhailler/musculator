@@ -10,6 +10,25 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Light theme** — *Mon profil & objectifs → Apparence* now offers Sombre, Clair or Système.
+  Dark stays the default, so an existing install only changes when its owner asks it to;
+  Système follows the OS setting live, including a phone that flips at sunset.
+  - The light palette is a second token block in `src/styles/tokens.css` that **inverts each
+    ramp rather than shifting it**. Steps 100–600 are text roles and 800–900 are fills — no
+    token was used as both, checked before relying on it — so several hundred inline
+    `var(--color-…)` usages theme themselves and not one component needed a light variant.
+  - The orange and green that were written as `#f0a35e` / `#5fd08a` in 39 places now go
+    through the `--color-warn` / `--color-good` tokens that already existed for them, and are
+    darkened in the light theme, where the dark-theme values are unreadable on white.
+    The Nutri-Score palette stays hardcoded on purpose: it is a standardised scale.
+  - The muscle map's sollicitation ramp gained its own `--color-load-*` tokens. Mirrored, the
+    accent ramp made a lightly-worked muscle come out *paler* than an untouched one — the
+    scale read backwards at its low end. `BodyMap`'s legend swatches now read the same
+    tokens as the body, so the two can no longer disagree.
+  - `index.html` applies the stored choice before first paint, so a light-theme PWA cold
+    start does not flash dark, and the `theme-color` meta follows the palette so the phone's
+    status bar matches.
+
 - **"Mes aliments" on the food search screen** — everything already logged (`foodCache`) is
   now listed below the meal picker, so a food used before never has to be scanned or searched
   for again.

@@ -11,6 +11,16 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <title>Musculator</title>
+    <!-- Theme before first paint. The store applies the same rules a moment
+         later (src/lib/theme.js); without this a light-theme user gets a dark
+         flash on every launch, which is worse on a PWA cold start. -->
+    <script>
+      try {
+        var mode = (JSON.parse(localStorage.getItem('musculator:v1') || '{}').theme) || 'dark';
+        if (mode === 'system') mode = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        document.documentElement.dataset.theme = mode === 'light' ? 'light' : 'dark';
+      } catch (e) { /* no storage (private mode) — the dark default stands */ }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -43,9 +43,14 @@ export function solicitationLabel(load) {
   return 'Faible';
 }
 
+// The map's own four-step ramp (tokens.css). It cannot borrow the accent ramp
+// directly: mirrored for the light theme, the "faible" step would come out
+// paler than the untouched-muscle grey and the scale would read backwards at
+// its low end. BodyMap's legend swatches use the same tokens, so the legend
+// and the body can no longer disagree.
 export function solicitationColor(load) {
-  if (load >= 70) return 'var(--color-accent-500)';
-  if (load >= 40) return 'var(--color-accent-700)';
-  if (load >= 1) return 'var(--color-accent-900)';
-  return 'var(--color-neutral-800)';
+  if (load >= 70) return 'var(--color-load-high)';
+  if (load >= 40) return 'var(--color-load-mid)';
+  if (load >= 1) return 'var(--color-load-low)';
+  return 'var(--color-load-none)';
 }

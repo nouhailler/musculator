@@ -37,7 +37,7 @@ export default function Journal() {
       >
         {state.analysisLoading ? 'Analyse en cours…' : 'Analyse IA de ma journée'}
       </PrimaryButton>
-      {state.analysisError && <div style={{ fontSize: 12, color: '#f0a35e', textAlign: 'center', marginBottom: 10 }}>{state.analysisError}</div>}
+      {state.analysisError && <div style={{ fontSize: 12, color: 'var(--color-warn)', textAlign: 'center', marginBottom: 10 }}>{state.analysisError}</div>}
 
       {an && (
         <div style={{ margin: '6px 0 18px', animation: 'mFade .35s ease' }}>
@@ -47,7 +47,7 @@ export default function Journal() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 11 }}>
             <div style={{ display: 'flex', gap: 11, background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 12 }}>
-              <Icon name="flame" weight="fill" size={22} color="#f0a35e" style={{ flex: 'none' }} />
+              <Icon name="flame" weight="fill" size={22} color="var(--color-warn)" style={{ flex: 'none' }} />
               <div><div style={{ fontSize: 12, fontWeight: 600, marginBottom: 1 }}>Énergie dépensée</div><div style={{ fontSize: 12, color: 'var(--color-neutral-300)', lineHeight: 1.5 }}>{an.energie}</div></div>
             </div>
             <div style={{ display: 'flex', gap: 11, background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 12 }}>
@@ -77,7 +77,7 @@ export default function Journal() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 12 }}>
             {an.ameliorer.map((a) => (
               <div key={a} style={{ display: 'flex', gap: 9, fontSize: 12, lineHeight: 1.5, color: 'var(--color-neutral-200)' }}>
-                <Icon name="wrench" weight="fill" size={15} color="#f0a35e" style={{ flex: 'none', marginTop: 1 }} /><span>{a}</span>
+                <Icon name="wrench" weight="fill" size={15} color="var(--color-warn)" style={{ flex: 'none', marginTop: 1 }} /><span>{a}</span>
               </div>
             ))}
           </div>
@@ -99,8 +99,8 @@ export default function Journal() {
         {journalToday.map((j) => (
           <div key={j.id} style={{
             background: 'var(--color-surface)',
-            border: `1px solid ${j.partial ? 'color-mix(in srgb,#f0a35e 34%,transparent)' : 'var(--color-divider)'}`,
-            borderLeft: j.partial ? '3px solid #f0a35e' : undefined,
+            border: `1px solid ${j.partial ? 'color-mix(in srgb,var(--color-warn) 34%,transparent)' : 'var(--color-divider)'}`,
+            borderLeft: j.partial ? '3px solid var(--color-warn)' : undefined,
             borderRadius: 'var(--radius-md)', padding: 13,
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: j.partial ? 5 : 8 }}>
@@ -109,7 +109,7 @@ export default function Journal() {
             </div>
             {/* Older entries predate the flag, so they simply read as complete. */}
             {j.partial && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#f0a35e', marginBottom: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--color-warn)', marginBottom: 8 }}>
                 <Icon name="warning-circle" weight="fill" size={13} style={{ flex: 'none' }} />
                 Séance partielle{j.exosTotal ? ` — arrêtée après ${j.exerciseIds.length} exercice${j.exerciseIds.length > 1 ? 's' : ''} sur ${j.exosTotal}` : ' — arrêtée en cours'}
               </div>

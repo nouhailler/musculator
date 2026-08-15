@@ -95,6 +95,7 @@ export const HELP = {
     points: [
       ['Poids, taille, âge', "Sans eux, les objectifs caloriques retombent sur une valeur par défaut au lieu d'être calculés."],
       ['Objectif nutrition', "Distinct de l'objectif d'entraînement : on peut viser la force tout en séchant."],
+      ['Thème', "Sombre, clair, ou « Système » pour suivre le réglage de ton téléphone. Le choix s'applique tout de suite et reste sur cet appareil."],
       ['OpenRouter', "Facultatif. La clé est enregistrée en clair sur cet appareil — n'utilise pas une clé partagée."],
       ['Import Nutritor', "Reprend un export CSV de journal. Les jours déjà renseignés sont complétés, jamais remplacés."],
     ],

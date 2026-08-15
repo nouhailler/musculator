@@ -179,7 +179,7 @@ export default function FoodSearch() {
         </div>
 
         {loading && <div style={{ fontSize: 12, color: 'var(--color-accent-300)', marginBottom: 10 }}>Recherche…</div>}
-        {error && <div style={{ fontSize: 12, color: '#f0a35e', marginBottom: 10, lineHeight: 1.5 }}>{error}</div>}
+        {error && <div style={{ fontSize: 12, color: 'var(--color-warn)', marginBottom: 10, lineHeight: 1.5 }}>{error}</div>}
         {notice && <div style={{ fontSize: 12, color: 'var(--color-neutral-300)', marginBottom: 10, lineHeight: 1.5 }}>{notice}</div>}
 
         {results.length > 0 && (
