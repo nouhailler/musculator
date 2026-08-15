@@ -38,6 +38,7 @@ export const HELP = {
     intro: "Ton journal alimentaire du jour et le Score Musculation Quotidien qui relie ce que tu manges à ton entraînement.",
     points: [
       ['Ajouter un aliment', "Scanne un code-barres, cherche par nom, ou saisis l'aliment à la main. Les produits scannés restent utilisables hors-ligne."],
+      ['Repas dicté', "« Importer un repas dicté » reprend le JSON produit par Claude ou ChatGPT à partir d'une description orale de tes repas. Le prompt à leur donner est fourni dans l'écran."],
       ['Score /100', "Protéines 40 pts, calories 40 pts, micronutriments 20 pts. Les calories sont au maximum dans une bande de ±10 % autour de ta cible."],
       ['Données manquantes', "Un micronutriment non renseigné n'est jamais compté comme zéro : sa part sort du calcul et la journée est notée sur 80."],
       ['Objectifs', "Ils sont calculés depuis ton profil (poids, taille, âge, fréquence) et ton objectif nutrition. Complète-les pour un calcul personnalisé."],
@@ -114,6 +115,17 @@ export const HELP = {
       ['Recherche', "La table générique répond hors-ligne ; les produits de marque viennent d'Open Food Facts quand le réseau est là."],
       ['Saisie manuelle', "Pour un plat maison ou un aliment sans code-barres. Les valeurs se saisissent pour 100 g."],
       ['Micronutriments', "Les aliments génériques en portent presque toujours, les produits de marque rarement — c'est ce qui fait varier la part « micros » du score."],
+    ],
+  },
+  importMeals: {
+    titre: 'Importer un repas dicté',
+    intro: "Décris tes repas à voix haute à Claude ou à ChatGPT, colle ici le JSON qu'ils renvoient.",
+    points: [
+      ['Le prompt', "« Comment générer ce JSON ? » contient le prompt à copier. Dans un Projet Claude ou un GPT personnalisé, colle-le une fois en instructions : ensuite tu n'as plus qu'à dicter."],
+      ['Valeurs pour 100 g', "L'assistant fournit le poids de la portion et les valeurs pour 100 g. La quantité reste modifiable dans le journal, tout se recalcule."],
+      ['Prévisualisation', "Rien n'est enregistré avant que tu aies vu le détail. « Remplacer » ne vide que les repas présents dans l'import."],
+      ['Avertissements', "Ils listent ce qui a été deviné : quantité manquante, repas non reconnu, valeurs hors du bloc « pour100g »."],
+      ['Estimations', "Les valeurs viennent d'un modèle de langage, pas d'une table officielle : elles sont approximatives et à vérifier si un aliment compte vraiment."],
     ],
   },
   foodEntry: {

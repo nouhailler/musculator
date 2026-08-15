@@ -18,13 +18,14 @@ import Profile from './overlays/Profile.jsx';
 import Builder from './overlays/Builder.jsx';
 import FoodSearch from './overlays/FoodSearch.jsx';
 import FoodEntry from './overlays/FoodEntry.jsx';
+import ImportMeals from './overlays/ImportMeals.jsx';
 import Workout from './overlays/Workout.jsx';
 import WorkoutComplete from './overlays/WorkoutComplete.jsx';
 
 const TAB_SCREENS = { home: Home, programs: Programs, library: Library, nutrition: Nutrition, journal: Journal, progress: Progress };
 const OVERLAYS = {
   exercise: ExerciseDetail, program: ProgramDetail, bodymap: BodyMap, profile: Profile,
-  builder: Builder, foodSearch: FoodSearch, foodEntry: FoodEntry,
+  builder: Builder, foodSearch: FoodSearch, foodEntry: FoodEntry, importMeals: ImportMeals,
 };
 
 export default function App() {

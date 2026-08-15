@@ -40,14 +40,24 @@
   padding: 14px 18px 30px;
 }
 
+/* The bare `.pill` carries no colour of its own: the <Pill> component sets
+   them inline, and the call sites that write the class by hand use `.pill-on`
+   below to mark the selected one. */
 .pill {
   padding: 6px 13px;
   border-radius: 999px;
   font: inherit;
   font-size: 12px;
   cursor: pointer;
-  border: 1px solid;
+  border: 1px solid var(--color-divider);
+  background: transparent;
+  color: var(--color-neutral-300);
   white-space: nowrap;
+}
+.pill-on {
+  background: var(--color-accent-800);
+  border-color: var(--color-accent);
+  color: var(--color-accent-100);
 }
 
 .row-card {

@@ -9,6 +9,7 @@ import { fetchFreeModels, checkKey, requestAnalysis } from '../lib/openrouter.js
 import { startCadence, stopSpeaking, say } from '../lib/voice.js';
 import { MEALS } from '../data/nutrition.js';
 import { mergeLog, parseNutritorCSV } from '../lib/importNutritor.js';
+import { applyImport, importedFoods } from '../lib/importMeals.js';
 
 const STORAGE_KEY = 'musculator:v1';
 const KCAL_PER_MIN = 9;
@@ -172,6 +173,21 @@ function reducer(state, action) {
     // --- Nutrition ---------------------------------------------------------
     case 'IMPORT_NUTRI_LOG':
       return { ...state, nutriLog: mergeLog(state.nutriLog, action.log) };
+
+    // Dictated meals, already parsed and previewed by the overlay. The view
+    // jumps to the first imported day so the result is visible straight away —
+    // an import for yesterday must not look like it did nothing.
+    case 'IMPORT_MEAL_DAYS': {
+      const foodCache = { ...state.foodCache };
+      for (const f of importedFoods(action.days)) foodCache[f.id] = f;
+      return {
+        ...state,
+        foodCache,
+        nutriLog: applyImport(state.nutriLog, action.days, action.mode),
+        nutriDate: action.days[0]?.date || state.nutriDate,
+        view: null,
+      };
+    }
 
     case 'SET_MENU':
       return { ...state, menuOpen: action.open };
@@ -577,6 +593,9 @@ export function AppProvider({ children }) {
       }
     },
     openFoodSearch: (meal) => dispatch({ type: 'PATCH', payload: { view: 'foodSearch', nutriMeal: meal, foodQuery: '', foodResults: [], foodError: '' } }),
+    openMealImport: () => dispatch({ type: 'OPEN_VIEW', view: 'importMeals' }),
+    // `days` comes from parseMealsImport and has already been shown to the user.
+    importMealDays: (days, mode) => dispatch({ type: 'IMPORT_MEAL_DAYS', days, mode }),
     addFoodEntry: (meal, food, grammes) => dispatch({
       type: 'ADD_FOOD_ENTRY',
       dateKey: state.nutriDate,

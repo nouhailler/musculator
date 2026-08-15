@@ -188,6 +188,27 @@ Every tunable number — score weights, micronutrient references, protein g/kg, 
 tolerance, activity multipliers — lives in `data/nutrition.js`. Don't scatter them back into
 the maths or the UI.
 
+**A fourth way in: a meal dictated to a chat assistant.** `lib/mealPrompt.js` holds the
+prompt the user pastes into Claude or ChatGPT and `lib/importMeals.js` reads the JSON back —
+they are two halves of one format and must move together, which is why the prompt derives its
+meal keys and micronutrient list from `data/nutrition.js` instead of restating them.
+
+- **The format asks for `grammes` + `pour100g`, never the portion's totals.** That is the
+  shape `nutriLog` stores, so an imported quantity stays editable and rescales like any other
+  entry. A model that flattened the macros onto the food is still read, but the user is told
+  in a warning how the values were interpreted — that is exactly where a portion total would
+  land unnoticed.
+- **The input is model output, so it is parsed defensively**: fences and prose around the
+  object, English or French field names, a `days` array or a bare day or a bare meal, a meal
+  routed by its hour when unnamed. A food that cannot be used is dropped with a warning
+  rather than failing the import, and `parseMealsImport` throws only when nothing survives.
+- **A micronutrient the model wrote as 0 is dropped**, because no real food is exactly at
+  zero iron or calcium and a filled-in zero would be scored as a known value — the one thing
+  the module's "unknown is never zero" rule exists to prevent. Fibre is the exception and
+  keeps its zero: meat, eggs and dairy really are at 0 g.
+- Parsing and applying are separate on purpose: the overlay previews the days before
+  `IMPORT_MEAL_DAYS` touches the log, and 'replace' clears only the meals the import carries.
+
 `lib/off.js` cannot send a `User-Agent`: it is a forbidden header name and browsers drop it
 silently (verified). It identifies the app with OFF's `app_name`/`app_version` query
 parameters instead. If this is ever reused from React Native, send a real header there.

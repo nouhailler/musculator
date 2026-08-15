@@ -10,6 +10,8 @@
 // Nothing here is required: with no key configured the app keeps using the
 // local engine in lib/analysis.js.
 
+import { extractJsonObject } from './json.js';
+
 const BASE = 'https://openrouter.ai/api/v1';
 
 // Sent so the app identifies itself in OpenRouter's dashboards. Both headers
@@ -117,10 +119,9 @@ const SYSTEM = [
 // add a sentence around it, so pull the outermost object out rather than
 // trusting the whole body to parse.
 function parseAnalysis(text) {
-  const start = text.indexOf('{');
-  const end = text.lastIndexOf('}');
-  if (start === -1 || end <= start) throw new Error("Le modèle n'a pas renvoyé de JSON.");
-  const parsed = JSON.parse(text.slice(start, end + 1));
+  const raw = extractJsonObject(text);
+  if (!raw) throw new Error("Le modèle n'a pas renvoyé de JSON.");
+  const parsed = JSON.parse(raw);
   const list = (v) => (Array.isArray(v) ? v.filter((x) => typeof x === 'string' && x.trim()) : []);
   const str = (v, fallback) => (typeof v === 'string' && v.trim() ? v.trim() : fallback);
   const pct = Number(parsed.progression);

@@ -10,6 +10,29 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Dictated meal import** — a new "Importer un repas dicté" screen on the Nutrition tab takes
+  the JSON produced by a chat assistant (Claude or ChatGPT) from a spoken description of a
+  meal, and files its foods into the right day and the right meal.
+  - The prompt to give the assistant ships with the app (`src/lib/mealPrompt.js`, copyable
+    from the screen) and is the other half of the format `src/lib/importMeals.js` reads. Its
+    meal keys and micronutrient list are derived from `src/data/nutrition.js`, so the prompt
+    follows when those change.
+  - It asks for a portion weight plus per-100 g values rather than the portion's totals,
+    which is the shape the log stores: an imported quantity stays editable afterwards and
+    rescales everything, exactly like a scanned product.
+  - Nothing is written before a preview: the parsed days, meals and foods are shown with
+    their totals, along with the warnings for anything that had to be guessed (missing
+    quantity, unrecognised meal, values found outside the `pour100g` block). The import then
+    either adds to the day or replaces only the meals it carries.
+  - Model output is treated as hostile: prose and code fences around the object are
+    tolerated, English or French field names are both read, a meal can be routed by its hour
+    when its name is missing, an unusable food is dropped with a warning rather than taking
+    the whole import down, and a food with macros but no energy gets the Atwater estimate.
+    A micronutrient the model set to zero is dropped rather than logged as a real zero —
+    except fibre, which is genuinely zero in meat, eggs and dairy.
+  - Imported foods land in `foodCache` under a deterministic id, so a food dictated twice
+    reuses one cache entry and stays re-addable offline.
+
 - **Animated demos for the whole catalogue** — the 35 lower-body exercises that previously
   fell back to a pulsing icon now have a real animated demonstration, so every one of the
   45 exercises shows its movement in the library sheet and during a guided session.
@@ -128,6 +151,10 @@ grouped by date and reference the commit they landed in.
   parti !". Affects the 10 names that have one; the displayed name is unchanged.
 
 ### Fixed
+
+- `.pill-on` had no style at all, so the selected quantity shortcut in the food-quantity
+  sheet and the selected meal in food search looked exactly like the unselected ones. The
+  class is now defined in `app.css` alongside `.pill`.
 
 - A session's logged `series` count now honours a custom workout's per-exercise overrides
   instead of the catalogue defaults, which under-reported it.

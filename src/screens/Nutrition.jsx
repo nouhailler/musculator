@@ -103,6 +103,15 @@ export default function Nutrition() {
         </div>
       </div>
 
+      {/* Dictate-and-paste import. Sits above the day rather than inside a
+          single meal: one dictation usually covers several meals at once. */}
+      <SecondaryButton
+        icon="sparkle" onClick={actions.openMealImport}
+        style={{ width: '100%', padding: 9, justifyContent: 'center', fontSize: 12, marginBottom: 14 }}
+      >
+        Importer un repas dicté
+      </SecondaryButton>
+
       {/* --- Score Musculation Quotidien --- */}
       <div style={{ background: 'linear-gradient(135deg,var(--color-accent-900),var(--color-surface))', border: '1px solid var(--color-accent-800)', borderRadius: 'var(--radius-lg)', padding: 14, marginBottom: 14 }}>
         <div style={{ fontSize: 10, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--color-accent-200)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 5 }}>
