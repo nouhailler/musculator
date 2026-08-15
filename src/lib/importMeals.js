@@ -12,7 +12,7 @@
 // deviate in the same ways.
 import { MEALS, MICROS } from '../data/nutrition.js';
 import { extractJsonObject } from './json.js';
-import { matchCiqual } from './ciqualMatch.js';
+import { matchCache, matchCiqual } from './ciqualMatch.js';
 import { makeActivityEntry } from './activity.js';
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -296,12 +296,19 @@ function parseDay(raw, fallbackDate, fallbackMeal, warnings, counter) {
  * preview can show which table entry was used and the user can catch a bad
  * pick, and a warning for what was not.
  */
-async function resolveLookups(days, warnings) {
+async function resolveLookups(days, warnings, foodCache) {
   const wanted = [...new Set(days.flatMap((d) => d.meals.flatMap((m) => m.entries.filter((e) => e.lookup).map((e) => e.lookup))))];
   if (!wanted.length) return days;
 
   const found = new Map();
   await Promise.all(wanted.map(async (nom) => {
+    // The user's own foods first: a product they scanned carries the brand's
+    // real values and is one they actually eat, which no generic can beat.
+    const mine = matchCache(nom, foodCache);
+    if (mine) {
+      found.set(nom, { ...mine, matchNom: mine.nom, matchSource: 'cache' });
+      return;
+    }
     const food = await matchCiqual(nom);
     if (food) found.set(nom, food);
   }));
@@ -313,10 +320,14 @@ async function resolveLookups(days, warnings) {
         if (!e.lookup) return true;
         const hit = found.get(e.lookup);
         if (!hit) { missing.add(e.lookup); return false; }
-        // Keep the dictated wording as the label — "figues" reads better in
-        // the journal than "Figue, crue" — but carry the table entry so the
-        // preview can show where the numbers came from.
-        e.food = { ...hit, id: `ciqual-dictee-${slug(e.lookup)}`, nom: e.lookup, marque: 'Table CIQUAL', ciqualNom: hit.nom };
+        // A food from the cache is kept exactly as it is, id included, so it
+        // stays the same entry there. A CIQUAL generic keeps the dictated
+        // wording instead — "figues" reads better in the journal than "Figue,
+        // crue" — and carries the table entry so the preview can show where
+        // the numbers came from.
+        e.food = hit.matchSource === 'cache'
+          ? hit
+          : { ...hit, id: `ciqual-dictee-${slug(e.lookup)}`, nom: e.lookup, marque: 'Table CIQUAL', matchNom: hit.nom, matchSource: 'ciqual' };
         if (e.pending) warnings.push(e.pending);
         delete e.lookup;
         delete e.pending;
@@ -326,7 +337,7 @@ async function resolveLookups(days, warnings) {
     day.meals = day.meals.filter((m) => m.entries.length);
   }
   for (const nom of missing) {
-    warnings.push(`« ${nom} » ignoré : aucune valeur fournie et introuvable dans la table CIQUAL — ajoute-le à la main.`);
+    warnings.push(`« ${nom} » ignoré : aucune valeur fournie, absent de tes aliments et de la table CIQUAL — scanne-le ou saisis-le à la main.`);
   }
   return days.filter((d) => d.meals.length || d.marche.length);
 }
@@ -343,7 +354,7 @@ async function resolveLookups(days, warnings) {
  * @returns {Promise<{ days: Array<{date, meals: Array<{key, entries}>}>, warnings: string[] }>}
  * @throws when nothing usable can be read at all
  */
-export async function parseMealsImport(text, { fallbackDate, fallbackMeal } = {}) {
+export async function parseMealsImport(text, { fallbackDate, fallbackMeal, foodCache } = {}) {
   if (!String(text || '').trim()) throw new Error('Colle d’abord le JSON généré.');
 
   const raw = extractJsonObject(text);
@@ -371,7 +382,7 @@ export async function parseMealsImport(text, { fallbackDate, fallbackMeal } = {}
   const rawDays = Array.isArray(obj.days) ? obj.days : [obj];
 
   const parsed = rawDays.map((d) => parseDay(d, topDate, meal, warnings, counter)).filter(Boolean);
-  const days = await resolveLookups(parsed, warnings);
+  const days = await resolveLookups(parsed, warnings, foodCache);
   if (!days.length) {
     // Whatever was dropped on the way is the useful part of this failure — the
     // preview that would have carried the warnings is never shown.

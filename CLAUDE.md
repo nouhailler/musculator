@@ -298,8 +298,12 @@ meal keys and micronutrient list from `data/nutrition.js` instead of restating t
   zero iron or calcium and a filled-in zero would be scored as a known value — the one thing
   the module's "unknown is never zero" rule exists to prevent. Fibre is the exception and
   keeps its zero: meat, eggs and dairy really are at 0 g.
-- **A food the assistant named but did not compose is resolved against CIQUAL**
-  (`lib/ciqualMatch.js`), which is why `parseMealsImport` is async. This is a different job
+- **A food the assistant named but did not compose is resolved against the user's own foods
+  first, then CIQUAL** (`lib/ciqualMatch.js`), which is why `parseMealsImport` is async. A
+  scanned product beats any generic — real brand values, and a food this person eats — and it
+  is reused as-is, id included, so it stays one entry in `foodCache`. `matchCache` drops the
+  head-word guard `matchCiqual` needs: that guard exists because CIQUAL names always lead
+  with the base food ("Oeuf, blanc"), which a brand name has no reason to do. This is a different job
   from `searchCiqual`: there, a human picks from a ranked list; here nobody picks, so a wrong
   match is silently wrong data. `matchCiqual` therefore answers *confidently or not at all* —
   every query token must appear in the candidate, and the candidate's **first** word must be

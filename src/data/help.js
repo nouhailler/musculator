@@ -154,7 +154,7 @@ export const HELP = {
       ['Le prompt', "« Comment générer ce JSON ? » contient le prompt à copier. Dans un Projet Claude ou un GPT personnalisé, colle-le une fois en instructions : ensuite tu n'as plus qu'à dicter."],
       ['Valeurs pour 100 g', "L'assistant fournit le poids de la portion et les valeurs pour 100 g. La quantité reste modifiable dans le journal, tout se recalcule."],
       ['Prévisualisation', "Rien n'est enregistré avant que tu aies vu le détail. « Remplacer » ne vide que les repas présents dans l'import."],
-      ['Valeurs manquantes', "Si l'assistant nomme un aliment sans donner ses valeurs, Musculator le cherche dans la table CIQUAL et affiche l'entrée retenue sous son nom — vérifie-la, « chocolat noir » peut tomber sur un chocolat fourré. Un aliment introuvable est signalé et à saisir à la main."],
+      ['Valeurs manquantes', "Si l'assistant nomme un aliment sans donner ses valeurs, Musculator cherche d'abord dans tes propres aliments — un produit que tu as scanné porte les vraies valeurs de sa marque — puis dans la table CIQUAL. L'aperçu affiche la source retenue sous chaque aliment : vérifie-la, « chocolat noir » peut tomber sur un chocolat fourré."],
       ['Avertissements', "Ils listent ce qui a été deviné : quantité pas exprimée en grammes (« 3 figues » devient 100 g), repas non reconnu, valeurs hors du bloc « pour100g »."],
       ['Estimations', "Les valeurs viennent d'un modèle de langage, pas d'une table officielle : elles sont approximatives et à vérifier si un aliment compte vraiment."],
     ],

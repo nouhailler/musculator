@@ -35,7 +35,7 @@ export default function ImportMeals() {
     setError('');
     setLoading(true);
     try {
-      setParsed(await parseMealsImport(text, { fallbackDate: state.nutriDate, fallbackMeal: state.nutriMeal }));
+      setParsed(await parseMealsImport(text, { fallbackDate: state.nutriDate, fallbackMeal: state.nutriMeal, foodCache: state.foodCache }));
     } catch (e) {
       setParsed(null);
       setError(e.message || 'JSON invalide.');
@@ -68,7 +68,7 @@ export default function ImportMeals() {
           Dicte tes repas à Claude ou ChatGPT, puis colle ici le JSON généré. Les aliments sont
           ajoutés à la journée correspondante, avec leurs valeurs pour 100 g — la quantité reste
           modifiable ensuite. Un aliment dont l'assistant n'a pas donné les valeurs est cherché
-          dans la table CIQUAL ; l'aperçu indique alors l'entrée utilisée.
+          d'abord dans tes aliments, puis dans la table CIQUAL ; l'aperçu indique la source retenue.
         </p>
 
         {/* --- The prompt to paste into the assistant --- */}
@@ -163,9 +163,9 @@ export default function ImportMeals() {
                               {/* Values the assistant did not give come from the
                                   table; naming the entry used is what lets a bad
                                   match be caught before it is imported. */}
-                              {e.food.ciqualNom && (
+                              {e.food.matchNom && (
                                 <span style={{ display: 'block', color: 'var(--color-neutral-500)', fontSize: 10 }}>
-                                  ↳ CIQUAL : {e.food.ciqualNom}
+                                  ↳ {e.food.matchSource === 'cache' ? 'Mes aliments' : 'CIQUAL'} : {e.food.matchNom}
                                 </span>
                               )}
                             </span>

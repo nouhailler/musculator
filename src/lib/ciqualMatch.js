@@ -56,7 +56,7 @@ const related = (a, b) => (
   || (a.length >= MIN_PREFIX && b.startsWith(a))
 );
 
-function scoreCandidate(qt, name) {
+function scoreCandidate(qt, name, requireHead) {
   const nt = tokens(name);
   const hits = (q) => nt.some((w) => related(w, q));
   const hard = qt.filter((q) => !isSoft(q));
@@ -70,7 +70,7 @@ function scoreCandidate(qt, name) {
   // examined — it is the food itself, everything after it is a qualifier.
   // Either the query names it ("blanc d'oeuf" → "Oeuf, blanc"), or it is what
   // the query leads with ("figues" → "Figue, crue").
-  if (!qt.some((q) => related(ht[0], q))) return -1;
+  if (requireHead && !qt.some((q) => related(ht[0], q))) return -1;
 
   let score = related(ht[0], qt[0]) ? 1000 : 400;
   // A soft token that did land is a better match, not a requirement.
@@ -82,25 +82,45 @@ function scoreCandidate(qt, name) {
   return score;
 }
 
+/** Best candidate in a list, or null when none scores. */
+function bestOf(name, items, getName, requireHead) {
+  const qt = tokens(name);
+  if (!qt.length) return null;
+  let best = null;
+  let bestScore = 0;
+  for (const item of items) {
+    const s = scoreCandidate(qt, getName(item), requireHead);
+    if (s > bestScore) { bestScore = s; best = item; }
+  }
+  return best;
+}
+
 /**
  * The CIQUAL entry a food name refers to, or null when nothing matches
  * confidently. Null is a normal answer — the caller reports the name back to
  * the user instead of importing a guess.
  */
 export async function matchCiqual(name) {
-  const qt = tokens(name);
-  if (!qt.length) return null;
   let table;
   try {
     table = await loadCiqual();
   } catch {
     return null;
   }
-  let best = null;
-  let bestScore = 0;
-  for (const c of table) {
-    const s = scoreCandidate(qt, c.name);
-    if (s > bestScore) { bestScore = s; best = c; }
-  }
+  const best = bestOf(name, table, (c) => c.name, true);
   return best ? fromCiqual(best) : null;
+}
+
+/**
+ * The same question asked of the user's own foods first.
+ *
+ * A scanned product beats any generic: it carries the brand's real values, and
+ * it is a food this person actually eats. The head-word guard is dropped here
+ * — it exists because CIQUAL names always lead with the base food ("Oeuf,
+ * blanc"), which a brand name has no reason to do.
+ */
+export function matchCache(name, foodCache) {
+  const foods = Object.values(foodCache || {});
+  if (!foods.length) return null;
+  return bestOf(name, foods, (f) => f.nom || '', false);
 }

@@ -63,6 +63,14 @@ grouped by date and reference the commit they landed in.
     one `OBJECTIFS` in `data/programs.js`, so a saved workout cannot carry an objective the
     profile is unable to express.
 
+- **A dictated food is looked up in your own foods before CIQUAL.** A product you scanned
+  carries its brand's real values and is one you actually eat; no generic can beat that. It
+  also closes a gap the previous change left open — scanning the two foods CIQUAL did not
+  know made them importable by name from then on, which is what the search screen has always
+  done and the import did not. The preview names the source ("Mes aliments" or "CIQUAL"), and
+  a cached food is reused exactly as it is, id included, so it stays one entry rather than
+  spawning a copy. On the failing example: 11 foods of 11, against 9 before.
+
 - **The dictated import reads three more shapes an assistant actually produces.** ChatGPT
   answered `"repas": { "petit_dejeuner": [...] }` — meals as a *map* keyed by meal rather
   than a list — which the parser rejected outright with "aucun repas exploitable".
