@@ -66,6 +66,7 @@ CATALOGUE (id · nom · muscle principal · niveau · matériel)
   clamshell · Coquillage (clamshell) · Moyen fessier · Débutant · Sans matériel/Élastique/Maison
   monster-walk · Marche latérale à l'élastique · Moyen fessier · Débutant · Élastique/Maison
   fire-hydrant · Fire hydrant · Moyen fessier · Grand fessier · Débutant · Sans matériel/Élastique/Maison
+  step-down-lateral · Step-down latéral · Moyen fessier · Intermédiaire · Sans matériel/Maison
   hip-thrust · Hip thrust · Grand fessier · Intermédiaire · Haltères/Maison/Salle
   hip-thrust-unilateral · Hip thrust unilatéral · Grand fessier · Intermédiaire · Sans matériel/Haltères/Maison
   glute-bridge · Glute bridge (pont au sol) · Grand fessier · Débutant · Sans matériel/Maison
@@ -92,11 +93,19 @@ CATALOGUE (id · nom · muscle principal · niveau · matériel)
   developpe-incline · Développé incliné haltères · Pectoraux · Intermédiaire · Haltères/Maison
   ecartes-halteres · Écartés haltères au sol · Pectoraux · Débutant · Haltères/Maison
   pull-over · Pull-over haltère · Pectoraux · Intermédiaire · Haltères/Maison
+  pompes-elastique · Pompes avec élastique · Pectoraux · Intermédiaire · Élastique/Maison
   rowing-halteres-un-bras · Rowing haltère un bras · Grand dorsal · Débutant · Haltères/Maison
   rowing-halteres-buste-penche · Rowing haltères buste penché · Grand dorsal · Intermédiaire · Haltères/Maison
   rowing-inverse · Rowing inversé · Grand dorsal · Débutant · Sans matériel/Maison
   tirage-vertical-elastique · Tirage vertical élastique · Grand dorsal · Débutant · Élastique/Maison
   face-pull · Tirage visage élastique (face pull) · Deltoïdes · Débutant · Élastique/Maison
+  tirage-horizontal-elastique-assis · Tirage horizontal élastique assis · Grand dorsal · Débutant · Élastique/Maison
+  traction-supination · Traction supination (chin-up) · Grand dorsal · Avancé · Salle
+  traction-neutre · Traction prise neutre · Grand dorsal · Avancé · Salle
+  traction-negative · Traction négative · Grand dorsal · Intermédiaire · Salle
+  traction-assistee-elastique · Traction assistée à l'élastique · Grand dorsal · Débutant · Élastique/Salle
+  straight-arm-pulldown-elastique · Straight-arm pulldown élastique · Grand dorsal · Débutant · Élastique/Maison
+  pulldown-genoux-elastique · Pulldown à genoux élastique · Grand dorsal · Débutant · Élastique/Maison
   oiseau-halteres · Oiseau haltères · Deltoïdes · Débutant · Haltères/Maison
   oiseau-elastique · Oiseau à l'élastique · Deltoïdes · Débutant · Élastique/Maison
   developpe-arnold · Développé Arnold · Deltoïdes · Intermédiaire · Haltères/Maison
@@ -118,6 +127,11 @@ CATALOGUE (id · nom · muscle principal · niveau · matériel)
   pallof-press · Pallof press élastique · Obliques · Débutant · Élastique/Maison
   bicycle · Abdominal bicycle · Obliques · Débutant · Sans matériel/Maison
   v-up · V-up · Grand droit · Avancé · Sans matériel/Maison
+  hanging-knee-raise · Hanging knee raise · Grand droit · Intermédiaire · Salle
+  hanging-leg-raise · Hanging leg raise · Grand droit · Avancé · Salle
+  toes-to-bar · Toes-to-bar · Grand droit · Avancé · Salle
+  hanging-windshield-wipers · Hanging windshield wipers · Obliques · Avancé · Salle
+  ab-wheel-rollout · Ab wheel rollout · Sangle abdominale · Avancé · Sans matériel/Maison
   cyclist-squat · Cyclist squat · Quadriceps · Intermédiaire · Sans matériel/Maison
   spanish-squat · Spanish squat · Quadriceps · Débutant · Élastique/Maison
   reverse-nordic · Reverse Nordic · Quadriceps · Avancé · Sans matériel/Maison
@@ -131,16 +145,28 @@ CATALOGUE (id · nom · muscle principal · niveau · matériel)
   mollets-unilateral · Élévations mollets unilatérales · Mollets (gastrocnémiens) · Débutant · Sans matériel/Maison
   mollets-marche · Élévations mollets sur marche · Mollets (gastrocnémiens) · Débutant · Sans matériel/Maison
   tibialis-raise · Tibialis raise · Tibial antérieur · Débutant · Sans matériel/Maison
+  seated-tibialis-raise · Seated tibialis raise · Tibial antérieur · Débutant · Sans matériel/Haltères/Maison
+  pogo-jumps · Pogo jumps · Mollets · Intermédiaire · Sans matériel/Maison
   farmer-walk · Farmer walk · Avant-bras · Débutant · Haltères/Maison
   dead-hang · Dead hang · Avant-bras · Débutant · Sans matériel/Maison
   wrist-curl · Wrist curl · Avant-bras · Débutant · Haltères/Maison
   reverse-wrist-curl · Wrist curl inversé · Avant-bras · Débutant · Haltères/Maison
   pinch-grip · Pinch grip · Avant-bras · Débutant · Haltères/Maison
+  wrist-roller · Wrist roller · Avant-bras · Intermédiaire · Haltères/Maison
+  pronation-supination-haltere · Pronation/supination haltère · Avant-bras · Débutant · Haltères/Maison
+  plate-wrist-curl · Plate wrist curl · Avant-bras · Débutant · Haltères/Maison
   shrugs · Shrugs haltères · Trapèzes · Débutant · Haltères/Maison
   y-raise · Y-raise · Trapèzes · Débutant · Sans matériel/Maison
   rowing-coudes-ouverts · Rowing coudes ouverts · Trapèzes · Débutant · Haltères/Maison
+  trap-3-raise · Trap-3 raise · Trapèzes · Débutant · Haltères/Maison
+  prone-t-raise · Prone T-raise · Trapèzes · Débutant · Haltères/Maison
+  prone-w-raise · Prone W-raise · Trapèzes · Intermédiaire · Sans matériel/Haltères/Maison
+  scapular-push-up · Scapular push-up · Dentelé antérieur · Débutant · Sans matériel/Maison
+  scapular-pull-up · Scapular pull-up · Trapèzes · Intermédiaire · Salle
   superman · Superman · Lombaires · Débutant · Sans matériel/Maison
   back-extension-sol · Back extension au sol · Lombaires · Débutant · Sans matériel/Maison
+  suitcase-carry · Suitcase carry · Lombaires · Débutant · Haltères/Maison
+  reverse-hyperextension · Reverse hyperextension · Lombaires · Intermédiaire · Salle
 
 SÉANCES
 - Une séance Musculator = une liste d'exercices faite d'un coup. Un programme sur la semaine
