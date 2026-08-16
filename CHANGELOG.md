@@ -10,6 +10,26 @@ grouped by date and reference the commit they landed in.
 
 ### Changed
 
+- **Muscle-map silhouette: angled arms, fingered hands, hair on both genders** — a
+  follow-up to the tapered-body-outline pass, refined against two reference images the user
+  supplied (neither copied — the first carried a commercial watermark, the second's license
+  couldn't be confirmed either, so both are matched by eye as original artwork rather than
+  traced). Arms are now a shoulder-then-elbow chain, each a small independent rotation, so
+  they curve gently away from the torso instead of hanging flush against it or swinging out
+  as one rigid rotated bar; hands are a palm plus four short finger stubs instead of a bare
+  circle (individually-rotated fingers were tried first and looked like the hand was melting
+  at 18px on screen — short parallel stubs read cleanly instead). Both Homme and Femme now
+  get a hair silhouette matched to the reference — shoulder-length strands for Femme, a
+  short cropped cap for Homme — since a bare head reads as male by default at this size;
+  Autre stays bare rather than asserting either. Every hair shape is authored once as its
+  right half and mirrored via an SVG transform, so the two sides can't drift out of
+  symmetry. `FRONT_ZONES`/`BACK_ZONES` click targets are untouched and verified still
+  correct on every limb and both sides; the zone rectangles don't move with the arm bend or
+  the slightly-narrowed leg stance, a minor cosmetic misalignment left as-is rather than
+  restructuring how zones hit-test.
+
+### Changed
+
 - **Cartographie musculaire: a real body silhouette instead of blocks, and it now matches
   `profile.sexe`** — the outline used to be flat rectangles (one uniform bar per limb, a single
   torso block); it's now a tapered torso path (shoulders/waist/hips as a genuine curve) plus
