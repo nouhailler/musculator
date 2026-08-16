@@ -132,6 +132,8 @@ CATALOGUE (id · nom · muscle principal · niveau · matériel)
   toes-to-bar · Toes-to-bar · Grand droit · Avancé · Salle
   hanging-windshield-wipers · Hanging windshield wipers · Obliques · Avancé · Salle
   ab-wheel-rollout · Ab wheel rollout · Sangle abdominale · Avancé · Sans matériel/Maison
+  reverse-crunch · Reverse crunch (hip lift) · Grand droit · Débutant · Sans matériel/Maison
+  up-down-plank · Up-down plank · Sangle abdominale · Intermédiaire · Sans matériel/Maison
   cyclist-squat · Cyclist squat · Quadriceps · Intermédiaire · Sans matériel/Maison
   spanish-squat · Spanish squat · Quadriceps · Débutant · Élastique/Maison
   reverse-nordic · Reverse Nordic · Quadriceps · Avancé · Sans matériel/Maison

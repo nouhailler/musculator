@@ -8,6 +8,16 @@ grouped by date and reference the commit they landed in.
 
 ## [Unreleased]
 
+### Added
+
+- **Reverse crunch (hip lift) and Up-down plank** — two more core exercises, added so a
+  dictated program naming either of them (as opposed to a hip-flexion leg raise or a static
+  plank) resolves to an exact catalogue match instead of a substitution. `reverse-crunch`
+  curls the pelvis toward the ribs rather than the ribs toward the pelvis, the inverse of the
+  standard crunch; `up-down-plank` alternates forearm/hand support without letting the hips
+  roll, an anti-rotation demand the static plank doesn't have. Both carry a full sheet, an
+  animated demo, voice cues and a body-map reference (abdos, and obliques for the plank).
+
 ### Fixed
 
 - **`optionnel` rescoped past the lower body, and every hardcoded exercise count updated** —

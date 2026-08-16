@@ -180,6 +180,8 @@ export const CUES = {
   'toes-to-bar': { beat: 1800, seq: ['Monte', 'Descends'] },
   'hanging-windshield-wipers': { beat: 1600, seq: ['À gauche', 'À droite'] },
   'ab-wheel-rollout': { beat: 1800, seq: ['Roule', 'Reviens'] },
+  'reverse-crunch': { beat: 1400, seq: ['Monte', 'Descends'] },
+  'up-down-plank': { beat: 1600, seq: ['Avant-bras', 'Mains'] },
 
   // Mollets : compléments
   'seated-tibialis-raise': { beat: 1300, seq: ['Orteils haut', 'Descends'] },
