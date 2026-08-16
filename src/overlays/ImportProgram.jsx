@@ -84,7 +84,9 @@ export default function ImportProgram() {
               <p style={{ fontSize: 12, color: 'var(--color-neutral-300)', margin: '0 0 10px', lineHeight: 1.55 }}>
                 Le prompt contient les {EXERCISES.length} exercices de l'app : l'assistant choisit dedans plutôt que
                 d'en inventer, sinon la séance perdrait sa démo animée et son coach vocal. Colle-le
-                dans un Projet Claude ou un GPT personnalisé, puis demande ton programme.
+                dans un Projet Claude ou un GPT personnalisé, puis demande ton programme. Si le champ
+                d'instructions refuse le prompt (trop long), colle-le en premier message d'une
+                conversation normale à la place — ça marche aussi.
               </p>
               <SecondaryButton icon={copied ? 'check' : 'copy'} onClick={copyPrompt} style={{ marginBottom: 10 }}>
                 {copied ? 'Prompt copié !' : 'Copier le prompt'}

@@ -23,6 +23,7 @@ export const HELP = {
     intro: "Demande un programme à Claude ou ChatGPT, colle ici le JSON : chaque séance du plan devient une séance perso.",
     points: [
       ['Le prompt', `Il contient les ${EXERCISES.length} exercices de l'app. L'assistant choisit dedans au lieu d'inventer — un exercice inventé n'aurait ni démo animée, ni coach vocal, ni place dans la cartographie musculaire.`],
+      ['Trop long pour un Projet ?', "Un champ d'instructions de Projet ChatGPT ou Claude a une limite de taille ; le prompt grossit avec le catalogue et peut la dépasser. Colle-le en premier message d'une conversation normale à la place — ça marche aussi."],
       ['Substitutions', "Un mouvement absent du catalogue est remplacé par le plus proche travaillant le même muscle, et l'aperçu le dit : « presse à cuisses → remplacé par Squats »."],
       ['Réglages conservés', "Séries, répétitions, charge et repos dictés sont repris tels quels dans la séance guidée."],
       ['Plusieurs séances', "Un programme hebdomadaire arrive en plusieurs séances d'un coup ; elles s'ajoutent toutes à tes séances perso."],

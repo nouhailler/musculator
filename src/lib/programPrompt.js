@@ -1,19 +1,31 @@
 // The prompt for dictating a training plan, and the other half of the contract
 // lib/importProgram.js reads back.
 //
-// It embeds the whole catalogue — 45 lines, ~4 KB — because the one thing this
-// import must get right is that a session refers to *existing* exercises. An
-// exercise here is an id cross-referenced by its animated demo, its voice
-// cues and the muscle map; an invented one would arrive with none of that and
-// quietly degrade five features. Giving the model the list is cheap next to
-// letting it guess.
+// It embeds the whole catalogue because the one thing this import must get
+// right is that a session refers to *existing* exercises. An exercise here is
+// an id cross-referenced by its animated demo, its voice cues and the muscle
+// map; an invented one would arrive with none of that and quietly degrade
+// five features. Giving the model the list is cheap next to letting it guess.
 //
 // The list is generated from the data, so it cannot drift from the catalogue.
+//
+// It started at 45 exercises, ~4 KB; the catalogue has since tripled and so
+// did this. `niveau` and `mat` are closed vocabularies (see exercises.js), so
+// coding them down to one letter each — with the legend spelled out once,
+// right above the table — loses nothing a model needs to pick correctly, and
+// the `|` field separator (vs. the previous ` · `, which also appears *inside*
+// a multi-muscle `primaire` like "Adducteurs · Quadriceps") cuts the table by
+// roughly a third. `id` and `nom` stay in full: `id` is the literal value the
+// output JSON must echo back, and `nom` is what a request's wording actually
+// matches against.
 import { EXERCISES } from '../data/exercises.js';
 import { OBJECTIFS } from '../data/programs.js';
 
+const NIVEAU_CODE = { Débutant: 'D', Intermédiaire: 'I', Avancé: 'A' };
+const MAT_CODE = { 'Sans matériel': 'S', Haltères: 'H', Élastique: 'É', Salle: 'G', Maison: 'M' };
+
 const CATALOGUE = EXERCISES
-  .map((e) => `  ${e.id} · ${e.nom} · ${e.primaire} · ${e.niveau} · ${e.mat.join('/')}`)
+  .map((e) => `${e.id}|${e.nom}|${e.primaire}|${NIVEAU_CODE[e.niveau]}|${e.mat.map((m) => MAT_CODE[m]).join('')}`)
   .join('\n');
 
 export const PROGRAM_IMPORT_PROMPT = `Tu es l'assistant de programmation de Musculator, une application de musculation.
@@ -28,7 +40,9 @@ musculaire que pour ceux-là. Si le mouvement que tu voulais n'y est pas, prends
 du catalogue et n'en parle pas ; en dernier recours seulement, donne un "nom" en clair et
 ajoute "muscle" pour que l'application puisse le remplacer par un équivalent.
 
-CATALOGUE (id · nom · muscle principal · niveau · matériel)
+CATALOGUE (id|nom|muscle principal|niveau|matériel — champs séparés par "|")
+Niveau : D=Débutant, I=Intermédiaire, A=Avancé. Matériel (parfois plusieurs lettres collées) :
+S=Sans matériel, H=Haltères, É=Élastique, G=Salle, M=Maison.
 ${CATALOGUE}
 
 SÉANCES

@@ -8,6 +8,21 @@ grouped by date and reference the commit they landed in.
 
 ## [Unreleased]
 
+### Changed
+
+- **Dictated-program prompt shrunk by ~30%, and its length-limit workaround documented** — the
+  embedded catalogue tripled in size over three PRs (45 → 104 → 132 exercises) without the
+  prompt format changing, and it's now long enough to get rejected by a ChatGPT Project's
+  instructions field. `niveau` and `mat` are closed vocabularies, so `programPrompt.js` now
+  codes them down to one letter each (with the legend spelled out once above the table) and
+  switches the field separator from ` · ` to `|` — `id` and `nom` stay in full, since one is
+  the literal value the output JSON echoes back and the other is what a request's wording
+  actually matches against. 14 760 → 10 418 characters. Independently of the size, the
+  in-app help, the "Comment générer ce JSON ?" panel and `PROMPT-PROGRAMME.md` now all say
+  what to do when a project's instructions field refuses the prompt anyway: paste it as a
+  first message in a normal conversation instead, which the meal-import prompt's docs already
+  said and the program one never did.
+
 ### Added
 
 - **Reverse crunch (hip lift) and Up-down plank** — two more core exercises, added so a

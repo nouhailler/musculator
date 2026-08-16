@@ -10,6 +10,7 @@
 import { writeFileSync } from 'node:fs';
 import { MEAL_IMPORT_PROMPT } from '../src/lib/mealPrompt.js';
 import { PROGRAM_IMPORT_PROMPT } from '../src/lib/programPrompt.js';
+import { EXERCISES } from '../src/data/exercises.js';
 
 const OUT = new URL('../PROMPT-REPAS.md', import.meta.url);
 
@@ -55,14 +56,18 @@ Le prompt à donner à un assistant conversationnel pour qu'il compose un progra
 d'entraînement importable dans Musculator.
 
 > Fichier généré par \`npm run gen-prompt\` depuis \`src/lib/programPrompt.js\`, la seule source.
-> Ne pas l'éditer à la main : le prompt embarque le catalogue des 45 exercices, dérivé de
-> \`src/data/exercises.js\`, et cette copie doit le suivre.
+> Ne pas l'éditer à la main : le prompt embarque le catalogue des ${EXERCISES.length} exercices,
+> dérivé de \`src/data/exercises.js\`, et cette copie doit le suivre.
 
 ## Utilisation
 
 1. Copie le prompt ci-dessous — ou, dans l'app, ouvre **Programmes → Importer un programme
    dicté → « Comment générer ce JSON ? » → Copier le prompt**.
-2. Colle-le dans les instructions d'un **Projet Claude** ou d'un **GPT personnalisé**.
+2. Colle-le dans les instructions d'un **Projet Claude** ou d'un **GPT personnalisé** pour ne le
+   coller qu'une fois. Un simple message en début de conversation marche aussi — et c'est la
+   seule option si un champ d'instructions refuse le prompt en le jugeant trop long : le
+   catalogue grossit avec l'app, et une conversation normale tolère largement plus de texte
+   qu'un champ d'instructions de projet.
 3. Demande ton programme (« recomposition, 3 séances par semaine, à la maison avec haltères »).
 4. Recopie le bloc JSON dans **Programmes → Importer un programme dicté**, prévisualise, importe.
 
