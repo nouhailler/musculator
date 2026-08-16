@@ -26,9 +26,19 @@
 //   pattern    movement pattern the exercise belongs to, one of PATTERNS.
 //              Only set on the lower-body entries; the original upper-body and
 //              core exercises are untagged.
-//   optionnel  true for exercises outside the thighs/glutes focus (calves) or
-//              reserved for an advanced audience, so they can be filtered out.
-//              See exercisesByPattern() / coreExercises() at the bottom.
+//   optionnel  true for an exercise that needs a specialised piece of kit (a GHR
+//              bench, an ab wheel, a wrist roller…) or a skill/strength ceiling well
+//              above the rest of its family (toes-to-bar past hanging leg raise,
+//              pistol squat past a split squat) — the ones a beginner browsing the
+//              default library doesn't need surfaced. It started scoped to calves
+//              and a handful of advanced lower-body lifts when the catalogue was
+//              thighs/glutes-only; now that the catalogue spans the whole body, the
+//              same bar applies everywhere, so a niche or high-ceiling upper-body
+//              or core entry can carry it too, `pattern` or not. `niveau: 'Avancé'`
+//              alone is not the bar — most Avancé entries (tractions, hanging leg
+//              raise) stay in the default view; `optionnel` is reserved for the
+//              exercises past that, where the family already has an accessible
+//              entry point. See exercisesByPattern() / coreExercises() at the bottom.
 export const EXERCISES = [
   {
     id: 'pompes', nom: 'Pompes', muscle: 'Pectoraux · triceps', niveau: 'Débutant', lieu: 'Maison',
@@ -1446,7 +1456,7 @@ export const EXERCISES = [
     similaires: ['hanging-knee-raise', 'toes-to-bar', 'v-up'],
   },
   {
-    id: 'toes-to-bar', nom: 'Toes-to-bar', muscle: 'Grand droit', niveau: 'Avancé', lieu: 'Salle',
+    id: 'toes-to-bar', nom: 'Toes-to-bar', muscle: 'Grand droit', niveau: 'Avancé', lieu: 'Salle', optionnel: true,
     mat: ['Salle'], series: 3, reps: '8', repos: 90, icon: 'arrows-in',
     desc: "Suspendu à la barre bras tendus, jambes tendues, ramène les orteils jusqu'à toucher la barre, puis redescends en contrôlant.",
     conseils: ["Génère un léger élan contrôlé du buste, pas des jambes seules", "Jambes tendues jusqu'au bout", "Redescends toujours en contrôle, jamais en chute libre"],
@@ -1461,7 +1471,7 @@ export const EXERCISES = [
     similaires: ['hanging-leg-raise', 'hanging-knee-raise', 'hanging-windshield-wipers'],
   },
   {
-    id: 'hanging-windshield-wipers', nom: 'Hanging windshield wipers', muscle: 'Obliques', niveau: 'Avancé', lieu: 'Salle',
+    id: 'hanging-windshield-wipers', nom: 'Hanging windshield wipers', muscle: 'Obliques', niveau: 'Avancé', lieu: 'Salle', optionnel: true,
     mat: ['Salle'], series: 3, reps: '8 / côté', repos: 90, icon: 'arrows-in',
     desc: "Suspendu à la barre, jambes relevées à l'horizontale, balance-les d'un côté à l'autre comme un essuie-glace en gardant les hanches hautes.",
     conseils: ["Garde les jambes groupées ou tendues selon ton niveau", "Le mouvement part du bassin, pas des épaules", "Ralentis si le bas du dos se cambre"],
@@ -1476,7 +1486,7 @@ export const EXERCISES = [
     similaires: ['toes-to-bar', 'russian-twist', 'hanging-leg-raise'],
   },
   {
-    id: 'ab-wheel-rollout', nom: 'Ab wheel rollout', muscle: 'Sangle abdominale', niveau: 'Avancé', lieu: 'Maison',
+    id: 'ab-wheel-rollout', nom: 'Ab wheel rollout', muscle: 'Sangle abdominale', niveau: 'Avancé', lieu: 'Maison', optionnel: true,
     mat: ['Sans matériel', 'Maison'], series: 3, reps: '10', repos: 75, icon: 'arrows-in-line-horizontal',
     desc: "À genoux, roulette tenue à deux mains, fais-la rouler devant toi en gardant le corps aligné, jusqu'à l'amplitude que tu contrôles, puis reviens.",
     conseils: ["Bascule le bassin vers l'arrière avant de commencer", "Ne descends que jusqu'où tu peux revenir sans casser au bassin", "Abdos gainés du début à la fin"],
@@ -1797,7 +1807,7 @@ export const EXERCISES = [
     similaires: ['farmer-walk', 'dead-hang', 'wrist-curl'],
   },
   {
-    id: 'wrist-roller', nom: 'Wrist roller', muscle: 'Avant-bras', niveau: 'Intermédiaire', lieu: 'Maison',
+    id: 'wrist-roller', nom: 'Wrist roller', muscle: 'Avant-bras', niveau: 'Intermédiaire', lieu: 'Maison', optionnel: true,
     mat: ['Haltères', 'Maison'], series: 3, reps: '3 montées / descentes', repos: 90, icon: 'arrows-down-up',
     desc: "Bâton tenu à deux mains, une corde lestée pendue au milieu, enroule la corde en tournant les poignets jusqu'à ce que la charge touche le bâton, puis déroule en sens inverse.",
     conseils: ["Bras tendus devant toi, seuls les poignets tournent", "Enroule et déroule à un tempo régulier", "Change de sens pour travailler les deux directions"],
@@ -2011,7 +2021,7 @@ export const EXERCISES = [
     similaires: ['farmer-walk', 'planche-laterale', 'pallof-press'],
   },
   {
-    id: 'reverse-hyperextension', nom: 'Reverse hyperextension', muscle: 'Lombaires (érecteurs)', niveau: 'Intermédiaire', lieu: 'Salle',
+    id: 'reverse-hyperextension', nom: 'Reverse hyperextension', muscle: 'Lombaires (érecteurs)', niveau: 'Intermédiaire', lieu: 'Salle', optionnel: true,
     mat: ['Salle'], series: 3, reps: '15', repos: 60, icon: 'arrows-down-up',
     desc: "Buste calé et fixe sur un banc, jambes dans le vide, lève les jambes tendues jusqu'à l'alignement du corps, puis redescends en contrôlant.",
     conseils: ["Le buste reste fixe : c'est le bassin qui bouge, pas le dos", "Jambes tendues ou légèrement fléchies", "Monte jusqu'à l'alignement, pas plus haut"],
@@ -2040,8 +2050,8 @@ export const PATTERNS = [
 
 export const exById = (id) => EXERCISES.find((e) => e.id === id) || EXERCISES[0];
 
-// Exercises within the thighs/glutes focus: drops calves and the entries
-// reserved for an advanced audience. Pass { optionnels: true } to keep them.
+// The default-view catalogue: drops the niche/specialised-equipment/high-ceiling
+// entries (`optionnel`), from any muscle group. Pass { optionnels: true } to keep them.
 export const coreExercises = ({ optionnels = false } = {}) =>
   EXERCISES.filter((e) => optionnels || !e.optionnel);
 
@@ -2059,7 +2069,7 @@ export const groupByPattern = (list = EXERCISES) => {
   return groups.filter((g) => g.exos.length > 0);
 };
 
-// The whole catalogue, grouped. `optionnels: false` drops calves and the
-// entries reserved for an advanced audience.
+// The whole catalogue, grouped. `optionnels: false` drops the niche/advanced
+// entries — see `optionnel` above.
 export const exercisesByPattern = ({ optionnels = true } = {}) =>
   groupByPattern(coreExercises({ optionnels }));

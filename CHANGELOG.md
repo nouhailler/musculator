@@ -8,6 +8,23 @@ grouped by date and reference the commit they landed in.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`optionnel` rescoped past the lower body, and every hardcoded exercise count updated** —
+  `optionnel` used to mean "outside the thighs/glutes focus"; now that the catalogue spans the
+  whole body, that framing no longer matched what it gated (calves and five advanced lower-body
+  lifts, while dozens of new upper-body/core entries stayed unfiltered by default regardless of
+  how niche or demanding). It now means "needs specialised kit or a skill/strength ceiling above
+  the rest of its family", so it can mark an entry in any muscle group: `reverse-hyperextension`
+  and `wrist-roller` need a bench/roller most people don't own, `toes-to-bar` and `hanging
+  windshield wipers` assume real bar-hang strength past `hanging-leg-raise`, `ab-wheel-rollout`
+  is flagged in its own `surcharge` as one of the most demanding core movements in the
+  catalogue. The Bibliothèque's "Hors focus cuisses / fessiers" filter label — misleading once
+  it was hiding movements that had nothing to do with legs — is now "Avancés & matériel
+  spécifique". Also fixed: four places (`help.js` ×2, `ImportProgram.jsx`, `README.md`) still
+  said "104 exercices" after the catalogue grew to 130; the two in-app ones now read
+  `EXERCISES.length` instead of a hardcoded number so this can't happen again.
+
 ### Added
 
 - **Catalogue étendu à 130 exercices** — 26 new entries filling gaps identified across the
