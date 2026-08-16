@@ -10,6 +10,17 @@ grouped by date and reference the commit they landed in.
 
 ### Changed
 
+- **Cartographie musculaire: a real body silhouette instead of blocks, and it now matches
+  `profile.sexe`** — the outline used to be flat rectangles (one uniform bar per limb, a single
+  torso block); it's now a tapered torso path (shoulders/waist/hips as a genuine curve) plus
+  two-segment arms and legs (upper-arm/forearm, thigh/calf) with hands and feet, so it reads as
+  a body rather than a mannequin. Shoulder/waist/hip proportions come from `profile.sexe` —
+  Homme skews shoulders-wider-than-hips, Femme the reverse, and Autre (or anything unset) gets
+  the midpoint of the two rather than silently defaulting to Homme, the same way `macros.js`
+  already gives 'Autre' its own BMR term instead of folding it into one of the other two. The
+  clickable muscle zones (`FRONT_ZONES`/`BACK_ZONES`) are untouched — only the silhouette drawn
+  behind them changed, verified by clicking into a zone on every limb and both sides.
+
 - **Dictated-program prompt shrunk by ~30%, and its length-limit workaround documented** — the
   embedded catalogue tripled in size over three PRs (45 → 104 → 132 exercises) without the
   prompt format changing, and it's now long enough to get rejected by a ChatGPT Project's
