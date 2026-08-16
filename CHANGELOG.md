@@ -8,6 +8,27 @@ grouped by date and reference the commit they landed in.
 
 ## [Unreleased]
 
+### Added
+
+- **"Ajoutez des exercices" in the Journal** — a third way to log a session after the fact,
+  alongside picking a whole program or a free-form entry: pick exercises one at a time from
+  the full catalogue and state series, reps and (optionally) a charge for each yourself,
+  since there is no per-set tracking outside a live workout to draw them from otherwise.
+  Always logs to today — for a past day, "Ajouter une séance" still covers that. Stores a new
+  `exercisesDetail` field on the sessionLog entry (tolerated as absent everywhere else, per
+  the sessionLog convention) so the journal card shows what was actually done — exercise,
+  series, reps, charge — rather than just the exercise names a program-based entry shows.
+  Duration/kcal are estimated the same way a solo exercise session already is: series ×
+  (rest + ~40s of work), summed across the picked exercises.
+
+### Changed
+
+- **Journal layout: "Ajoutez des exercices" at the top, "Analyse IA de ma journée" at the
+  bottom** — the new button opens right under the intro line, and the AI-analysis trigger
+  (plus its results once run) moved from mid-screen to the very end, after the notes field,
+  so the whole day (food, walking, sessions, notes) is logged before analysing it rather than
+  interrupting that flow partway through.
+
 ### Changed
 
 - **Muscle-map silhouette: angled arms, fingered hands, hair on both genders** — a

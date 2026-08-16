@@ -24,12 +24,13 @@ import Activity from './overlays/Activity.jsx';
 import ImportProgram from './overlays/ImportProgram.jsx';
 import Workout from './overlays/Workout.jsx';
 import WorkoutComplete from './overlays/WorkoutComplete.jsx';
+import AddExercises from './overlays/AddExercises.jsx';
 
 const TAB_SCREENS = { home: Home, programs: Programs, library: Library, nutrition: Nutrition, journal: Journal, progress: Progress };
 const OVERLAYS = {
   exercise: ExerciseDetail, program: ProgramDetail, bodymap: BodyMap, profile: Profile,
   builder: Builder, foodSearch: FoodSearch, foodEntry: FoodEntry, importMeals: ImportMeals,
-  activity: Activity, importProgram: ImportProgram,
+  activity: Activity, importProgram: ImportProgram, addExercises: AddExercises,
 };
 
 export default function App() {

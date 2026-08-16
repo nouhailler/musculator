@@ -7,7 +7,7 @@ import { dayActivity } from '../lib/activity.js';
 import { fmt, todayLabel } from '../lib/format.js';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
-import { PrimaryButton, IconCircleButton } from '../components/ui/Button.jsx';
+import { PrimaryButton, SecondaryButton, IconCircleButton } from '../components/ui/Button.jsx';
 import { TextArea } from '../components/ui/Field.jsx';
 import SessionForm, { DeleteSessionButton } from '../components/SessionForm.jsx';
 
@@ -33,6 +33,10 @@ export default function Journal() {
         <span style={{ fontSize: 11, color: 'var(--color-neutral-500)', textTransform: 'capitalize', textAlign: 'right', maxWidth: 120 }}>{todayLabel()}</span>
       </div>
       <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 14px' }}>Récap de tes séances, puis lance l'analyse IA.</p>
+
+      <SecondaryButton icon="plus-circle" onClick={actions.openAddExercises} style={{ width: '100%', justifyContent: 'center', marginBottom: 14 }}>
+        Ajoutez des exercices
+      </SecondaryButton>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
         <div className="stat-box"><div className="stat-value">{fmt(dayTime)}</div><div className="stat-label">temps</div></div>
@@ -94,6 +98,87 @@ export default function Journal() {
         )}
       </div>
 
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', margin: '4px 0 10px' }}>
+        <h6 style={{ color: 'var(--color-neutral-400)', margin: 0 }}>Séances d'aujourd'hui · {journalToday.length}</h6>
+        {!addOpen && (
+          <button type="button" onClick={() => setAddOpen(true)}
+            style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', color: 'var(--color-accent-200)', fontSize: 11, cursor: 'pointer', padding: 0 }}>
+            <Icon name="plus" size={13} />Ajouter une séance
+          </button>
+        )}
+      </div>
+      {addOpen && <SessionForm onClose={() => setAddOpen(false)} />}
+      {journalToday.length === 0 && (
+        <div className="empty-state" style={{ padding: '24px 10px', background: 'var(--color-surface)', border: '1px dashed var(--color-divider)', borderRadius: 'var(--radius-md)' }}>
+          <Icon name="moon" size={24} style={{ display: 'block', margin: '0 auto 8px' }} />Aucune séance encore aujourd'hui.<br />Lance-toi depuis l'accueil !
+        </div>
+      )}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}>
+        {journalToday.map((j) => (editId === j.id
+          ? <SessionForm key={j.id} session={j} onClose={() => setEditId(null)} />
+          : (
+          <div key={j.id} style={{
+            background: 'var(--color-surface)',
+            border: `1px solid ${j.partial ? 'color-mix(in srgb,var(--color-warn) 34%,transparent)' : 'var(--color-divider)'}`,
+            borderLeft: j.partial ? '3px solid var(--color-warn)' : undefined,
+            borderRadius: 'var(--radius-md)', padding: 13,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: j.partial || j.manual ? 5 : 8 }}>
+              <div style={{ fontSize: 14, fontWeight: 600 }}>{j.programNom}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>{j.heure}</span>
+                <IconCircleButton icon="pencil-simple" size={26} title="Modifier cette séance"
+                  onClick={() => setEditId(j.id)} style={{ color: 'var(--color-neutral-500)' }} />
+                <DeleteSessionButton id={j.id} />
+              </div>
+            </div>
+            {/* Older entries predate the flag, so they simply read as complete. */}
+            {j.partial && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--color-warn)', marginBottom: 8 }}>
+                <Icon name="warning-circle" weight="fill" size={13} style={{ flex: 'none' }} />
+                Séance partielle{j.exosTotal ? ` — arrêtée après ${j.exerciseIds.length} exercice${j.exerciseIds.length > 1 ? 's' : ''} sur ${j.exosTotal}` : ' — arrêtée en cours'}
+              </div>
+            )}
+            {j.manual && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--color-neutral-400)', marginBottom: 8 }}>
+                <Icon name="note-pencil" size={13} style={{ flex: 'none' }} />
+                Ajoutée manuellement
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 9 }}>
+              <Tag variant="neutral" icon="clock">{fmt(j.elapsedSec)}</Tag>
+              <Tag variant="neutral" icon="flame">{j.kcal} kcal</Tag>
+              {j.series > 0 && <Tag variant="neutral">{j.series} série{j.series > 1 ? 's' : ''}</Tag>}
+            </div>
+            {/* Per-exercise detail only exists on entries logged via "Ajoutez des
+                exercices" — anything else (a program, an older entry) falls
+                back to the plain name list it always had. */}
+            {j.exercisesDetail ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginBottom: 4 }}>
+                {j.exercisesDetail.map((d) => (
+                  <div key={d.id} style={{ fontSize: 11, color: 'var(--color-neutral-400)', lineHeight: 1.5 }}>
+                    {exById(d.id).nom} — {d.series} série{d.series > 1 ? 's' : ''} × {d.reps}{d.charge ? ` · ${d.charge}` : ''}
+                  </div>
+                ))}
+              </div>
+            ) : j.exerciseIds.length > 0 && (
+              <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', lineHeight: 1.5 }}>{j.exerciseIds.map((id) => exById(id).nom).join(' · ')}</div>
+            )}
+            {j.exerciseIds.length > 0 && (
+              <div style={{ fontSize: 11, color: 'var(--color-accent-300)', marginTop: 4 }}>Muscles : {j.muscles.join(' · ')}</div>
+            )}
+          </div>
+          )))}
+      </div>
+
+      <h6 style={{ color: 'var(--color-neutral-400)', marginBottom: 8 }}>Notes du jour</h6>
+      <TextArea
+        value={state.dayNotes[today] || ''}
+        onChange={actions.setDayNote}
+        placeholder="Ressenti, courbatures, sommeil…"
+        style={{ marginBottom: 20 }}
+      />
+
       <PrimaryButton
         icon={state.analysisLoading ? 'circle-notch' : 'sparkle'}
         iconWeight={state.analysisLoading ? 'regular' : 'fill'}
@@ -152,76 +237,6 @@ export default function Journal() {
           </div>
         </div>
       )}
-
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', margin: '4px 0 10px' }}>
-        <h6 style={{ color: 'var(--color-neutral-400)', margin: 0 }}>Séances d'aujourd'hui · {journalToday.length}</h6>
-        {!addOpen && (
-          <button type="button" onClick={() => setAddOpen(true)}
-            style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', color: 'var(--color-accent-200)', fontSize: 11, cursor: 'pointer', padding: 0 }}>
-            <Icon name="plus" size={13} />Ajouter une séance
-          </button>
-        )}
-      </div>
-      {addOpen && <SessionForm onClose={() => setAddOpen(false)} />}
-      {journalToday.length === 0 && (
-        <div className="empty-state" style={{ padding: '24px 10px', background: 'var(--color-surface)', border: '1px dashed var(--color-divider)', borderRadius: 'var(--radius-md)' }}>
-          <Icon name="moon" size={24} style={{ display: 'block', margin: '0 auto 8px' }} />Aucune séance encore aujourd'hui.<br />Lance-toi depuis l'accueil !
-        </div>
-      )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}>
-        {journalToday.map((j) => (editId === j.id
-          ? <SessionForm key={j.id} session={j} onClose={() => setEditId(null)} />
-          : (
-          <div key={j.id} style={{
-            background: 'var(--color-surface)',
-            border: `1px solid ${j.partial ? 'color-mix(in srgb,var(--color-warn) 34%,transparent)' : 'var(--color-divider)'}`,
-            borderLeft: j.partial ? '3px solid var(--color-warn)' : undefined,
-            borderRadius: 'var(--radius-md)', padding: 13,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: j.partial || j.manual ? 5 : 8 }}>
-              <div style={{ fontSize: 14, fontWeight: 600 }}>{j.programNom}</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>{j.heure}</span>
-                <IconCircleButton icon="pencil-simple" size={26} title="Modifier cette séance"
-                  onClick={() => setEditId(j.id)} style={{ color: 'var(--color-neutral-500)' }} />
-                <DeleteSessionButton id={j.id} />
-              </div>
-            </div>
-            {/* Older entries predate the flag, so they simply read as complete. */}
-            {j.partial && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--color-warn)', marginBottom: 8 }}>
-                <Icon name="warning-circle" weight="fill" size={13} style={{ flex: 'none' }} />
-                Séance partielle{j.exosTotal ? ` — arrêtée après ${j.exerciseIds.length} exercice${j.exerciseIds.length > 1 ? 's' : ''} sur ${j.exosTotal}` : ' — arrêtée en cours'}
-              </div>
-            )}
-            {j.manual && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--color-neutral-400)', marginBottom: 8 }}>
-                <Icon name="note-pencil" size={13} style={{ flex: 'none' }} />
-                Ajoutée manuellement
-              </div>
-            )}
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 9 }}>
-              <Tag variant="neutral" icon="clock">{fmt(j.elapsedSec)}</Tag>
-              <Tag variant="neutral" icon="flame">{j.kcal} kcal</Tag>
-              {j.series > 0 && <Tag variant="neutral">{j.series} série{j.series > 1 ? 's' : ''}</Tag>}
-            </div>
-            {j.exerciseIds.length > 0 && (
-              <>
-                <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', lineHeight: 1.5 }}>{j.exerciseIds.map((id) => exById(id).nom).join(' · ')}</div>
-                <div style={{ fontSize: 11, color: 'var(--color-accent-300)', marginTop: 4 }}>Muscles : {j.muscles.join(' · ')}</div>
-              </>
-            )}
-          </div>
-          )))}
-      </div>
-
-      <h6 style={{ color: 'var(--color-neutral-400)', marginBottom: 8 }}>Notes du jour</h6>
-      <TextArea
-        value={state.dayNotes[today] || ''}
-        onChange={actions.setDayNote}
-        placeholder="Ressenti, courbatures, sommeil…"
-        style={{ marginBottom: 20 }}
-      />
     </div>
   );
 }

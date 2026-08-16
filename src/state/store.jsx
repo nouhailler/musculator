@@ -216,27 +216,53 @@ const validDateKey = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) && !Num
 const validHeure = (v) => (/^([01]\d|2[0-3]):[0-5]\d$/.test(String(v || '')) ? v : null);
 
 // A session logged after the fact — worked out outside the app, so it never
-// touches the workout state machine. Kept simple: no per-set tracking exists
-// to draw a series count from, so a picked program is assumed completed as
-// prescribed and a free-form entry carries no exercises at all.
-function buildManualSessionEntry(state, { progId, customName, minutes, dateKey: d, heure }) {
-  const elapsedSec = Math.max(60, Math.round((Number(minutes) || 0) * 60));
-  const kcal = Math.round((elapsedSec / 60) * KCAL_PER_MIN);
+// touches the workout state machine. Three shapes: a picked program (assumed
+// completed as prescribed), a free-form entry (no exercises at all, since
+// there is no per-set tracking outside a live workout to draw a series count
+// from), or a hand-picked list of exercises carrying their own series/reps/
+// charge — the one case where the caller, not the catalogue or a saved
+// program, supplies what was actually performed.
+function buildManualSessionEntry(state, { progId, customName, minutes, dateKey: d, heure, exercises }) {
   // The session being logged is usually one that already happened, so the day
   // and time are the user's to set; now is only the default.
   const base = {
     id: `s-${Date.now()}`,
     dateKey: validDateKey(d) || dateKey(),
     heure: validHeure(heure) || nowHM(),
-    elapsedSec, kcal, partial: false, manual: true,
+    partial: false, manual: true,
   };
+
+  if (exercises && exercises.length) {
+    const exObjs = exercises.map((e) => exById(e.id));
+    // No rest time is asked of the user for this flow, so duration borrows the
+    // same per-set estimate soloProgram() uses: series × (rest + ~40s of work).
+    const elapsedSec = Math.max(60, exercises.reduce(
+      (a, e, i) => a + (Number(e.series) || 0) * ((exObjs[i].repos || 45) + 40), 0,
+    ));
+    return {
+      ...base,
+      elapsedSec, kcal: Math.round((elapsedSec / 60) * KCAL_PER_MIN),
+      programId: 'manual', programNom: 'Exercices ajoutés',
+      series: exercises.reduce((a, e) => a + (Number(e.series) || 0), 0),
+      exerciseIds: exercises.map((e) => e.id),
+      exosTotal: exercises.length,
+      muscles: [...new Set(exObjs.map((e) => e.muscle.split(' · ')[0]))],
+      // Per-exercise detail so the journal card can show what was actually
+      // done rather than just the exercise names — tolerated as absent by
+      // every older/other entry shape, per the sessionLog convention.
+      exercisesDetail: exercises.map((e) => ({ id: e.id, series: Number(e.series) || 0, reps: e.reps || '', charge: e.charge || '' })),
+    };
+  }
+
+  const elapsedSec = Math.max(60, Math.round((Number(minutes) || 0) * 60));
+  const kcal = Math.round((elapsedSec / 60) * KCAL_PER_MIN);
   if (!progId) {
-    return { ...base, programId: 'manual', programNom: (customName || '').trim() || 'Séance libre', series: 0, exerciseIds: [], exosTotal: 0, muscles: [] };
+    return { ...base, elapsedSec, kcal, programId: 'manual', programNom: (customName || '').trim() || 'Séance libre', series: 0, exerciseIds: [], exosTotal: 0, muscles: [] };
   }
   const program = progById(progId, state.customWorkouts);
   const exObjs = program.exos.map(exById);
   return {
-    ...base,
+    ...base, elapsedSec, kcal,
     programId: program.id,
     programNom: program.nom,
     series: program.exos.reduce((a, id) => a + effSeries(program, id), 0),
@@ -816,10 +842,12 @@ export function AppProvider({ children }) {
     // Both take the same `{ progId, customName, nom, minutes, dateKey, heure }`
     // shape, so one form component drives adding and editing alike.
     addManualSession: (patch) => dispatch({ type: 'ADD_MANUAL_SESSION', patch }),
+    addExercisesSession: (exercises) => dispatch({ type: 'ADD_MANUAL_SESSION', patch: { exercises } }),
     editSession: (id, patch) => dispatch({ type: 'EDIT_SESSION', id, patch }),
     setDayNote: (text) => dispatch({ type: 'SET_DAY_NOTE', dateKey: dateKey(), text }),
 
     openActivity: () => dispatch({ type: 'OPEN_VIEW', view: 'activity' }),
+    openAddExercises: () => dispatch({ type: 'OPEN_VIEW', view: 'addExercises' }),
     addActivity: (patch, d) => dispatch({
       type: 'ADD_ACTIVITY',
       dateKey: d || dateKey(),
