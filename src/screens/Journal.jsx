@@ -87,12 +87,13 @@ export default function Journal() {
           <>
             <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
               <div className="stat-box"><div className="stat-value">{marche.km.toLocaleString('fr-FR')}</div><div className="stat-label">km</div></div>
+              <div className="stat-box"><div className="stat-value">{marche.pas.toLocaleString('fr-FR')}</div><div className="stat-label">pas</div></div>
               <div className="stat-box"><div className="stat-value">{marche.kcal}</div><div className="stat-label">kcal</div></div>
               <div className="stat-box"><div className="stat-value">{marche.minutes}</div><div className="stat-label">minutes</div></div>
             </div>
             <div style={{ fontSize: 11, color: 'var(--color-neutral-500)', lineHeight: 1.5 }}>
-              {marche.count} sortie{marche.count > 1 ? 's' : ''} · estimation nette à 0,5 kcal par kilo et par kilomètre.
-              Elle s'ajoute à ta dépense, pas à ta cible calorique.
+              {marche.count} sortie{marche.count > 1 ? 's' : ''} · estimation nette à 0,5 kcal par kilo et par kilomètre,
+              pas estimés depuis ta taille. Elle s'ajoute à ta dépense, pas à ta cible calorique.
             </div>
           </>
         )}

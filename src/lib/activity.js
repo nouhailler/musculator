@@ -103,7 +103,19 @@ export function makeActivityEntry({ km, minutes, source, heure, note, type }) {
   };
 }
 
-/** The day's totals — the `{ km, minutes, kcal }` shape everything reads. */
+/**
+ * Steps for one entry — from its distance when known, from its duration
+ * otherwise. Like the rest of this module, it's an estimate from the
+ * profile's height and the entry's gait: no pedometer backs it.
+ */
+function estimatePas({ km, minutes, taille, sexe, type }) {
+  const d = num(km);
+  if (d) return Math.round((d * 1000) / stepLength({ taille, sexe, type }));
+  const m = num(minutes);
+  return m ? estimateFromDuration({ minutes: m, taille, sexe, type }).pas : 0;
+}
+
+/** The day's totals — the `{ km, minutes, kcal, pas }` shape everything reads. */
 export function dayActivity(activityLog, dateKey, profile) {
   const list = (activityLog || {})[dateKey] || [];
   const km = list.reduce((a, e) => a + num(e.km), 0);
@@ -111,8 +123,11 @@ export function dayActivity(activityLog, dateKey, profile) {
   // Recomputed from the current weight rather than summed from what was stored:
   // a corrected weight should fix past estimates, not leave them frozen.
   const poids = poidsOf(profile);
+  const taille = tailleOf(profile);
+  const sexe = profile?.sexe;
   const kcal = list.reduce((a, e) => a + walkKcal({ km: e.km, minutes: e.minutes, poids, type: e.type }), 0);
-  return { km: Math.round(km * 100) / 100, minutes, kcal, entries: list, count: list.length };
+  const pas = list.reduce((a, e) => a + estimatePas({ km: e.km, minutes: e.minutes, taille, sexe, type: e.type }), 0);
+  return { km: Math.round(km * 100) / 100, minutes, kcal, pas, entries: list, count: list.length };
 }
 
 /** Totals over the last `days` days, for the progress analysis and badges. */
