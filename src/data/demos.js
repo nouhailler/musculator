@@ -1051,6 +1051,211 @@ export const DEMOS = {
       { hip: [56, 86], torso: 196, arm: [164, 134], armB: [170, 140], leg: [-2, 2], legB: [2, -2], foot: 0 },
     ],
   },
+  'suitcase-carry': {
+    scene: 'ground', weights: true,
+    frames: [
+      { hip: [48, 58], torso: -90, arm: [82, 80], armB: [98, 100], leg: [70, 108], legB: [110, 72], foot: 0 },
+      { hip: [52, 58], torso: -90, arm: [84, 82], armB: [96, 98], leg: [110, 72], legB: [70, 108], foot: 0 },
+    ],
+  },
+  'reverse-hyperextension': {
+    scene: 'ground',
+    props: [{ kind: 'block', x: 40, y: 56, w: 24 }],
+    frames: [
+      { hip: [46, 58], torso: -168, arm: [140, 100], leg: [130, 172] },
+      { hip: [46, 58], torso: -168, arm: [140, 100], leg: [80, 100] },
+    ],
+  },
+
+  // --- Grand dorsal : compléments --------------------------------------------
+  'tirage-horizontal-elastique-assis': {
+    scene: 'mat',
+    band: [80, 82],
+    frames: [
+      { hip: [44, 82], torso: -90, arm: [15, 20], leg: [0, 0], foot: 0 },
+      { hip: [44, 82], torso: -90, arm: [165, -15], leg: [0, 0], foot: 0 },
+    ],
+  },
+  'traction-supination': {
+    scene: 'bar',
+    frames: [
+      { hip: [50, 64], torso: -90, arm: [-90, -90], leg: [85, 140], foot: 120 },
+      { hip: [50, 50], torso: -90, arm: [-30, -150], leg: [85, 140], foot: 120 },
+    ],
+  },
+  'traction-neutre': {
+    scene: 'bar',
+    frames: [
+      { hip: [50, 64], torso: -90, arm: [-88, -92], leg: [86, 138], foot: 118 },
+      { hip: [50, 51], torso: -90, arm: [-34, -146], leg: [86, 138], foot: 118 },
+    ],
+  },
+  'traction-negative': {
+    scene: 'bar',
+    frames: [
+      { hip: [50, 52], torso: -90, arm: [-32, -148], leg: [85, 140], foot: 120 },
+      { hip: [50, 64], torso: -90, arm: [-90, -90], leg: [85, 140], foot: 120 },
+    ],
+  },
+  'traction-assistee-elastique': {
+    scene: 'bar',
+    frames: [
+      { hip: [50, 63], torso: -90, arm: [-87, -93], leg: [84, 136], foot: 116 },
+      { hip: [50, 53], torso: -90, arm: [-35, -145], leg: [84, 136], foot: 116 },
+    ],
+  },
+  'straight-arm-pulldown-elastique': {
+    scene: 'ground',
+    band: [50, 5],
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [-75, -85], leg: [92, 88], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [75, 65], leg: [92, 88], foot: 0 },
+    ],
+  },
+  'pulldown-genoux-elastique': {
+    scene: 'ground',
+    band: [50, 5],
+    frames: [
+      { hip: [50, 72], torso: -90, arm: [-78, -84], leg: [100, 170], foot: 0 },
+      { hip: [50, 72], torso: -90, arm: [-40, 150], leg: [100, 170], foot: 0 },
+    ],
+  },
+
+  // --- Trapèzes : compléments -------------------------------------------------
+  'trap-3-raise': {
+    scene: 'mat',
+    frames: [
+      { hip: [58, 86], torso: 182, arm: [152, 156], armB: [148, 152], leg: [-2, 2], legB: [2, -2], foot: 0 },
+      { hip: [58, 86], torso: 182, arm: [168, 172], armB: [164, 168], leg: [-2, 2], legB: [2, -2], foot: 0 },
+    ],
+  },
+  'prone-t-raise': {
+    scene: 'mat',
+    frames: [
+      { hip: [58, 86], torso: 182, arm: [100, 104], armB: [96, 100], leg: [-2, 2], legB: [2, -2], foot: 0 },
+      { hip: [58, 86], torso: 182, arm: [116, 120], armB: [112, 116], leg: [-2, 2], legB: [2, -2], foot: 0 },
+    ],
+  },
+  'prone-w-raise': {
+    scene: 'mat',
+    frames: [
+      { hip: [58, 86], torso: 182, arm: [92, 150], armB: [88, 146], leg: [-2, 2], legB: [2, -2], foot: 0 },
+      { hip: [58, 86], torso: 182, arm: [92, 180], armB: [88, 176], leg: [-2, 2], legB: [2, -2], foot: 0 },
+    ],
+  },
+  'scapular-push-up': {
+    scene: 'ground',
+    frames: [
+      { hip: [47, 76], torso: -22, arm: [90, 90], armB: [88, 88], leg: [168, 168], legB: [172, 172], foot: 60 },
+      { hip: [47, 78], torso: -10, arm: [86, 86], armB: [84, 84], leg: [172, 172], legB: [176, 176], foot: 62 },
+    ],
+  },
+  'scapular-pull-up': {
+    scene: 'bar',
+    frames: [
+      { hip: [50, 66], torso: -90, arm: [-88, -90], armB: [-92, -88], leg: [88, 92], legB: [92, 88], foot: 20 },
+      { hip: [50, 58], torso: -90, arm: [-87, -91], armB: [-91, -87], leg: [89, 91], legB: [91, 89], foot: 20 },
+    ],
+  },
+
+  // --- Abdominaux suspendus ----------------------------------------------------
+  'hanging-knee-raise': {
+    scene: 'bar',
+    frames: [
+      { hip: [50, 64], torso: -90, arm: [-88, -92], leg: [85, 140], foot: 120 },
+      { hip: [50, 64], torso: -90, arm: [-88, -92], leg: [-30, 80], foot: 40 },
+    ],
+  },
+  'hanging-leg-raise': {
+    scene: 'bar',
+    frames: [
+      { hip: [50, 64], torso: -90, arm: [-88, -92], leg: [85, 140], foot: 120 },
+      { hip: [50, 64], torso: -90, arm: [-88, -92], leg: [-5, 10], foot: 0 },
+    ],
+  },
+  'toes-to-bar': {
+    scene: 'bar',
+    frames: [
+      { hip: [50, 64], torso: -90, arm: [-88, -92], leg: [85, 140], foot: 120 },
+      { hip: [50, 64], torso: -90, arm: [-88, -92], leg: [-85, -80], foot: -80 },
+    ],
+  },
+  'hanging-windshield-wipers': {
+    scene: 'bar',
+    frames: [
+      { hip: [50, 64], torso: -84, arm: [-88, -92], leg: [-8, 15], legB: [-2, 20], foot: 0, footB: 0 },
+      { hip: [50, 64], torso: -96, arm: [-88, -92], leg: [-2, 20], legB: [-8, 15], foot: 0, footB: 0 },
+    ],
+  },
+  'ab-wheel-rollout': {
+    scene: 'mat',
+    frames: [
+      { hip: [54, 74], torso: -75, arm: [15, 15], leg: [105, 165], foot: 0 },
+      { hip: [46, 82], torso: -20, arm: [75, 15], leg: [105, 165], foot: 0 },
+    ],
+  },
+
+  // --- Mollets : compléments ---------------------------------------------------
+  'seated-tibialis-raise': {
+    scene: 'ground',
+    props: [{ kind: 'block', x: 38, y: 72, w: 24 }, { kind: 'block', x: 66, y: 84, w: 14 }],
+    frames: [
+      { hip: [44, 70], torso: -90, arm: [90, 90], leg: [-3.5, 86.3], foot: 10 },
+      { hip: [44, 70], torso: -90, arm: [90, 90], leg: [-3.5, 86.3], foot: -65 },
+    ],
+  },
+  'pogo-jumps': {
+    scene: 'ground',
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [80, 84], leg: [90, 90], foot: 0 },
+      { hip: [50, 50], torso: -90, arm: [76, 80], leg: [92, 92], foot: 20 },
+    ],
+  },
+
+  // --- Moyen fessier : compléments ----------------------------------------------
+  'step-down-lateral': {
+    scene: 'ground',
+    props: [{ kind: 'block', x: 40, y: 74, w: 22 }],
+    frames: [
+      { hip: [40, 58], torso: -90, arm: [80, 84], armB: [100, 96], leg: [88, 88], legB: [40, 145], foot: 0, footB: -40 },
+      { hip: [40, 70], torso: -90, arm: [80, 84], armB: [100, 96], leg: [55, 128], legB: [8, 175], foot: 0, footB: -60 },
+    ],
+  },
+
+  // --- Pectoraux : compléments ---------------------------------------------------
+  'pompes-elastique': {
+    scene: 'ground',
+    frames: [
+      { hip: [46.8, 75.8], torso: -27, arm: [90, 90], leg: [165, 165], foot: 60 },
+      { hip: [49, 81.8], torso: -15, arm: [52, 158], leg: [177, 177], foot: 72 },
+    ],
+  },
+
+  // --- Avant-bras : compléments ---------------------------------------------------
+  'wrist-roller': {
+    scene: 'ground',
+    weights: true,
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [8, 4], armB: [8, -4], leg: [96, 84], legB: [84, 96], foot: 0 },
+      { hip: [50, 58], torso: -90, arm: [8, -30], armB: [8, 30], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+  'pronation-supination-haltere': {
+    scene: 'ground', weights: true,
+    props: [{ kind: 'block', x: 46, y: 72, w: 28 }],
+    frames: [
+      { hip: [44, 72], torso: -80, arm: [10, 20], armB: [16, 26], leg: [4, 86], legB: [-2, 92], foot: 0 },
+      { hip: [44, 72], torso: -80, arm: [10, -50], armB: [16, -44], leg: [4, 86], legB: [-2, 92], foot: 0 },
+    ],
+  },
+  'plate-wrist-curl': {
+    scene: 'ground', weights: 'disc',
+    props: [{ kind: 'block', x: 46, y: 72, w: 28 }],
+    frames: [
+      { hip: [44, 72], torso: -80, arm: [10, 60], armB: [16, 66], leg: [4, 86], legB: [-2, 92], foot: 0 },
+      { hip: [44, 72], torso: -80, arm: [10, -30], armB: [16, -24], leg: [4, 86], legB: [-2, 92], foot: 0 },
+    ],
+  },
 };
 
 export function demoFor(exId) {

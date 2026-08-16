@@ -10,6 +10,16 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Catalogue étendu à 130 exercices** — 26 new entries filling gaps identified across the
+  muscle map, each with a full sheet, an animated demo, voice cues and a body-map reference:
+  grand dorsal (tirage horizontal élastique assis, traction supination/neutre/négative,
+  traction assistée à l'élastique, straight-arm pulldown élastique, pulldown à genoux
+  élastique), trapèzes (trap-3 raise, prone T-raise, prone W-raise, scapular push-up,
+  scapular pull-up), lombaires (suitcase carry, reverse hyperextension), abdominaux suspendus
+  (hanging knee/leg raise, toes-to-bar, hanging windshield wipers, ab wheel rollout), mollets
+  (seated tibialis raise, pogo jumps), moyen fessier (step-down latéral), pectoraux (pompes
+  avec élastique) and avant-bras (wrist roller, pronation/supination haltère, plate wrist
+  curl).
 - **Journal du jour, cinq additions** — the daily journal now does more than recap the
   sessions the workout flow itself logged.
   - **Alimentation du jour**: a card summing today's `nutriLog` (via the same `totals()`
