@@ -81,12 +81,23 @@ export const HELP = {
     points: [
       ['Séances partielles', "Une séance arrêtée en cours est marquée en orange : seul le travail réellement fait est compté."],
       ['Ajouter une séance', "Tu t'es entraîné hors appli ? « Ajouter une séance » l'ajoute au journal après coup, avec ou sans programme. La date et l'heure se règlent : une séance d'hier se consigne aujourd'hui."],
+      ['Ajouter des exercices', "En haut de l'écran : choisis dans tout le catalogue les exercices faits aujourd'hui hors séance guidée, avec séries, répétitions et charge pour chacun. Toujours consigné pour aujourd'hui — pour une autre date, passe par « Ajouter une séance »."],
       ['Modifier une séance', "Le crayon corrige la date, l'heure et la durée — et le nom d'une séance libre. Ce qui a été fait (exercices, séries, muscles) n'est pas modifiable : c'est la trace de ta séance réelle."],
       ['Supprimer une séance', "La corbeille demande confirmation, puis retire définitivement la séance. Le Journal ne montre qu'aujourd'hui : pour une séance passée, passe par l'historique dans Progrès."],
       ['Marche du jour', "Distance, calories et durée du jour, avec « Ajouter une marche » pour la saisir, la suivre au GPS ou l'importer."],
       ['Alimentation du jour', "Reprend ce que tu as consigné côté Nutrition. Ce n'est pas un bilan calorique complet : la dépense de repos n'y entre pas."],
       ['Analyse IA', "Par défaut elle est calculée sur l'appareil, sans réseau. Tu peux brancher un modèle OpenRouter dans ton profil. Le résultat est gardé pour la journée, pas recalculé à chaque visite."],
       ['Portée', "L'analyse ne remplace pas l'avis d'un professionnel de santé."],
+    ],
+  },
+  addExercises: {
+    titre: 'Ajouter des exercices',
+    intro: "Consigne dans le journal du jour ce que tu as fait hors séance guidée, exercice par exercice.",
+    points: [
+      ['Catalogue complet', "Le picker propose les mêmes exercices que la Bibliothèque, y compris les avancés — rien n'est filtré ici."],
+      ['Séries et répétitions', "Pré-remplies avec les valeurs par défaut du catalogue ; corrige-les pour refléter ce que tu as vraiment fait."],
+      ['Avec un poids', "Optionnel : active-le pour préciser la charge en texte libre (kg, élastique…). Laissé désactivé, l'exercice est consigné au poids du corps."],
+      ["Toujours aujourd'hui", "Contrairement à « Ajouter une séance », il n'y a pas de date à choisir : ça s'ajoute au jour courant."],
     ],
   },
   progress: {
