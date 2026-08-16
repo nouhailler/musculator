@@ -58,7 +58,7 @@ export default function Library() {
       <PillGroup options={LEVEL_OPTS} value={state.libLevel} onChange={(v) => actions.setLibFilter('libLevel', v)} style={{ marginBottom: 12 }} />
       <div className="section-label">Matériel</div>
       <PillGroup options={MAT_OPTS} value={state.libMat} onChange={(v) => actions.setLibFilter('libMat', v)} style={{ marginBottom: 12 }} />
-      <div className="section-label">Hors focus cuisses / fessiers</div>
+      <div className="section-label">Avancés & matériel spécifique</div>
       <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap', marginBottom: 18 }}>
         <Pill
           label="Mollets & avancés"

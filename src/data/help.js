@@ -2,6 +2,10 @@
 // showing, a view key when an overlay is on top. Keep each entry about *this*
 // screen: what it is for, what is not obvious, and the one or two things users
 // get wrong. A generic tour belongs nowhere.
+//
+// The exercise count below is read from EXERCISES rather than hardcoded, so it
+// can't go stale the next time the catalogue grows.
+import { EXERCISES } from './exercises.js';
 
 export const HELP = {
   // --- Tabs ---------------------------------------------------------------
@@ -18,7 +22,7 @@ export const HELP = {
     titre: 'Importer un programme dicté',
     intro: "Demande un programme à Claude ou ChatGPT, colle ici le JSON : chaque séance du plan devient une séance perso.",
     points: [
-      ['Le prompt', "Il contient les 104 exercices de l'app. L'assistant choisit dedans au lieu d'inventer — un exercice inventé n'aurait ni démo animée, ni coach vocal, ni place dans la cartographie musculaire."],
+      ['Le prompt', `Il contient les ${EXERCISES.length} exercices de l'app. L'assistant choisit dedans au lieu d'inventer — un exercice inventé n'aurait ni démo animée, ni coach vocal, ni place dans la cartographie musculaire.`],
       ['Substitutions', "Un mouvement absent du catalogue est remplacé par le plus proche travaillant le même muscle, et l'aperçu le dit : « presse à cuisses → remplacé par Squats »."],
       ['Réglages conservés', "Séries, répétitions, charge et repos dictés sont repris tels quels dans la séance guidée."],
       ['Plusieurs séances', "Un programme hebdomadaire arrive en plusieurs séances d'un coup ; elles s'ajoutent toutes à tes séances perso."],
@@ -37,10 +41,10 @@ export const HELP = {
   },
   library: {
     titre: 'Bibliothèque',
-    intro: "Les 104 exercices avec leur fiche technique complète et une démonstration animée.",
+    intro: `Les ${EXERCISES.length} exercices avec leur fiche technique complète et une démonstration animée.`,
     points: [
       ['Regroupement', "Les exercices sont classés par schéma de mouvement (poussée, fente, hinge, abduction…)."],
-      ['Optionnels', "Le bouton « Mollets & avancés » fait apparaître les exercices hors focus cuisses/fessiers et ceux réservés à un public confirmé."],
+      ['Optionnels', "Le bouton « Mollets & avancés » fait apparaître les exercices avancés ou demandant un matériel spécifique, dans tout le catalogue."],
       ['Muscle ciblé', "Chaque fiche explique comment le muscle travaille et ce qu'il faut surveiller pour ne pas le surcharger."],
       ['Exercice seul', "Le bouton « Faire cet exercice maintenant » lance une séance d'un seul exercice, sans monter un programme."],
     ],

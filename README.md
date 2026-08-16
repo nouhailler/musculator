@@ -40,7 +40,7 @@ trigger yourself and the optional AI analysis if you plug in your own key.
 
 | <img src="docs/screenshots/bodymap.webp" width="250" alt="Cartographie musculaire"> | <img src="docs/screenshots/library.webp" width="250" alt="Bibliothèque"> | <img src="docs/screenshots/programs.webp" width="250" alt="Programmes"> |
 |:--:|:--:|:--:|
-| **Cartographie** — sollicitation et récupération, calculées sur tes séances réelles | **Bibliothèque** — 104 exercices groupés par schéma de mouvement | **Programmes** — filtrables, plus un constructeur de séance |
+| **Cartographie** — sollicitation et récupération, calculées sur tes séances réelles | **Bibliothèque** — 130 exercices groupés par schéma de mouvement | **Programmes** — filtrables, plus un constructeur de séance |
 
 <details>
 <summary>🎨 <b>Et en thème clair</b></summary>
@@ -116,11 +116,11 @@ the stored choice before first paint so a light-theme launch never flashes dark.
 - 📋 **Programmes** — filterable by duration/level/equipment, a workout builder to compose and
   save custom sessions (exercises, series, reps, charge, rest, order), and **"Importer un
   programme dicté"**: ask an assistant for a plan and each of its sessions becomes a custom
-  workout. The prompt embeds all 104 exercises so the assistant picks from the catalogue rather
+  workout. The prompt embeds all 130 exercises so the assistant picks from the catalogue rather
   than inventing — an invented exercise would have no animated demo, no voice cues and no
   place on the muscle map. A movement the catalogue lacks is replaced by the nearest one
   working the same muscle, and the preview says so before anything is saved.
-- 📚 **Bibliothèque** — searchable exercise catalogue (104 exercises) grouped by movement
+- 📚 **Bibliothèque** — searchable exercise catalogue (130 exercises) grouped by movement
   pattern, with full technique sheets (setup, movement, breathing, common mistakes, safety
   tips, easier/harder variants), an animated demo of every movement, and a "Muscle ciblé"
   block explaining how the target muscle is actually loaded and what to watch so it isn't
@@ -157,12 +157,18 @@ the stored choice before first paint so a light-theme launch never flashes dark.
 
 ## 💪 Exercise catalogue
 
-104 exercises. The 10 original upper-body/core movements came from the design prototype and
-the 35 lower-body ones (thighs / glutes) were added on top; the rest closed the gaps the
+130 exercises. The 10 original upper-body/core movements came from the design prototype and
+the 35 lower-body ones (thighs / glutes) were added on top; a further batch closed the gaps the
 dictated-programme import kept substituting for — chest, back, deltoids, biceps, triceps,
 rotation and anti-rotation core work, and three families the catalogue had no entry for at
-all: grip and forearms, spinal erectors, and the trapezius. The lower-body entries carry two
-extra fields:
+all: grip and forearms, spinal erectors, and the trapezius, bringing it to 104. A last round of
+26 filled what remained per muscle group once the app's scope stopped being thighs/glutes-only —
+more of the lat, trapezius, forearm and suspended-ab families, plus a lumbar carry and a
+moyen-fessier step-down. The lower-body entries also carry `pattern`, their movement pattern.
+`optionnel` sits alongside it there, and now on a handful of entries elsewhere too — it no
+longer means "outside thighs/glutes", it means "needs specialised kit or a skill/strength
+ceiling above the rest of its family", so it can mark a niche or advanced entry in any muscle
+group:
 
 Use the helpers rather than filtering `EXERCISES` by hand: `coreExercises({ optionnels })`,
 `groupByPattern(list)`, `exercisesByPattern({ optionnels })`, `exById(id)`.
@@ -171,7 +177,7 @@ Use the helpers rather than filtering `EXERCISES` by hand: `coreExercises({ opti
 
 ## 🎞️ Animated demos
 
-Every one of the 104 exercises has an animated demonstration, shown in its library sheet and
+Every one of the 130 exercises has an animated demonstration, shown in its library sheet and
 during a guided session — so you can always see the movement rather than read it.
 
 `src/data/demos.js` holds keyframe poses for a stick-figure skeleton rendered by
