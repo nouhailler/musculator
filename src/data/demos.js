@@ -1194,6 +1194,20 @@ export const DEMOS = {
       { hip: [46, 82], torso: -20, arm: [75, 15], leg: [105, 165], foot: 0 },
     ],
   },
+  'reverse-crunch': {
+    scene: 'mat',
+    frames: [
+      { hip: [56, 86], torso: 178, arm: [160, 160], leg: [-85, 5], foot: 0 },
+      { hip: [56, 80], torso: 178, arm: [160, 160], leg: [-115, 25], foot: 0 },
+    ],
+  },
+  'up-down-plank': {
+    scene: 'ground',
+    frames: [
+      { hip: [46.8, 75.8], torso: -27, arm: [90, 90], leg: [165, 165], foot: 60 },
+      { hip: [44.2, 80.2], torso: -7, arm: [90, 0], leg: [173, 173], foot: 60 },
+    ],
+  },
 
   // --- Mollets : compléments ---------------------------------------------------
   'seated-tibialis-raise': {

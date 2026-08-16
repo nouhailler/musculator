@@ -15,10 +15,10 @@ export const MUSCLES = [
   { id: 'epaules', nom: 'Épaules (deltoïdes)', region: 'front', exos: ['oiseau-halteres', 'oiseau-elastique', 'developpe-arnold', 'elevation-frontale', 'face-pull', 'developpe', 'elevations-laterales', 'pompes'] },
   { id: 'pecs', nom: 'Pectoraux', region: 'front', exos: ['pompes-diamant', 'pompes-inclinees', 'pompes-declinees', 'developpe-couche', 'developpe-incline', 'ecartes-halteres', 'pull-over', 'pompes', 'pompes-elastique', 'dips', 'developpe'] },
   { id: 'biceps', nom: 'Biceps', region: 'front', exos: ['curl-marteau', 'curl-incline', 'curl-concentration', 'curl-elastique', 'curl-inverse', 'rowing-halteres-un-bras', 'rowing-inverse', 'curl-biceps', 'tractions', 'traction-supination', 'rowing'] },
-  { id: 'abdos', nom: 'Abdominaux', region: 'front', exos: ['dead-bug', 'hollow-body', 'bicycle', 'v-up', 'abdos', 'releve-jambes', 'hanging-knee-raise', 'hanging-leg-raise', 'toes-to-bar', 'ab-wheel-rollout', 'gainage', 'mountain', 'copenhagen'] },
+  { id: 'abdos', nom: 'Abdominaux', region: 'front', exos: ['dead-bug', 'hollow-body', 'bicycle', 'v-up', 'abdos', 'releve-jambes', 'reverse-crunch', 'hanging-knee-raise', 'hanging-leg-raise', 'toes-to-bar', 'ab-wheel-rollout', 'up-down-plank', 'gainage', 'mountain', 'copenhagen'] },
   // Ajoutés quand le catalogue a couvert la rotation, la préhension et les
   // érecteurs : trois familles qu'aucun exercice n'atteignait.
-  { id: 'obliques', nom: 'Obliques', region: 'front', exos: ['planche-laterale', 'russian-twist', 'pallof-press', 'bicycle', 'copenhagen', 'hanging-windshield-wipers', 'suitcase-carry'] },
+  { id: 'obliques', nom: 'Obliques', region: 'front', exos: ['planche-laterale', 'russian-twist', 'pallof-press', 'bicycle', 'copenhagen', 'hanging-windshield-wipers', 'suitcase-carry', 'up-down-plank'] },
   { id: 'avant-bras', nom: 'Avant-bras (grip)', region: 'front', exos: ['farmer-walk', 'dead-hang', 'wrist-curl', 'reverse-wrist-curl', 'pinch-grip', 'curl-inverse', 'curl-marteau', 'wrist-roller', 'pronation-supination-haltere', 'plate-wrist-curl'] },
   {
     id: 'quads',
