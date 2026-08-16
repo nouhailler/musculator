@@ -13,12 +13,51 @@ function Zone({ id, d, rect, statsById, selMuscleId, onClick }) {
   return rect ? <rect x={rect.x} y={rect.y} width={rect.w} height={rect.h} rx={rect.rx} {...shared} /> : <path d={d} {...shared} />;
 }
 
-function BodyOutline() {
+// Silhouette proportions per `profile.sexe` — shoulder/waist/hip half-widths
+// (torsoPath) and thigh/calf half-widths, the two places a body outline reads
+// as male, female, or neither. 'Autre' (and anything unset) gets the midpoint
+// of the two rather than defaulting to Homme, matching how macros.js already
+// treats a third BMR term for 'Autre' instead of folding it into Homme.
+const BODY_SHAPE = {
+  Homme: { sw: 42, ww: 27, hw: 29, thigh: 14, calf: 10 },
+  Femme: { sw: 32, ww: 20, hw: 38, thigh: 15, calf: 9 },
+  Autre: { sw: 37, ww: 23.5, hw: 33.5, thigh: 14.5, calf: 9.5 },
+};
+
+// One closed path from shoulder to shoulder via the waist and hips — the
+// taper (shoulder vs. waist vs. hip half-width) is what makes the silhouette
+// read as a body rather than a block, and its direction (shoulders wider than
+// hips, or the reverse) is the primary male/female cue.
+function torsoPath({ sw, ww, hw }) {
+  const [lsx, rsx] = [100 - sw, 100 + sw];
+  const [lwx, rwx] = [100 - ww, 100 + ww];
+  const [lhx, rhx] = [100 - hw, 100 + hw];
+  return `M${lsx} 55 Q100 50 ${rsx} 55 Q${rsx + 3} 76 ${rwx} 96 Q${rwx + 6} 118 ${rhx} 138 `
+    + `Q${rhx - 5} 150 100 150 Q${lhx + 5} 150 ${lhx} 138 Q${lwx - 6} 118 ${lwx} 96 Q${lsx - 3} 76 ${lsx} 55 Z`;
+}
+
+function BodyOutline({ sexe }) {
+  const shape = BODY_SHAPE[sexe] || BODY_SHAPE.Autre;
+  const { thigh, calf } = shape;
   return (
     <g fill="var(--color-neutral-800)">
-      <circle cx="100" cy="30" r="17" /><rect x="72" y="50" width="56" height="92" rx="16" /><rect x="74" y="138" width="52" height="26" rx="12" />
-      <rect x="50" y="56" width="16" height="80" rx="8" /><rect x="134" y="56" width="16" height="80" rx="8" />
-      <rect x="77" y="164" width="19" height="150" rx="9" /><rect x="104" y="164" width="19" height="150" rx="9" />
+      {/* Legs and arms sit behind the torso so their attachment seams at the
+          hip and shoulder are covered rather than showing a straight edge. */}
+      <rect x={86 - thigh} y="140" width={thigh * 2} height="75" rx="13" />
+      <rect x={114 - thigh} y="140" width={thigh * 2} height="75" rx="13" />
+      <rect x={86 - calf} y="208" width={calf * 2} height="92" rx="9" />
+      <rect x={114 - calf} y="208" width={calf * 2} height="92" rx="9" />
+      <rect x={86 - calf - 2} y="295" width={calf * 2 + 4} height="17" rx="7" />
+      <rect x={114 - calf - 2} y="295" width={calf * 2 + 4} height="17" rx="7" />
+      <rect x="44" y="53" width="18" height="50" rx="9" />
+      <rect x="138" y="53" width="18" height="50" rx="9" />
+      <rect x="46" y="98" width="14" height="46" rx="7" />
+      <rect x="140" y="98" width="14" height="46" rx="7" />
+      <circle cx="53" cy="147" r="7" />
+      <circle cx="147" cy="147" r="7" />
+      <path d={torsoPath(shape)} />
+      <rect x="91" y="41" width="18" height="15" rx="5" />
+      <circle cx="100" cy="28" r="16" />
     </g>
   );
 }
@@ -85,7 +124,7 @@ export default function BodyMap() {
 
         <div style={{ background: 'radial-gradient(120% 90% at 50% 10%,var(--color-surface),var(--color-bg))', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', padding: '12px 0 6px', marginBottom: 12 }}>
           <svg viewBox="0 0 200 360" style={{ width: 180, display: 'block', margin: '0 auto' }}>
-            <BodyOutline />
+            <BodyOutline sexe={state.profile.sexe} />
             <g strokeWidth="2.5">
               {zones.map((z, i) => (
                 <Zone key={`${z.id}-${i}`} id={z.id} rect={z.rect} statsById={statsById} selMuscleId={state.selMuscleId} onClick={actions.selectMuscle} />
