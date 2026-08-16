@@ -36,6 +36,56 @@ function torsoPath({ sw, ww, hw }) {
     + `Q${rhx - 5} 150 100 150 Q${lhx + 5} 150 ${lhx} 138 Q${lwx - 6} 118 ${lwx} 96 Q${lsx - 3} 76 ${lsx} 55 Z`;
 }
 
+// A palm plus three short fingers, instead of a bare circle. Kept to short,
+// parallel, unrotated stubs on purpose — fingers individually angled looked
+// like the hand was melting at this render size (18px on screen).
+function Hand({ cx }) {
+  return (
+    <g>
+      <ellipse cx={cx} cy="147" rx="6.5" ry="7" />
+      <rect x={cx - 6.3} y="152" width="3" height="6.5" rx="1.5" />
+      <rect x={cx - 1.5} y="153.2" width="3" height="7.5" rx="1.5" />
+      <rect x={cx + 3.3} y="152" width="3" height="6.5" rx="1.5" />
+    </g>
+  );
+}
+
+// Shoulder-length hair: a cap over the top of the head plus two strands
+// framing the face down to shoulder level, all drawn behind the head circle
+// so only what extends past its edge actually shows — no path needs to cross
+// under the chin, which is what made an earlier one-piece version self-
+// intersect. The right strand is authored once; the left is the same path
+// mirrored, so the two can't drift out of symmetry. The one gender-specific
+// silhouette cue besides body proportions, since a head-only outline reads
+// as male by default at this size (checked against the reference).
+const HAIR_STRAND_R = 'M112 20 C123 23 125 38 121 50 C119 58 114 62 109 60 C112 51 110 38 107 26 Z';
+function Hair() {
+  return (
+    <g fill="var(--color-neutral-800)">
+      <ellipse cx="100" cy="17" rx="19" ry="13" />
+      <path d={HAIR_STRAND_R} />
+      <g transform="matrix(-1 0 0 1 200 0)"><path d={HAIR_STRAND_R} /></g>
+    </g>
+  );
+}
+
+// An upper-arm/forearm/hand group, rotated a few degrees around the shoulder
+// so the arm swings slightly away from the torso instead of hanging flush
+// against it — the gap that reads as "a person standing" rather than "a
+// mannequin with its arms glued to its sides".
+function Arm({ side }) {
+  const s = side === 'left' ? -1 : 1;
+  const x = side === 'left' ? 44 : 138;
+  const cx = side === 'left' ? 53 : 147;
+  return (
+    <g transform={`rotate(${s * 9} ${cx} 55)`}>
+      <rect x={x} y="53" width="18" height="50" rx="9" />
+      <rect x={x + 2} y="98" width="14" height="46" rx="7" />
+      <Hand cx={cx} />
+    </g>
+  );
+}
+
 function BodyOutline({ sexe }) {
   const shape = BODY_SHAPE[sexe] || BODY_SHAPE.Autre;
   const { thigh, calf } = shape;
@@ -49,13 +99,10 @@ function BodyOutline({ sexe }) {
       <rect x={114 - calf} y="208" width={calf * 2} height="92" rx="9" />
       <rect x={86 - calf - 2} y="295" width={calf * 2 + 4} height="17" rx="7" />
       <rect x={114 - calf - 2} y="295" width={calf * 2 + 4} height="17" rx="7" />
-      <rect x="44" y="53" width="18" height="50" rx="9" />
-      <rect x="138" y="53" width="18" height="50" rx="9" />
-      <rect x="46" y="98" width="14" height="46" rx="7" />
-      <rect x="140" y="98" width="14" height="46" rx="7" />
-      <circle cx="53" cy="147" r="7" />
-      <circle cx="147" cy="147" r="7" />
+      <Arm side="left" />
+      <Arm side="right" />
       <path d={torsoPath(shape)} />
+      {sexe === 'Femme' && <Hair />}
       <rect x="91" y="41" width="18" height="15" rx="5" />
       <circle cx="100" cy="28" r="16" />
     </g>
