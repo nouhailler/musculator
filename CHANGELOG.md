@@ -10,6 +10,13 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Step count on "Marche du jour"** — the Journal's walking card now shows an estimated
+  step count alongside km/kcal/minutes. Steps are derived, not stored: `dayActivity()` turns
+  each entry's distance (or duration, when that's all it has) back into steps using the same
+  height- and gait-based step length `estimateFromDuration` already uses, so a GPS-tracked or
+  manually-entered walk reads a plausible step count without the app pretending to have a
+  pedometer.
+
 - **"Ajoutez des exercices" in the Journal** — a third way to log a session after the fact,
   alongside picking a whole program or a free-form entry: pick exercises one at a time from
   the full catalogue and state series, reps and (optionally) a charge for each yourself,
