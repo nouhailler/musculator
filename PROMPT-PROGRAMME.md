@@ -4,14 +4,18 @@ Le prompt à donner à un assistant conversationnel pour qu'il compose un progra
 d'entraînement importable dans Musculator.
 
 > Fichier généré par `npm run gen-prompt` depuis `src/lib/programPrompt.js`, la seule source.
-> Ne pas l'éditer à la main : le prompt embarque le catalogue des 45 exercices, dérivé de
-> `src/data/exercises.js`, et cette copie doit le suivre.
+> Ne pas l'éditer à la main : le prompt embarque le catalogue des 132 exercices,
+> dérivé de `src/data/exercises.js`, et cette copie doit le suivre.
 
 ## Utilisation
 
 1. Copie le prompt ci-dessous — ou, dans l'app, ouvre **Programmes → Importer un programme
    dicté → « Comment générer ce JSON ? » → Copier le prompt**.
-2. Colle-le dans les instructions d'un **Projet Claude** ou d'un **GPT personnalisé**.
+2. Colle-le dans les instructions d'un **Projet Claude** ou d'un **GPT personnalisé** pour ne le
+   coller qu'une fois. Un simple message en début de conversation marche aussi — et c'est la
+   seule option si un champ d'instructions refuse le prompt en le jugeant trop long : le
+   catalogue grossit avec l'app, et une conversation normale tolère largement plus de texte
+   qu'un champ d'instructions de projet.
 3. Demande ton programme (« recomposition, 3 séances par semaine, à la maison avec haltères »).
 4. Recopie le bloc JSON dans **Programmes → Importer un programme dicté**, prévisualise, importe.
 
@@ -36,139 +40,141 @@ musculaire que pour ceux-là. Si le mouvement que tu voulais n'y est pas, prends
 du catalogue et n'en parle pas ; en dernier recours seulement, donne un "nom" en clair et
 ajoute "muscle" pour que l'application puisse le remplacer par un équivalent.
 
-CATALOGUE (id · nom · muscle principal · niveau · matériel)
-  pompes · Pompes · Pectoraux · Débutant · Sans matériel/Maison
-  squats · Squats · Quadriceps · Débutant · Sans matériel/Maison
-  gainage · Gainage (planche) · Sangle abdominale · Débutant · Sans matériel/Maison
-  abdos · Abdominaux (crunch) · Grand droit · Débutant · Sans matériel/Maison
-  tractions · Tractions · Grand dorsal · Avancé · Salle
-  fentes · Fentes · Quadriceps · Débutant · Sans matériel/Maison
-  dips · Dips · Triceps · Intermédiaire · Sans matériel/Maison
-  developpe · Développé haltères · Deltoïdes · Intermédiaire · Haltères/Salle
-  rowing · Rowing élastique · Grand dorsal · Débutant · Élastique/Maison
-  mountain · Mountain climbers · Sangle abdominale · Intermédiaire · Sans matériel/Maison
-  sissy-squat · Sissy squat · Quadriceps (droit fémoral) · Avancé · Sans matériel/Maison
-  squat-sumo · Squat sumo · Adducteurs · Quadriceps · Grand fessier · Débutant · Sans matériel/Haltères/Maison
-  wall-sit · Wall sit (chaise) · Quadriceps (isométrique) · Débutant · Sans matériel/Maison
-  step-up · Step-up (montée de marche) · Quadriceps · Grand fessier · Débutant · Sans matériel/Haltères/Maison
-  leg-extension · Leg extension · Quadriceps (isolation) · Débutant · Élastique/Salle
-  fente-arriere · Fente arrière · Quadriceps · Grand fessier · Débutant · Sans matériel/Haltères/Maison
-  fente-croisee · Fente croisée (curtsy lunge) · Grand fessier · Moyen fessier · Intermédiaire · Sans matériel/Haltères/Maison
-  fente-laterale · Fente latérale · Adducteurs · Quadriceps · Grand fessier · Intermédiaire · Sans matériel/Haltères/Maison
-  bulgarian-split-squat · Bulgarian split squat · Quadriceps · Grand fessier · Intermédiaire · Sans matériel/Haltères/Maison
-  rdl · Soulevé de terre roumain (RDL) · Ischio-jambiers · Grand fessier · Intermédiaire · Haltères/Élastique/Maison
-  rdl-unilateral · RDL unilatéral · Ischio-jambiers · Grand fessier · Intermédiaire · Sans matériel/Haltères/Maison
-  good-morning · Good morning · Ischio-jambiers · Grand fessier · Intermédiaire · Sans matériel/Maison/Salle
-  curl-nordique · Curl nordique · Ischio-jambiers (excentrique) · Avancé · Sans matériel/Maison
-  leg-curl-allonge · Leg curl allongé · Ischio-jambiers (flexion de genou) · Débutant · Sans matériel/Maison/Salle
-  kettlebell-swing · Kettlebell swing · Grand fessier · Ischio-jambiers · Intermédiaire · Haltères/Maison/Salle
-  abduction-elastique · Abduction élastique debout · Moyen fessier · Débutant · Élastique/Maison
-  clamshell · Coquillage (clamshell) · Moyen fessier · Débutant · Sans matériel/Élastique/Maison
-  monster-walk · Marche latérale à l'élastique · Moyen fessier · Débutant · Élastique/Maison
-  fire-hydrant · Fire hydrant · Moyen fessier · Grand fessier · Débutant · Sans matériel/Élastique/Maison
-  step-down-lateral · Step-down latéral · Moyen fessier · Intermédiaire · Sans matériel/Maison
-  hip-thrust · Hip thrust · Grand fessier · Intermédiaire · Haltères/Maison/Salle
-  hip-thrust-unilateral · Hip thrust unilatéral · Grand fessier · Intermédiaire · Sans matériel/Haltères/Maison
-  glute-bridge · Glute bridge (pont au sol) · Grand fessier · Débutant · Sans matériel/Maison
-  glute-bridge-unilateral · Glute bridge unilatéral · Grand fessier · Débutant · Sans matériel/Maison
-  kickback-elastique · Kickback élastique · Grand fessier · Débutant · Élastique/Maison/Salle
-  frog-pump · Frog pump · Grand fessier · Débutant · Sans matériel/Maison
-  adduction-sol · Adduction au sol · Adducteurs · Débutant · Sans matériel/Maison
-  copenhagen · Copenhagen (planche adducteurs) · Adducteurs · Avancé · Sans matériel/Maison
-  serrage-ballon · Serrage de ballon · Adducteurs (isométrique) · Débutant · Sans matériel/Maison
-  mollets-debout · Élévations sur pointes debout · Mollets (gastrocnémiens) · Débutant · Sans matériel/Haltères/Maison
-  mollets-assis · Élévations sur pointes assis · Mollets (soléaire) · Débutant · Sans matériel/Haltères/Maison
-  front-squat · Front squat · Quadriceps · Grand fessier · Intermédiaire · Haltères/Salle
-  squat-talons-sureleves · Squat talons surélevés · Quadriceps · Intermédiaire · Sans matériel/Haltères/Salle
-  pistol-squat · Pistol squat · Quadriceps · Grand fessier · Avancé · Sans matériel/Maison
-  ghr · Glute-ham raise (GHR) · Ischio-jambiers · Grand fessier · Avancé · Salle
-  hyperextension-45 · Hyperextension 45° · Grand fessier · Ischio-jambiers · Intermédiaire · Salle
-  curl-biceps · Curl biceps haltères · Biceps · Débutant · Haltères/Maison
-  elevations-laterales · Élévations latérales · Deltoïdes · Débutant · Haltères/Maison
-  extension-triceps · Extension triceps nuque · Triceps · Débutant · Haltères/Maison
-  releve-jambes · Relevé de jambes · Grand droit · Intermédiaire · Sans matériel/Maison
-  pompes-inclinees · Pompes inclinées · Pectoraux · Débutant · Sans matériel/Maison
-  pompes-declinees · Pompes déclinées · Pectoraux · Intermédiaire · Sans matériel/Maison
-  developpe-couche · Développé couché haltères · Pectoraux · Intermédiaire · Haltères/Maison
-  developpe-incline · Développé incliné haltères · Pectoraux · Intermédiaire · Haltères/Maison
-  ecartes-halteres · Écartés haltères au sol · Pectoraux · Débutant · Haltères/Maison
-  pull-over · Pull-over haltère · Pectoraux · Intermédiaire · Haltères/Maison
-  pompes-elastique · Pompes avec élastique · Pectoraux · Intermédiaire · Élastique/Maison
-  rowing-halteres-un-bras · Rowing haltère un bras · Grand dorsal · Débutant · Haltères/Maison
-  rowing-halteres-buste-penche · Rowing haltères buste penché · Grand dorsal · Intermédiaire · Haltères/Maison
-  rowing-inverse · Rowing inversé · Grand dorsal · Débutant · Sans matériel/Maison
-  tirage-vertical-elastique · Tirage vertical élastique · Grand dorsal · Débutant · Élastique/Maison
-  face-pull · Tirage visage élastique (face pull) · Deltoïdes · Débutant · Élastique/Maison
-  tirage-horizontal-elastique-assis · Tirage horizontal élastique assis · Grand dorsal · Débutant · Élastique/Maison
-  traction-supination · Traction supination (chin-up) · Grand dorsal · Avancé · Salle
-  traction-neutre · Traction prise neutre · Grand dorsal · Avancé · Salle
-  traction-negative · Traction négative · Grand dorsal · Intermédiaire · Salle
-  traction-assistee-elastique · Traction assistée à l'élastique · Grand dorsal · Débutant · Élastique/Salle
-  straight-arm-pulldown-elastique · Straight-arm pulldown élastique · Grand dorsal · Débutant · Élastique/Maison
-  pulldown-genoux-elastique · Pulldown à genoux élastique · Grand dorsal · Débutant · Élastique/Maison
-  oiseau-halteres · Oiseau haltères · Deltoïdes · Débutant · Haltères/Maison
-  oiseau-elastique · Oiseau à l'élastique · Deltoïdes · Débutant · Élastique/Maison
-  developpe-arnold · Développé Arnold · Deltoïdes · Intermédiaire · Haltères/Maison
-  elevation-frontale · Élévation frontale haltères · Deltoïdes · Débutant · Haltères/Maison
-  curl-marteau · Curl marteau · Biceps · Débutant · Haltères/Maison
-  curl-incline · Curl incliné haltères · Biceps · Intermédiaire · Haltères/Maison
-  curl-concentration · Curl concentration · Biceps · Débutant · Haltères/Maison
-  curl-elastique · Curl élastique · Biceps · Débutant · Élastique/Maison
-  curl-inverse · Curl inversé · Biceps · Intermédiaire · Haltères/Maison
-  extension-triceps-unilaterale · Extension triceps unilatérale · Triceps · Débutant · Haltères/Maison
-  extension-triceps-elastique · Extension triceps élastique · Triceps · Débutant · Élastique/Maison
-  barre-au-front · Barre au front haltères · Triceps · Intermédiaire · Haltères/Maison
-  pompes-diamant · Pompes diamant · Triceps · Intermédiaire · Sans matériel/Maison
-  planche-laterale · Planche latérale · Obliques · Débutant · Sans matériel/Maison
-  russian-twist · Russian twist · Obliques · Débutant · Sans matériel/Maison
-  dead-bug · Dead bug · Sangle abdominale · Débutant · Sans matériel/Maison
-  bird-dog · Bird dog · Lombaires · Débutant · Sans matériel/Maison
-  hollow-body · Hollow body hold · Sangle abdominale · Intermédiaire · Sans matériel/Maison
-  pallof-press · Pallof press élastique · Obliques · Débutant · Élastique/Maison
-  bicycle · Abdominal bicycle · Obliques · Débutant · Sans matériel/Maison
-  v-up · V-up · Grand droit · Avancé · Sans matériel/Maison
-  hanging-knee-raise · Hanging knee raise · Grand droit · Intermédiaire · Salle
-  hanging-leg-raise · Hanging leg raise · Grand droit · Avancé · Salle
-  toes-to-bar · Toes-to-bar · Grand droit · Avancé · Salle
-  hanging-windshield-wipers · Hanging windshield wipers · Obliques · Avancé · Salle
-  ab-wheel-rollout · Ab wheel rollout · Sangle abdominale · Avancé · Sans matériel/Maison
-  reverse-crunch · Reverse crunch (hip lift) · Grand droit · Débutant · Sans matériel/Maison
-  up-down-plank · Up-down plank · Sangle abdominale · Intermédiaire · Sans matériel/Maison
-  cyclist-squat · Cyclist squat · Quadriceps · Intermédiaire · Sans matériel/Maison
-  spanish-squat · Spanish squat · Quadriceps · Débutant · Élastique/Maison
-  reverse-nordic · Reverse Nordic · Quadriceps · Avancé · Sans matériel/Maison
-  pull-through · Pull-through élastique · Grand fessier · Débutant · Élastique/Maison
-  hip-thrust-pause · Hip thrust unilatéral avec pause · Grand fessier · Avancé · Sans matériel/Maison
-  sliding-leg-curl · Leg curl glissé · Ischio-jambiers · Intermédiaire · Sans matériel/Maison
-  hamstring-walkout · Hamstring walkout · Ischio-jambiers · Débutant · Sans matériel/Maison
-  copenhagen-dynamique · Copenhagen dynamique · Adducteurs · Avancé · Sans matériel/Maison
-  copenhagen-genou-flechi · Copenhagen genou fléchi · Adducteurs · Débutant · Sans matériel/Maison
-  adduction-debout-elastique · Adduction debout élastique · Adducteurs · Débutant · Élastique/Maison
-  mollets-unilateral · Élévations mollets unilatérales · Mollets (gastrocnémiens) · Débutant · Sans matériel/Maison
-  mollets-marche · Élévations mollets sur marche · Mollets (gastrocnémiens) · Débutant · Sans matériel/Maison
-  tibialis-raise · Tibialis raise · Tibial antérieur · Débutant · Sans matériel/Maison
-  seated-tibialis-raise · Seated tibialis raise · Tibial antérieur · Débutant · Sans matériel/Haltères/Maison
-  pogo-jumps · Pogo jumps · Mollets · Intermédiaire · Sans matériel/Maison
-  farmer-walk · Farmer walk · Avant-bras · Débutant · Haltères/Maison
-  dead-hang · Dead hang · Avant-bras · Débutant · Sans matériel/Maison
-  wrist-curl · Wrist curl · Avant-bras · Débutant · Haltères/Maison
-  reverse-wrist-curl · Wrist curl inversé · Avant-bras · Débutant · Haltères/Maison
-  pinch-grip · Pinch grip · Avant-bras · Débutant · Haltères/Maison
-  wrist-roller · Wrist roller · Avant-bras · Intermédiaire · Haltères/Maison
-  pronation-supination-haltere · Pronation/supination haltère · Avant-bras · Débutant · Haltères/Maison
-  plate-wrist-curl · Plate wrist curl · Avant-bras · Débutant · Haltères/Maison
-  shrugs · Shrugs haltères · Trapèzes · Débutant · Haltères/Maison
-  y-raise · Y-raise · Trapèzes · Débutant · Sans matériel/Maison
-  rowing-coudes-ouverts · Rowing coudes ouverts · Trapèzes · Débutant · Haltères/Maison
-  trap-3-raise · Trap-3 raise · Trapèzes · Débutant · Haltères/Maison
-  prone-t-raise · Prone T-raise · Trapèzes · Débutant · Haltères/Maison
-  prone-w-raise · Prone W-raise · Trapèzes · Intermédiaire · Sans matériel/Haltères/Maison
-  scapular-push-up · Scapular push-up · Dentelé antérieur · Débutant · Sans matériel/Maison
-  scapular-pull-up · Scapular pull-up · Trapèzes · Intermédiaire · Salle
-  superman · Superman · Lombaires · Débutant · Sans matériel/Maison
-  back-extension-sol · Back extension au sol · Lombaires · Débutant · Sans matériel/Maison
-  suitcase-carry · Suitcase carry · Lombaires · Débutant · Haltères/Maison
-  reverse-hyperextension · Reverse hyperextension · Lombaires · Intermédiaire · Salle
+CATALOGUE (id|nom|muscle principal|niveau|matériel — champs séparés par "|")
+Niveau : D=Débutant, I=Intermédiaire, A=Avancé. Matériel (parfois plusieurs lettres collées) :
+S=Sans matériel, H=Haltères, É=Élastique, G=Salle, M=Maison.
+pompes|Pompes|Pectoraux|D|SM
+squats|Squats|Quadriceps|D|SM
+gainage|Gainage (planche)|Sangle abdominale|D|SM
+abdos|Abdominaux (crunch)|Grand droit|D|SM
+tractions|Tractions|Grand dorsal|A|G
+fentes|Fentes|Quadriceps|D|SM
+dips|Dips|Triceps|I|SM
+developpe|Développé haltères|Deltoïdes|I|HG
+rowing|Rowing élastique|Grand dorsal|D|ÉM
+mountain|Mountain climbers|Sangle abdominale|I|SM
+sissy-squat|Sissy squat|Quadriceps (droit fémoral)|A|SM
+squat-sumo|Squat sumo|Adducteurs · Quadriceps · Grand fessier|D|SHM
+wall-sit|Wall sit (chaise)|Quadriceps (isométrique)|D|SM
+step-up|Step-up (montée de marche)|Quadriceps · Grand fessier|D|SHM
+leg-extension|Leg extension|Quadriceps (isolation)|D|ÉG
+fente-arriere|Fente arrière|Quadriceps · Grand fessier|D|SHM
+fente-croisee|Fente croisée (curtsy lunge)|Grand fessier · Moyen fessier|I|SHM
+fente-laterale|Fente latérale|Adducteurs · Quadriceps · Grand fessier|I|SHM
+bulgarian-split-squat|Bulgarian split squat|Quadriceps · Grand fessier|I|SHM
+rdl|Soulevé de terre roumain (RDL)|Ischio-jambiers · Grand fessier|I|HÉM
+rdl-unilateral|RDL unilatéral|Ischio-jambiers · Grand fessier|I|SHM
+good-morning|Good morning|Ischio-jambiers · Grand fessier|I|SMG
+curl-nordique|Curl nordique|Ischio-jambiers (excentrique)|A|SM
+leg-curl-allonge|Leg curl allongé|Ischio-jambiers (flexion de genou)|D|SMG
+kettlebell-swing|Kettlebell swing|Grand fessier · Ischio-jambiers|I|HMG
+abduction-elastique|Abduction élastique debout|Moyen fessier|D|ÉM
+clamshell|Coquillage (clamshell)|Moyen fessier|D|SÉM
+monster-walk|Marche latérale à l'élastique|Moyen fessier|D|ÉM
+fire-hydrant|Fire hydrant|Moyen fessier · Grand fessier|D|SÉM
+step-down-lateral|Step-down latéral|Moyen fessier|I|SM
+hip-thrust|Hip thrust|Grand fessier|I|HMG
+hip-thrust-unilateral|Hip thrust unilatéral|Grand fessier|I|SHM
+glute-bridge|Glute bridge (pont au sol)|Grand fessier|D|SM
+glute-bridge-unilateral|Glute bridge unilatéral|Grand fessier|D|SM
+kickback-elastique|Kickback élastique|Grand fessier|D|ÉMG
+frog-pump|Frog pump|Grand fessier|D|SM
+adduction-sol|Adduction au sol|Adducteurs|D|SM
+copenhagen|Copenhagen (planche adducteurs)|Adducteurs|A|SM
+serrage-ballon|Serrage de ballon|Adducteurs (isométrique)|D|SM
+mollets-debout|Élévations sur pointes debout|Mollets (gastrocnémiens)|D|SHM
+mollets-assis|Élévations sur pointes assis|Mollets (soléaire)|D|SHM
+front-squat|Front squat|Quadriceps · Grand fessier|I|HG
+squat-talons-sureleves|Squat talons surélevés|Quadriceps|I|SHG
+pistol-squat|Pistol squat|Quadriceps · Grand fessier|A|SM
+ghr|Glute-ham raise (GHR)|Ischio-jambiers · Grand fessier|A|G
+hyperextension-45|Hyperextension 45°|Grand fessier · Ischio-jambiers|I|G
+curl-biceps|Curl biceps haltères|Biceps|D|HM
+elevations-laterales|Élévations latérales|Deltoïdes|D|HM
+extension-triceps|Extension triceps nuque|Triceps|D|HM
+releve-jambes|Relevé de jambes|Grand droit|I|SM
+pompes-inclinees|Pompes inclinées|Pectoraux|D|SM
+pompes-declinees|Pompes déclinées|Pectoraux|I|SM
+developpe-couche|Développé couché haltères|Pectoraux|I|HM
+developpe-incline|Développé incliné haltères|Pectoraux|I|HM
+ecartes-halteres|Écartés haltères au sol|Pectoraux|D|HM
+pull-over|Pull-over haltère|Pectoraux|I|HM
+pompes-elastique|Pompes avec élastique|Pectoraux|I|ÉM
+rowing-halteres-un-bras|Rowing haltère un bras|Grand dorsal|D|HM
+rowing-halteres-buste-penche|Rowing haltères buste penché|Grand dorsal|I|HM
+rowing-inverse|Rowing inversé|Grand dorsal|D|SM
+tirage-vertical-elastique|Tirage vertical élastique|Grand dorsal|D|ÉM
+face-pull|Tirage visage élastique (face pull)|Deltoïdes|D|ÉM
+tirage-horizontal-elastique-assis|Tirage horizontal élastique assis|Grand dorsal|D|ÉM
+traction-supination|Traction supination (chin-up)|Grand dorsal|A|G
+traction-neutre|Traction prise neutre|Grand dorsal|A|G
+traction-negative|Traction négative|Grand dorsal|I|G
+traction-assistee-elastique|Traction assistée à l'élastique|Grand dorsal|D|ÉG
+straight-arm-pulldown-elastique|Straight-arm pulldown élastique|Grand dorsal|D|ÉM
+pulldown-genoux-elastique|Pulldown à genoux élastique|Grand dorsal|D|ÉM
+oiseau-halteres|Oiseau haltères|Deltoïdes|D|HM
+oiseau-elastique|Oiseau à l'élastique|Deltoïdes|D|ÉM
+developpe-arnold|Développé Arnold|Deltoïdes|I|HM
+elevation-frontale|Élévation frontale haltères|Deltoïdes|D|HM
+curl-marteau|Curl marteau|Biceps|D|HM
+curl-incline|Curl incliné haltères|Biceps|I|HM
+curl-concentration|Curl concentration|Biceps|D|HM
+curl-elastique|Curl élastique|Biceps|D|ÉM
+curl-inverse|Curl inversé|Biceps|I|HM
+extension-triceps-unilaterale|Extension triceps unilatérale|Triceps|D|HM
+extension-triceps-elastique|Extension triceps élastique|Triceps|D|ÉM
+barre-au-front|Barre au front haltères|Triceps|I|HM
+pompes-diamant|Pompes diamant|Triceps|I|SM
+planche-laterale|Planche latérale|Obliques|D|SM
+russian-twist|Russian twist|Obliques|D|SM
+dead-bug|Dead bug|Sangle abdominale|D|SM
+bird-dog|Bird dog|Lombaires|D|SM
+hollow-body|Hollow body hold|Sangle abdominale|I|SM
+pallof-press|Pallof press élastique|Obliques|D|ÉM
+bicycle|Abdominal bicycle|Obliques|D|SM
+v-up|V-up|Grand droit|A|SM
+hanging-knee-raise|Hanging knee raise|Grand droit|I|G
+hanging-leg-raise|Hanging leg raise|Grand droit|A|G
+toes-to-bar|Toes-to-bar|Grand droit|A|G
+hanging-windshield-wipers|Hanging windshield wipers|Obliques|A|G
+ab-wheel-rollout|Ab wheel rollout|Sangle abdominale|A|SM
+reverse-crunch|Reverse crunch (hip lift)|Grand droit|D|SM
+up-down-plank|Up-down plank|Sangle abdominale|I|SM
+cyclist-squat|Cyclist squat|Quadriceps|I|SM
+spanish-squat|Spanish squat|Quadriceps|D|ÉM
+reverse-nordic|Reverse Nordic|Quadriceps|A|SM
+pull-through|Pull-through élastique|Grand fessier|D|ÉM
+hip-thrust-pause|Hip thrust unilatéral avec pause|Grand fessier|A|SM
+sliding-leg-curl|Leg curl glissé|Ischio-jambiers|I|SM
+hamstring-walkout|Hamstring walkout|Ischio-jambiers|D|SM
+copenhagen-dynamique|Copenhagen dynamique|Adducteurs|A|SM
+copenhagen-genou-flechi|Copenhagen genou fléchi|Adducteurs|D|SM
+adduction-debout-elastique|Adduction debout élastique|Adducteurs|D|ÉM
+mollets-unilateral|Élévations mollets unilatérales|Mollets (gastrocnémiens)|D|SM
+mollets-marche|Élévations mollets sur marche|Mollets (gastrocnémiens)|D|SM
+tibialis-raise|Tibialis raise|Tibial antérieur|D|SM
+seated-tibialis-raise|Seated tibialis raise|Tibial antérieur|D|SHM
+pogo-jumps|Pogo jumps|Mollets|I|SM
+farmer-walk|Farmer walk|Avant-bras|D|HM
+dead-hang|Dead hang|Avant-bras|D|SM
+wrist-curl|Wrist curl|Avant-bras|D|HM
+reverse-wrist-curl|Wrist curl inversé|Avant-bras|D|HM
+pinch-grip|Pinch grip|Avant-bras|D|HM
+wrist-roller|Wrist roller|Avant-bras|I|HM
+pronation-supination-haltere|Pronation/supination haltère|Avant-bras|D|HM
+plate-wrist-curl|Plate wrist curl|Avant-bras|D|HM
+shrugs|Shrugs haltères|Trapèzes|D|HM
+y-raise|Y-raise|Trapèzes|D|SM
+rowing-coudes-ouverts|Rowing coudes ouverts|Trapèzes|D|HM
+trap-3-raise|Trap-3 raise|Trapèzes|D|HM
+prone-t-raise|Prone T-raise|Trapèzes|D|HM
+prone-w-raise|Prone W-raise|Trapèzes|I|SHM
+scapular-push-up|Scapular push-up|Dentelé antérieur|D|SM
+scapular-pull-up|Scapular pull-up|Trapèzes|I|G
+superman|Superman|Lombaires|D|SM
+back-extension-sol|Back extension au sol|Lombaires|D|SM
+suitcase-carry|Suitcase carry|Lombaires|D|HM
+reverse-hyperextension|Reverse hyperextension|Lombaires|I|G
 
 SÉANCES
 - Une séance Musculator = une liste d'exercices faite d'un coup. Un programme sur la semaine
