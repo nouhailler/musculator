@@ -19,7 +19,7 @@ export const MUSCLES = [
   // Ajoutés quand le catalogue a couvert la rotation, la préhension et les
   // érecteurs : trois familles qu'aucun exercice n'atteignait.
   { id: 'obliques', nom: 'Obliques', region: 'front', exos: ['planche-laterale', 'russian-twist', 'pallof-press', 'bicycle', 'copenhagen', 'hanging-windshield-wipers', 'suitcase-carry', 'up-down-plank'] },
-  { id: 'avant-bras', nom: 'Avant-bras (grip)', region: 'front', exos: ['farmer-walk', 'dead-hang', 'wrist-curl', 'reverse-wrist-curl', 'pinch-grip', 'curl-inverse', 'curl-marteau', 'wrist-roller', 'pronation-supination-haltere', 'plate-wrist-curl'] },
+  { id: 'avant-bras', nom: 'Avant-bras (grip)', region: 'front', exos: ['etirement-extenseurs-avant-bras', 'etirement-flechisseurs-avant-bras', 'etirement-pouce-finkelstein', 'ouverture-doigts-elastique', 'automassage-avant-bras', 'farmer-walk', 'dead-hang', 'wrist-curl', 'reverse-wrist-curl', 'pinch-grip', 'curl-inverse', 'curl-marteau', 'wrist-roller', 'pronation-supination-haltere', 'plate-wrist-curl'] },
   // Le psoas n'avait pas de zone alors qu'il commande la bascule du bassin :
   // il relie le fémur aux lombaires, et une journée assise le raccourcit. Sa
   // zone est le pli de l'aine, là où on le sent.
@@ -86,7 +86,9 @@ export const ZONES = [
   { label: 'Dos', muscles: ['Dos', 'Rhomboïdes', 'Trapèzes moyens', 'Lombaires'] },
   { label: 'Jambes', muscles: ['Quadriceps', 'Ischios', 'Fessiers', 'Moyen fessier', 'Adducteurs', 'Mollets', 'Psoas-iliaque'] },
   { label: 'Épaules', muscles: ['Épaules', 'Rotateurs externes', 'Dentelé antérieur'] },
-  { label: 'Bras', muscles: ['Triceps', 'Biceps'] },
+  // 'Avant-bras' manquait depuis le début : une séance de grip ne comptait pour
+  // aucune zone. Les trois noms qui suivent viennent des exercices de poignet.
+  { label: 'Bras', muscles: ['Triceps', 'Biceps', 'Avant-bras', "Extenseurs de l'avant-bras", "Fléchisseurs de l'avant-bras", 'Long abducteur du pouce'] },
   { label: 'Abdos', muscles: ['Sangle abdominale', 'Grand droit'] },
 ];
 

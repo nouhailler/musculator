@@ -208,10 +208,12 @@ the body map — five features degraded to gain a name.
 - An imported session is an ordinary `customWorkouts` entry, in the exact shape
   `SAVE_WORKOUT` produces, so nothing downstream can tell the difference.
 
-**A programme may name the one that completes it** — `complement: { id, raison }`, rendered
-under the exercise list by `ProgramDetail`. The pairing is symmetric by meaning, so
-`check-catalogue` enforces that both sides declare it, that the target exists and that the
-reason is there; nothing at runtime would notice a half-declared pair. The screen's
+**A programme may name the ones that complete it** — `complement: [{ id, raison }]`, rendered
+under the exercise list by `ProgramDetail`. Each pairing is symmetric by meaning, so
+`check-catalogue` enforces that both sides declare it, that the target exists, that no id
+repeats and that the reason is there; nothing at runtime would notice a half-declared pair.
+It is a list because the three corrective sessions (omoplates, bassin, souris) are ends of one
+chain rather than a pair. The screen's
 "Démarrer" footer is `position: sticky` inside a flex column, **not** `absolute; bottom: 0`:
 inside a scrolling overlay the latter anchors to the end of the *content*, so it silently drew
 over whatever was added last.

@@ -4,7 +4,7 @@ Le prompt à donner à un assistant conversationnel pour qu'il compose un progra
 d'entraînement importable dans Musculator.
 
 > Fichier généré par `npm run gen-prompt` depuis `src/lib/programPrompt.js`, la seule source.
-> Ne pas l'éditer à la main : le prompt embarque le catalogue des 139 exercices,
+> Ne pas l'éditer à la main : le prompt embarque le catalogue des 144 exercices,
 > dérivé de `src/data/exercises.js`, et cette copie doit le suivre.
 
 ## Utilisation
@@ -182,6 +182,11 @@ etirement-elevateur-scapula|Étirement élévateur de la scapula|Élévateur de 
 retroversion-bassin|Rétroversion du bassin|Sangle abdominale|D|SM
 etirement-psoas-chevalier|Étirement du psoas (chevalier servant)|Psoas-iliaque|D|SM
 posture-enfant|Posture de l'enfant|Lombaires|D|SM
+etirement-extenseurs-avant-bras|Étirement des extenseurs de l'avant-bras|Extenseurs de l'avant-bras|D|SM
+etirement-flechisseurs-avant-bras|Étirement des fléchisseurs de l'avant-bras|Fléchisseurs de l'avant-bras|D|SM
+etirement-pouce-finkelstein|Étirement du pouce (Finkelstein modifié)|Long abducteur du pouce|D|SM
+ouverture-doigts-elastique|Ouverture des doigts à l’élastique|Extenseurs de l'avant-bras|D|ÉM
+automassage-avant-bras|Auto-massage de l'avant-bras|Avant-bras|D|SM
 
 SÉANCES
 - Une séance Musculator = une liste d'exercices faite d'un coup. Un programme sur la semaine

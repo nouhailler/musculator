@@ -166,15 +166,19 @@ for (const m of MUSCLES) {
 
 const progById2 = new Map(PROGRAMS.map((p) => [p.id, p]));
 for (const p of PROGRAMS) {
-  const c = p.complement;
-  if (!c) continue;
   const where = `program "${p.id}"`;
-  if (!c.id || !progById2.has(c.id)) { fail('broken complement', `${where} points at "${c.id}"`); continue; }
-  if (c.id === p.id) fail('self complement', where);
-  if (!c.raison) fail('complement without reason', where);
-  const back = progById2.get(c.id).complement;
-  if (!back || back.id !== p.id) {
-    fail('one-way complement', `${where} names "${c.id}", which does not name it back`);
+  if (p.complement && !Array.isArray(p.complement)) { fail('complement shape', `${where} is not a list`); continue; }
+  const seen = new Set();
+  for (const c of p.complement || []) {
+    if (!c.id || !progById2.has(c.id)) { fail('broken complement', `${where} points at "${c.id}"`); continue; }
+    if (c.id === p.id) fail('self complement', where);
+    if (seen.has(c.id)) fail('duplicate complement', `${where} names "${c.id}" twice`);
+    seen.add(c.id);
+    if (!c.raison) fail('complement without reason', `${where} → "${c.id}"`);
+    const back = progById2.get(c.id).complement || [];
+    if (!back.some((b) => b.id === p.id)) {
+      fail('one-way complement', `${where} names "${c.id}", which does not name it back`);
+    }
   }
 }
 

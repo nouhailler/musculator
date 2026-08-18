@@ -10,6 +10,24 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Cinq exercices d'avant-bras et un programme « Syndrome de la souris »** — les TMS du
+  membre supérieur côté bureau : contraction statique, micro-répétitions, poignet en extension.
+  - Étirement des extenseurs, des fléchisseurs, du pouce (Finkelstein modifié), ouverture des
+    doigts à l'élastique et auto-massage de l'avant-bras. Le catalogue avait du renforcement
+    lourd d'avant-bras (wrist curls, grip, wrist roller) et rien pour un tendon déjà irrité :
+    ces cinq-là relâchent et rééquilibrent au lieu de charger.
+  - **Les drapeaux rouges sont dans les fiches, pas seulement dans la description** :
+    fourmillements nocturnes, perte de force, poignet gonflé ou chaud renvoient à un examen
+    dans le champ `surcharge` des étirements concernés — c'est là qu'on les lit au moment de
+    faire le geste.
+  - `Avant-bras` manquait dans le pont `ZONES` depuis le début : une séance de grip ne comptait
+    pour aucune zone du profil. Elle compte maintenant pour « Bras », avec les trois noms que
+    les nouveaux exercices ajoutent.
+  - **`complement` devient une liste.** Les trois séances correctives — omoplates, bassin,
+    souris — sont les bouts d'une même chaîne, pas une paire : « Omoplates & nuque » en affiche
+    désormais deux. `check-catalogue` vérifie toujours la réciprocité, plus l'absence de
+    doublon dans la liste.
+
 - **Deux séances qui se renvoient l'une à l'autre** — « Bascule du bassin » et « Omoplates &
   nuque » traitent les deux bouts d'une même chaîne, et chacune l'annonce désormais dans
   l'app.

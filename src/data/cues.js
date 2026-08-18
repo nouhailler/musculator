@@ -212,6 +212,14 @@ export const CUES = {
   'retroversion-bassin': { beat: 2500, seq: ['Plaque le dos', 'Relâche'] },
   'etirement-psoas-chevalier': { beat: 5000, seq: ['Rentre les fesses', 'Avance un peu', 'Respire', 'Change de jambe'] },
   'posture-enfant': { beat: 5000, seq: ['Assieds-toi', 'Bras loin devant', 'Respire', 'Relâche le dos'] },
+
+  // Avant-bras & poignet. Rythme lent partout : sur un tendon irrité, la
+  // cadence est le premier réglage à baisser.
+  'etirement-extenseurs-avant-bras': { beat: 5000, seq: ['Paume vers le bas', 'Tire les doigts', 'Respire', 'Change de bras'] },
+  'etirement-flechisseurs-avant-bras': { beat: 5000, seq: ['Paume vers le haut', 'Tire les doigts', 'Respire', 'Change de bras'] },
+  'etirement-pouce-finkelstein': { beat: 5000, seq: ['Pouce dans le poing', 'Incline doucement', 'Sans forcer', 'Change de main'] },
+  'ouverture-doigts-elastique': { beat: 2000, seq: ['Écarte', 'Referme lentement'] },
+  'automassage-avant-bras': { beat: 5000, seq: ['Sous le coude', 'Descends', 'Cherche les points', 'Change de bras'] },
 };
 
 export const ENCOURAGEMENTS = [

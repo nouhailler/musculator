@@ -19,10 +19,10 @@ export default function ProgramDetail() {
     return { num: i + 1, id: eid, nom: e.nom, meta: `${se} × ${rp}${ch ? ' · ' + ch : ''} · repos ${ro}s` };
   });
 
-  // A programme can name one that completes it — the pairing is symmetric and
-  // carries its reason, because a bare "see also" is noise next to a session
-  // someone is about to start.
-  const comp = prog.complement ? progById(prog.complement.id) : null;
+  // A programme can name the ones that complete it — each pairing is symmetric
+  // and carries its reason, because a bare "see also" is noise next to a
+  // session someone is about to start.
+  const comps = (prog.complement || []).map((c) => ({ ...c, prog: progById(c.id) }));
 
   return (
     <div className="overlay mscroll" style={{ display: 'flex', flexDirection: 'column' }}>
@@ -57,19 +57,24 @@ export default function ProgramDetail() {
           ))}
         </div>
 
-        {comp && (
+        {comps.length > 0 && (
           <>
-            <h6 style={{ color: 'var(--color-neutral-400)', margin: '20px 0 10px' }}>Séance complémentaire</h6>
-            <button type="button" onClick={() => actions.selectProgram(comp.id)} className="row-card" style={{ alignItems: 'flex-start' }}>
-              <div className="icon-tile" style={{ width: 34, height: 34 }}><Icon name={comp.icon} size={18} /></div>
-              <span style={{ flex: 1, minWidth: 0 }}>
-                <span style={{ display: 'block', fontSize: 13, fontWeight: 600 }}>{comp.nom}</span>
-                <span style={{ display: 'block', fontSize: 11, color: 'var(--color-neutral-500)', margin: '1px 0 4px' }}>{comp.duree} min · {comp.niveau}</span>
-                <span style={{ display: 'block', fontSize: 11.5, color: 'var(--color-neutral-400)', lineHeight: 1.5 }}>{prog.complement.raison}</span>
-              </span>
-              <Icon name="caret-right" size={16} color="var(--color-neutral-500)" style={{ flex: 'none', marginTop: 8 }} />
-            </button>
-
+            <h6 style={{ color: 'var(--color-neutral-400)', margin: '20px 0 10px' }}>
+              Séance{comps.length > 1 ? 's' : ''} complémentaire{comps.length > 1 ? 's' : ''}
+            </h6>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+              {comps.map((c) => (
+                <button key={c.id} type="button" onClick={() => actions.selectProgram(c.id)} className="row-card" style={{ alignItems: 'flex-start' }}>
+                  <div className="icon-tile" style={{ width: 34, height: 34 }}><Icon name={c.prog.icon} size={18} /></div>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{ display: 'block', fontSize: 13, fontWeight: 600 }}>{c.prog.nom}</span>
+                    <span style={{ display: 'block', fontSize: 11, color: 'var(--color-neutral-500)', margin: '1px 0 4px' }}>{c.prog.duree} min · {c.prog.niveau}</span>
+                    <span style={{ display: 'block', fontSize: 11.5, color: 'var(--color-neutral-400)', lineHeight: 1.5 }}>{c.raison}</span>
+                  </span>
+                  <Icon name="caret-right" size={16} color="var(--color-neutral-500)" style={{ flex: 'none', marginTop: 8 }} />
+                </button>
+              ))}
+            </div>
           </>
         )}
       </div>

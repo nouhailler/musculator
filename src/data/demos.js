@@ -1356,6 +1356,64 @@ export const DEMOS = {
       { hip: [58, 74.4], torso: 165, arm: [168, 168], armB: [171, 171], leg: [70, 180], legB: [74, 177], foot: 192, footB: 190 },
     ],
   },
+  // --- Avant-bras & poignet -------------------------------------------------
+  // Le squelette n'a pas de doigts et le poignet n'est pas une articulation :
+  // ce qui se dessine, c'est l'avant-bras qui pivote et la main d'en face qui
+  // vient le chercher. C'est assez pour distinguer les trois étirements — la
+  // main d'aide tire vers le bas, vers le haut, ou n'intervient pas.
+  'etirement-extenseurs-avant-bras': {
+    scene: 'ground',
+    cycle: 5000, // maintien : la traction s'installe, rien d'autre ne bouge
+    frames: [
+      // bras tendu devant, paume vers le sol, l'autre main sur les doigts
+      { hip: [50, 58], torso: -90, arm: [0, 0], armB: [1.6, -1.6], leg: [96, 84], legB: [84, 96], foot: 0 },
+      // les doigts sont tirés vers le bas : le dessus de l'avant-bras s'étire
+      { hip: [50, 58], torso: -90, arm: [0, 40], armB: [39.6, 3.2], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+
+  'etirement-flechisseurs-avant-bras': {
+    scene: 'ground',
+    cycle: 5000,
+    frames: [
+      // même départ, paume vers le plafond
+      { hip: [50, 58], torso: -90, arm: [0, 0], armB: [1.6, -1.6], leg: [96, 84], legB: [84, 96], foot: 0 },
+      // la main d'aide tire par-dessous : le dessous de l'avant-bras s'étire
+      { hip: [50, 58], torso: -90, arm: [0, -40], armB: [-3.2, -39.6], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+
+  'etirement-pouce-finkelstein': {
+    scene: 'ground',
+    cycle: 5000,
+    frames: [
+      // poing fermé sur le pouce, avant-bras devant, sans main d'aide
+      { hip: [50, 58], torso: -90, arm: [0, 8], armB: [86, 92], leg: [96, 84], legB: [84, 96], foot: 0 },
+      // le poignet s'incline vers le sol, comme pour verser de l'eau
+      { hip: [50, 58], torso: -90, arm: [0, 52], armB: [86, 92], leg: [96, 84], legB: [84, 96], foot: 0 },
+    ],
+  },
+
+  // Les deux exercices de bureau reprennent la pose des wrist curls : assis,
+  // avant-bras posé sur la table.
+  'ouverture-doigts-elastique': {
+    scene: 'ground',
+    props: [{ kind: 'block', x: 46, y: 72, w: 28 }],
+    frames: [
+      { hip: [44, 72], torso: -80, arm: [10, 24], armB: [16, 30], leg: [4, 86], legB: [-2, 92], foot: 0 },
+      { hip: [44, 72], torso: -80, arm: [10, -14], armB: [16, -8], leg: [4, 86], legB: [-2, 92], foot: 0 },
+    ],
+  },
+
+  'automassage-avant-bras': {
+    scene: 'ground',
+    props: [{ kind: 'block', x: 46, y: 72, w: 28 }],
+    cycle: 5000, // la main d'aide descend du coude vers le poignet
+    frames: [
+      { hip: [44, 72], torso: -80, arm: [10, 10], armB: [62.4, -43.3], leg: [4, 86], legB: [-2, 92], foot: 0 },
+      { hip: [44, 72], torso: -80, arm: [10, 10], armB: [27.3, -6], leg: [4, 86], legB: [-2, 92], foot: 0 },
+    ],
+  },
 };
 
 export function demoFor(exId) {
