@@ -13,7 +13,7 @@
 // at least one zone in overlays/BodyMap.jsx, otherwise it can't be selected.
 export const MUSCLES = [
   { id: 'epaules', nom: 'Épaules (deltoïdes)', region: 'front', exos: ['oiseau-halteres', 'oiseau-elastique', 'developpe-arnold', 'elevation-frontale', 'face-pull', 'developpe', 'elevations-laterales', 'pompes'] },
-  { id: 'pecs', nom: 'Pectoraux', region: 'front', exos: ['pompes-diamant', 'pompes-inclinees', 'pompes-declinees', 'developpe-couche', 'developpe-incline', 'ecartes-halteres', 'pull-over', 'pompes', 'pompes-elastique', 'dips', 'developpe'] },
+  { id: 'pecs', nom: 'Pectoraux', region: 'front', exos: ['pompes-diamant', 'pompes-inclinees', 'pompes-declinees', 'developpe-couche', 'developpe-incline', 'ecartes-halteres', 'pull-over', 'etirement-pectoral-porte', 'pompes', 'pompes-elastique', 'dips', 'developpe'] },
   { id: 'biceps', nom: 'Biceps', region: 'front', exos: ['curl-marteau', 'curl-incline', 'curl-concentration', 'curl-elastique', 'curl-inverse', 'rowing-halteres-un-bras', 'rowing-inverse', 'curl-biceps', 'tractions', 'traction-supination', 'rowing'] },
   { id: 'abdos', nom: 'Abdominaux', region: 'front', exos: ['dead-bug', 'hollow-body', 'bicycle', 'v-up', 'abdos', 'releve-jambes', 'reverse-crunch', 'hanging-knee-raise', 'hanging-leg-raise', 'toes-to-bar', 'ab-wheel-rollout', 'up-down-plank', 'gainage', 'mountain', 'copenhagen'] },
   // Ajoutés quand le catalogue a couvert la rotation, la préhension et les
@@ -32,7 +32,15 @@ export const MUSCLES = [
     region: 'front',
     exos: ['copenhagen-dynamique', 'copenhagen-genou-flechi', 'adduction-debout-elastique', 'adduction-sol', 'copenhagen', 'serrage-ballon', 'squat-sumo', 'fente-laterale', 'frog-pump'],
   },
-  { id: 'trapezes', nom: 'Trapèzes', region: 'back', exos: ['shrugs', 'y-raise', 'rowing-coudes-ouverts', 'trap-3-raise', 'prone-t-raise', 'prone-w-raise', 'scapular-push-up', 'scapular-pull-up', 'farmer-walk', 'oiseau-halteres', 'oiseau-elastique', 'face-pull', 'rowing-halteres-buste-penche', 'rowing-inverse', 'tractions', 'rowing', 'developpe'] },
+  { id: 'trapezes', nom: 'Trapèzes', region: 'back', exos: ['shrugs', 'y-raise', 'retraction-scapulaire', 'rowing-coudes-ouverts', 'trap-3-raise', 'prone-t-raise', 'prone-w-raise', 'scapular-push-up', 'scapular-pull-up', 'farmer-walk', 'oiseau-halteres', 'oiseau-elastique', 'face-pull', 'rowing-halteres-buste-penche', 'rowing-inverse', 'tractions', 'rowing', 'developpe'] },
+  // Les stabilisateurs de l'omoplate et la nuque : trois zones qu'aucun
+  // exercice n'atteignait, alors que le catalogue avait déjà les mouvements —
+  // « Dentelé antérieur » était même un `primaire` sans muscle correspondant.
+  // Le dentelé est à l'avant (sous l'aisselle, sur les côtes) bien qu'il
+  // déplace l'omoplate, qui est dans le dos : c'est là qu'on le touche.
+  { id: 'rhomboides', nom: 'Rhomboïdes & trapèze moyen', region: 'back', exos: ['retraction-scapulaire', 'prone-w-raise', 'prone-t-raise', 'trap-3-raise', 'y-raise', 'face-pull', 'rowing-coudes-ouverts', 'rowing-inverse', 'oiseau-halteres'] },
+  { id: 'cou', nom: 'Cou & nuque', region: 'back', exos: ['chin-tuck', 'etirement-elevateur-scapula'] },
+  { id: 'dentele', nom: 'Dentelé antérieur', region: 'front', exos: ['scapular-push-up', 'scapular-pull-up', 'pompes', 'gainage', 'pull-over'] },
   { id: 'dos', nom: 'Dos (grand dorsal)', region: 'back', exos: ['dead-hang', 'oiseau-halteres', 'rowing-halteres-un-bras', 'rowing-halteres-buste-penche', 'rowing-inverse', 'tirage-vertical-elastique', 'tirage-horizontal-elastique-assis', 'traction-supination', 'traction-neutre', 'traction-negative', 'traction-assistee-elastique', 'straight-arm-pulldown-elastique', 'pulldown-genoux-elastique', 'pull-over', 'tractions', 'rowing'] },
   { id: 'triceps', nom: 'Triceps', region: 'back', exos: ['extension-triceps-unilaterale', 'extension-triceps-elastique', 'barre-au-front', 'pompes-diamant', 'developpe-couche', 'pompes-inclinees', 'dips', 'extension-triceps', 'pompes', 'developpe'] },
   {
@@ -69,9 +77,11 @@ export const MUSCLES = [
 // "Jambes" never appears in a session log, "Quadriceps" does.
 export const ZONES = [
   { label: 'Pectoraux', muscles: ['Pectoraux'] },
-  { label: 'Dos', muscles: ['Dos'] },
+  // 'Rhomboïdes' et 'Trapèzes moyens' arrivent des exercices de posture : sans
+  // eux dans la liste, une séance d'omoplates ne compterait pour aucune zone.
+  { label: 'Dos', muscles: ['Dos', 'Rhomboïdes', 'Trapèzes moyens'] },
   { label: 'Jambes', muscles: ['Quadriceps', 'Ischios', 'Fessiers', 'Moyen fessier', 'Adducteurs', 'Mollets'] },
-  { label: 'Épaules', muscles: ['Épaules'] },
+  { label: 'Épaules', muscles: ['Épaules', 'Rotateurs externes', 'Dentelé antérieur'] },
   { label: 'Bras', muscles: ['Triceps', 'Biceps'] },
   { label: 'Abdos', muscles: ['Sangle abdominale', 'Grand droit'] },
 ];

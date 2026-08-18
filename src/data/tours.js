@@ -48,7 +48,7 @@ export const TOURS = [
       },
       {
         titre: 'La bibliothèque',
-        texte: "104 exercices avec fiche technique, muscle ciblé et démonstration animée. Chaque fiche peut se lancer seule, sans monter un programme.",
+        texte: "112 exercices avec fiche technique, muscle ciblé et démonstration animée. Chaque fiche peut se lancer seule, sans monter un programme.",
         tab: 'library',
         cible: 'tab-library',
       },

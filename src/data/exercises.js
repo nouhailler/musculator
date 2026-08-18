@@ -2065,7 +2065,77 @@ export const EXERCISES = [
     variFacile: "Amplitude réduite, genoux fléchis.", variDifficile: "Charge à la cheville, ou arrêt en haut.",
     similaires: ['hyperextension-45', 'good-morning', 'superman'],
   },
-];
+  // --- Posture cervicale & étirements de la ceinture scapulaire -------------
+  // Ce que le travail correctif demandait et que le catalogue n'avait pas : le
+  // placement du cou, le serrage d'omoplates isométrique, et les deux
+  // étirements sans lesquels renforcer le dos revient à tirer sur une corde des
+  // deux côtés. Les raises et le scapular push-up, eux, existent déjà
+  // (prone-t-raise, prone-w-raise, trap-3-raise, scapular-push-up). Volume
+  // faible, charge nulle : ce sont des exercices de placement.
+  {
+    id: 'chin-tuck', nom: 'Chin tuck (menton rentré)', muscle: 'Cou & nuque', niveau: 'Débutant', lieu: 'Maison',
+    mat: ['Sans matériel', 'Maison'], series: 3, reps: '10 × 5 s', repos: 30, icon: 'arrow-left',
+    desc: "Debout ou assis, recule la tête à l'horizontale — un double menton — sans la pencher. Le sommet du crâne monte, le regard reste droit devant.",
+    conseils: ["Recule, ne baisse pas : le regard reste horizontal", "Imagine un fil qui tire le sommet du crâne", "Sans forcer : c'est un placement, pas un étirement"],
+    primaire: 'Fléchisseurs profonds du cou', secondaires: ['Trapèzes moyens', 'Nuque'],
+    sollicitation: "Les fléchisseurs profonds (long du cou, long de la tête) travaillent en isométrie courte pour ramener la tête au-dessus des épaules. Ce sont des muscles d'endurance posturale : ils répondent à des maintiens brefs et répétés, pas à de la charge.",
+    surcharge: "Rien à surcharger ici, mais deux erreurs annulent l'exercice : baisser le menton vers la poitrine, qui étire la nuque au lieu de la replacer, et serrer les mâchoires. Si un maintien provoque vertige, fourmillements ou douleur qui irradie dans le bras, arrête et fais-toi examiner.",
+    depart: "Debout ou assis, dos droit, regard droit devant, épaules relâchées.",
+    mouvement: "Recule la tête à l'horizontale comme pour te faire un double menton, tiens 5 secondes, puis relâche sans repartir en avant.",
+    respiration: "Respire normalement pendant le maintien, sans bloquer.",
+    erreurs: ["Baisser le menton au lieu de reculer la tête", "Hausser les épaules", "Bloquer sa respiration"],
+    variFacile: "Allongé sur le dos, tête posée : la gravité aide et le repère est le sol.",
+    variDifficile: "Debout dos au mur, occiput qui vient toucher le mur sans cambrer la nuque.",
+    similaires: ['retraction-scapulaire', 'etirement-elevateur-scapula'],
+  },
+  {
+    id: 'retraction-scapulaire', nom: "Rétraction scapulaire", muscle: 'Rhomboïdes · trapèze moyen', niveau: 'Débutant', lieu: 'Maison',
+    mat: ['Sans matériel', 'Maison'], series: 3, reps: '10 × 5 s', repos: 30, icon: 'arrows-in-line-horizontal',
+    desc: "Assis ou debout, dos droit : rapproche les omoplates l'une de l'autre, comme pour coincer un crayon entre elles, sans hausser les épaules.",
+    conseils: ["Serre vers le bas et l'arrière, pas vers les oreilles", "Garde les bras relâchés : le mouvement vient du dos", "Cinq secondes de maintien, puis relâche complètement"],
+    primaire: 'Rhomboïdes', secondaires: ['Trapèzes moyens', 'Trapèzes inférieurs'],
+    sollicitation: "Contraction isométrique pure des rhomboïdes et du trapèze moyen, qui tirent le bord interne de l'omoplate vers la colonne. C'est l'exact inverse de la position que prend l'omoplate quand tu travailles tête baissée, épaules enroulées — d'où l'intérêt de le refaire souvent et court.",
+    surcharge: "Le piège est de compenser avec le trapèze supérieur : dès que les épaules montent vers les oreilles, ce sont les mauvais muscles qui travaillent. Relâche et recommence plus doucement plutôt que de serrer plus fort.",
+    depart: "Assis ou debout, dos droit, épaules basses, bras relâchés le long du corps.",
+    mouvement: "Rapproche les omoplates l'une de l'autre en ouvrant la poitrine, tiens 5 secondes, puis relâche.",
+    respiration: "Souffle en serrant, respire normalement pendant le maintien.",
+    erreurs: ["Hausser les épaules", "Cambrer le bas du dos pour ouvrir la poitrine", "Serrer en apnée"],
+    variFacile: "Assis, dos contre un dossier, pour supprimer tout le travail postural.",
+    variDifficile: "Un élastique léger tenu devant soi, bras tendus, pendant le serrage.",
+    similaires: ['y-raise', 'prone-t-raise', 'scapular-push-up'],
+  },
+  {
+    id: 'etirement-pectoral-porte', nom: 'Étirement pectoral au cadre de porte', muscle: 'Pectoraux', niveau: 'Débutant', lieu: 'Maison',
+    mat: ['Sans matériel', 'Maison'], series: 3, reps: '30 s', repos: 15, icon: 'wind',
+    desc: "Avant-bras posé contre un cadre de porte, coude à 90° à hauteur d'épaule. Avance doucement le bassin, dos droit, jusqu'à sentir l'étirement dans la poitrine.",
+    conseils: ["Coude à hauteur d'épaule, ni plus haut ni plus bas", "Avance le corps entier, ne tourne pas le buste", "Étirement franc mais indolore : jamais de douleur vive"],
+    primaire: 'Pectoraux', secondaires: ['Deltoïdes antérieurs'],
+    sollicitation: "Étirement passif du grand pectoral, maintenu assez longtemps pour que la tension retombe. Des pectoraux courts tirent en permanence l'épaule vers l'avant : tant qu'ils ne cèdent pas, les muscles du dos travaillent contre eux toute la journée — les renforcer sans les étirer revient à tirer sur une corde des deux côtés.",
+    surcharge: "L'avant de l'épaule encaisse tout si le coude monte trop haut ou si l'on force en tournant : garde le coude à hauteur d'épaule et arrête à la première douleur pointue à l'avant de l'épaule. Un étirement se dose en minutes par jour, pas en intensité.",
+    depart: "Debout devant un cadre de porte, avant-bras gauche posé contre le montant, coude fléchi à 90° à hauteur d'épaule.",
+    mouvement: "Avance lentement le bassin en gardant le dos droit jusqu'à sentir l'étirement dans la poitrine, tiens 30 secondes, puis change de côté.",
+    respiration: "Respire lentement et profondément : chaque expiration laisse gagner un peu d'amplitude.",
+    erreurs: ["Coude trop haut", "Cambrer le bas du dos pour avancer", "Tenir en apnée ou rebondir"],
+    variFacile: "Bras plus bas sur le montant, amplitude réduite.",
+    variDifficile: "Les deux bras à la fois dans l'encadrement, un pas en avant.",
+    similaires: ['etirement-elevateur-scapula', 'prone-t-raise'],
+  },
+  {
+    id: 'etirement-elevateur-scapula', nom: 'Étirement élévateur de la scapula', muscle: 'Cou & nuque', niveau: 'Débutant', lieu: 'Maison',
+    mat: ['Sans matériel', 'Maison'], series: 2, reps: '25 s', repos: 15, icon: 'person-simple-tai-chi',
+    desc: "Assis, tourne la tête vers l'aisselle opposée et regarde vers le bas. La main du même côté accompagne très légèrement le mouvement, sans tirer.",
+    conseils: ["Regarde vers l'aisselle, pas droit devant", "La main accompagne, elle ne tire pas", "Épaule du côté étiré basse et relâchée"],
+    primaire: 'Élévateur de la scapula', secondaires: ['Trapèzes supérieurs', 'Nuque'],
+    sollicitation: "L'élévateur de la scapula relie les vertèbres du cou au coin supérieur de l'omoplate ; il ne s'allonge que dans cette combinaison précise — flexion, inclinaison et rotation du cou du côté opposé. Le maintien long, sans à-coup, est ce qui fait retomber le tonus d'un muscle contracté toute la journée.",
+    surcharge: "C'est le cou : on n'y met jamais de force. Une main qui tire, c'est trop — elle pèse seulement. Fourmillements, vertige ou douleur qui descend dans le bras : arrête immédiatement et fais-toi examiner avant de reprendre.",
+    depart: "Assis, dos droit, épaules basses, une main posée légèrement à l'arrière de la tête.",
+    mouvement: "Tourne la tête vers l'aisselle opposée, laisse-la descendre doucement, tiens 25 secondes, puis change de côté.",
+    respiration: "Respire lentement ; relâche un peu plus à chaque expiration.",
+    erreurs: ["Tirer franchement sur la tête", "Hausser l'épaule du côté étiré", "Étirer en force jusqu'à la douleur"],
+    variFacile: "Sans les mains : le seul poids de la tête suffit.",
+    variDifficile: "Assis sur la main du côté étiré pour bloquer l'épaule en bas.",
+    similaires: ['chin-tuck', 'etirement-pectoral-porte'],
+  },];
 
 // Movement patterns, in the order the catalogue presents them.
 export const PATTERNS = [

@@ -1270,6 +1270,59 @@ export const DEMOS = {
       { hip: [44, 72], torso: -80, arm: [10, -30], armB: [16, -24], leg: [4, 86], legB: [-2, 92], foot: 0 },
     ],
   },
+
+  // --- Stabilisateurs de l'omoplate & posture cervicale ---------------------
+  // La rétraction d'omoplate se joue dans un plan que la vue de profil ne
+  // montre pas : ce qui se voit, c'est le coude qui part en arrière et la
+  // poitrine qui s'ouvre, et c'est ce que ces poses dessinent. Les T / W / L
+  // sont pour la même raison figurés buste penché plutôt qu'à plat ventre —
+  // allongé, le bras ne peut être tracé que le long du sol, et les quatre
+  // lettres se ressembleraient toutes.
+  'chin-tuck': {
+    scene: 'ground',
+    frames: [
+      // tête en avant, dos avachi : la posture de travail
+      { hip: [50, 58], torso: -76, arm: [88, 84], armB: [96, 92], leg: [92, 88], legB: [86, 94], foot: 0 },
+      // menton rentré : la tête revient au-dessus des épaules
+      { hip: [50, 58], torso: -97, arm: [88, 84], armB: [96, 92], leg: [92, 88], legB: [86, 94], foot: 0 },
+    ],
+  },
+
+  'retraction-scapulaire': {
+    scene: 'ground',
+    frames: [
+      // relâché : épaules enroulées, coudes en avant
+      { hip: [50, 58], torso: -84, arm: [70, 10], armB: [76, 18], leg: [92, 88], legB: [86, 94], foot: 0 },
+      // serrage : les coudes partent en arrière, la poitrine s'ouvre
+      { hip: [50, 58], torso: -93, arm: [108, -6], armB: [102, 0], leg: [92, 88], legB: [86, 94], foot: 0 },
+    ],
+  },
+
+  // Mains fixées au sol, coudes tendus : ce qui bouge est le buste, qui monte
+  // de quelques centimètres quand les omoplates s'écartent.
+  'etirement-pectoral-porte': {
+    scene: 'ground',
+    props: [{ kind: 'wall', x: 74, top: 22 }],
+    cycle: 5000, // maintien : seul le bassin avance
+    frames: [
+      // avant-bras posé sur le montant, bassin en arrière
+      { hip: [52, 58], torso: -88, arm: [30, -40.9], armB: [84, 92], leg: [92, 88], legB: [86, 94], foot: 0 },
+      // le bassin avance : la poitrine s'ouvre, le coude se ferme
+      { hip: [56, 58], torso: -88, arm: [41.8, -55.3], armB: [86, 94], leg: [96, 84], legB: [90, 90], foot: 0 },
+    ],
+  },
+
+  'etirement-elevateur-scapula': {
+    scene: 'ground',
+    props: [{ kind: 'block', x: 58, y: 74, w: 24 }],
+    cycle: 5000, // maintien assis : la main pèse, elle ne tire pas
+    frames: [
+      // assis, main posée sur l'arrière du crâne, coude haut
+      { hip: [52, 72], torso: -90, arm: [-51.6, -158.3], armB: [86, 92], leg: [0, 90], legB: [4, 86], foot: 0 },
+      // la main pèse : le buste se relâche d'un degré, la tête descend
+      { hip: [52, 72], torso: -85, arm: [-47, -153], armB: [88, 94], leg: [0, 90], legB: [4, 86], foot: 0 },
+    ],
+  },
 };
 
 export function demoFor(exId) {

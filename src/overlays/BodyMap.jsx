@@ -133,11 +133,20 @@ const FRONT_ZONES = [
   { id: 'quads', rect: { x: 104, y: 168, w: 19, h: 72, rx: 9 } },
   { id: 'adducteurs', rect: { x: 88, y: 174, w: 8, h: 52, rx: 4 } },
   { id: 'adducteurs', rect: { x: 104, y: 174, w: 8, h: 52, rx: 4 } },
+  // Le dentelé court sous l'aisselle, sur les côtes : deux bandes latérales
+  // posées après les pectoraux pour rester cliquables là où elles les touchent.
+  { id: 'dentele', rect: { x: 72, y: 82, w: 9, h: 20, rx: 4 } },
+  { id: 'dentele', rect: { x: 119, y: 82, w: 9, h: 20, rx: 4 } },
 ];
 
 const BACK_ZONES = [
   { id: 'trapezes', rect: { x: 80, y: 52, w: 40, h: 18, rx: 8 } },
   { id: 'dos', rect: { x: 76, y: 72, w: 48, h: 42, rx: 9 } },
+  // Entre les omoplates, par-dessus le grand dorsal : c'est exactement là que
+  // se plaint une ceinture scapulaire qui travaille tête baissée.
+  { id: 'rhomboides', rect: { x: 82, y: 70, w: 16, h: 18, rx: 4 } },
+  { id: 'rhomboides', rect: { x: 102, y: 70, w: 16, h: 18, rx: 4 } },
+  { id: 'cou', rect: { x: 91, y: 42, w: 18, h: 14, rx: 5 } },
   { id: 'triceps', rect: { x: 50, y: 70, w: 16, h: 30, rx: 8 } },
   { id: 'triceps', rect: { x: 134, y: 70, w: 16, h: 30, rx: 8 } },
   { id: 'lombaires', rect: { x: 82, y: 116, w: 36, h: 22, rx: 8 } },

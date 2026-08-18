@@ -5,6 +5,14 @@ export const PROGRAMS = [
   { id: 'bas', nom: 'Bas du corps', obj: 'Prise de masse', niveau: 'Intermédiaire', lieu: 'Maison', duree: 20, kcal: 200, mat: ['Sans matériel', 'Maison'], icon: 'person-simple-walk', exos: ['squats', 'fentes', 'mountain'], desc: "Quadriceps et fessiers : puissance et volume des jambes, sans matériel." },
   { id: 'core', nom: 'Abdos / Core', obj: 'Gainage', niveau: 'Débutant', lieu: 'Maison', duree: 10, kcal: 90, mat: ['Sans matériel', 'Maison'], icon: 'shield-check', exos: ['gainage', 'abdos', 'mountain'], desc: "Renforce la sangle abdominale et stabilise ton tronc pour tous tes autres mouvements." },
   { id: 'hiit', nom: 'HIIT Brûle-graisse', obj: 'Cardio & sèche', niveau: 'Avancé', lieu: 'Maison', duree: 15, kcal: 240, mat: ['Sans matériel', 'Maison'], icon: 'lightning', exos: ['mountain', 'squats', 'pompes', 'fentes'], desc: "Intervalles intenses : du cardio pour sécher tout en préservant ta masse musculaire." },
+  // Séance corrective plutôt que de développement : charge nulle, volume
+  // faible, deux étirements à la fin. Elle vise la ceinture scapulaire d'un
+  // poste de travail tête baissée — stabilisateurs de l'omoplate d'un côté,
+  // pectoraux et élévateur de la scapula raccourcis de l'autre — et se refait
+  // souvent, idéalement tous les jours, là où les autres programmes demandent
+  // 48 h de récupération. Elle est montée sur les exercices du catalogue, pas
+  // sur des doublons : le Y, le W et le scapular push-up existaient déjà.
+  { id: 'omoplates', nom: 'Omoplates & nuque', obj: 'Tonus', niveau: 'Débutant', lieu: 'Maison', duree: 18, kcal: 70, mat: ['Sans matériel', 'Maison'], icon: 'person-simple-tai-chi', exos: ['chin-tuck', 'retraction-scapulaire', 'y-raise', 'prone-w-raise', 'scapular-push-up', 'etirement-pectoral-porte', 'etirement-elevateur-scapula'], desc: "Posture du haut du dos : on réveille d'abord les stabilisateurs de l'omoplate (rhomboïdes, trapèzes moyen et inférieur, dentelé), puis on relâche ce qui tire l'épaule vers l'avant. Sans charge, à refaire souvent — et si une douleur persiste, irradie ou réveille la nuit, fais-toi examiner." },
   { id: 'express', nom: 'Renforcement Express', obj: 'Prise de masse', niveau: 'Débutant', lieu: 'Maison', duree: 5, kcal: 55, mat: ['Sans matériel', 'Maison'], icon: 'timer', exos: ['pompes', 'squats', 'gainage'], desc: "5 minutes, 3 exercices : parfait quand le temps manque mais que tu veux rester régulier." },
 ];
 

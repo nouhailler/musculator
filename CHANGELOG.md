@@ -10,6 +10,26 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Quatre exercices de posture, trois muscles, et un programme « Omoplates & nuque »** — le
+  travail correctif de la ceinture scapulaire, monté sur ce que le catalogue avait déjà.
+  - **Ce qui manquait vraiment** : chin tuck (placement du cou), rétraction scapulaire
+    (serrage isométrique de 5 s), et les deux étirements sans lesquels renforcer le dos revient
+    à tirer sur une corde des deux côtés — pectoral au cadre de porte, élévateur de la scapula.
+    Le catalogue n'avait aucun étirement jusqu'ici. Les raises et le scapular push-up, eux,
+    existaient déjà (`prone-t-raise`, `prone-w-raise`, `trap-3-raise`, `scapular-push-up`) : le
+    programme les réutilise plutôt que d'en ajouter des doublons.
+  - **Trois muscles n'avaient aucune zone** alors que les mouvements existaient — `dentele`
+    était même le `primaire` du scapular push-up sans muscle correspondant. `rhomboides` (entre
+    les omoplates), `dentele` (sous l'aisselle, sur les côtes) et `cou` (nuque) ont maintenant
+    leur zone sur la carte, et leurs noms sont entrés dans le pont `ZONES` : sans ça, une séance
+    de posture ne comptait pour aucune zone du profil et l'analyse des progrès la lisait comme
+    non mesurée.
+  - **Le programme est correctif, pas de développement** : charge nulle, volume faible, deux
+    étirements en fin de séance, et il se refait tous les jours là où les autres demandent
+    48 h. Sa description dit aussi ce que l'app ne fait pas : une douleur qui persiste, irradie
+    ou réveille la nuit relève d'un examen, pas d'un programme — le même garde-fou est écrit
+    dans le champ `surcharge` du chin tuck et de l'étirement du cou.
+
 - **Un centre d'aide dans l'app** — aide, FAQ, tutoriels et support, sans jamais avoir à en
   sortir. Nouvel overlay `help`, joignable depuis le menu, depuis le profil (« Aide &
   support ») et depuis le pied de la feuille d'aide contextuelle.

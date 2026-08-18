@@ -197,6 +197,15 @@ export const CUES = {
   'wrist-roller': { beat: 1400, seq: ['Enroule', 'Déroule'] },
   'pronation-supination-haltere': { beat: 1400, seq: ['Tourne', 'Reviens'] },
   'plate-wrist-curl': { beat: 1200, seq: ['Ferme', 'Déroule'] },
+
+  // Stabilisateurs de l'omoplate & posture cervicale. Les maintiens battent
+  // lentement — cinq secondes de serrage, pas une répétition — et les deux
+  // étirements portent une séquence plus longue de rappels, leur démo fixant
+  // son propre `cycle`.
+  'chin-tuck': { beat: 2500, seq: ['Recule la tête', 'Relâche'] },
+  'retraction-scapulaire': { beat: 2500, seq: ['Serre les omoplates', 'Relâche'] },
+  'etirement-pectoral-porte': { beat: 5000, seq: ['Avance le bassin', 'Respire', 'Épaule basse', 'Tiens bon'] },
+  'etirement-elevateur-scapula': { beat: 5000, seq: ['Regarde en bas', 'Respire', 'Sans tirer', 'Relâche un peu'] },
 };
 
 export const ENCOURAGEMENTS = [

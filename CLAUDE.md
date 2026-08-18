@@ -190,7 +190,7 @@ ids, never to invented exercises.** An exercise is cross-referenced by `demos.js
 and `muscles.js`; one conjured by a model would have no demo, no voice cues and no place on
 the body map — five features degraded to gain a name.
 
-- The prompt therefore **embeds the whole catalogue** (45 lines, ~4 KB, generated from
+- The prompt therefore **embeds the whole catalogue** (178 lines, ~13 KB, generated from
   `EXERCISES` so it cannot drift). The parser resolves in three steps, each reported: id,
   then name, then substitution.
 - **Substitution requires the muscle the assistant named.** A name that already failed to
@@ -213,6 +213,9 @@ tooling:
 - `mat` uses a closed vocabulary (`Sans matériel · Haltères · Élastique · Salle · Maison`);
   the library filter matches it literally.
 - Every muscle id needs at least one zone in `overlays/BodyMap.jsx` or it can't be selected.
+  A new muscle also needs its `primaire` name listed in `ZONES` (`data/muscles.js`), or a
+  session training it counts for no profile zone at all and the progress analysis reads it as
+  unmeasured.
 
 `scripts/solve-pose.mjs` solves a pose from positions — "hand on the bench, foot on the
 floor" — instead of angles guessed by hand, which is the only way a pose that touches
@@ -242,7 +245,7 @@ viewBox); `lib/pose.js` does forward kinematics, interpolation and per-exercise 
 framing and is kept React-free; `components/ExerciseDemo.jsx` mutates SVG nodes imperatively
 via refs so a running animation never re-renders the tree above it.
 
-All 104 exercises have a demo. `demoFor(id)` still returns `null` for an unknown id and both
+All 112 exercises have a demo. `demoFor(id)` still returns `null` for an unknown id and both
 call sites degrade to the icon, so that guard stays — but a new exercise without a `DEMOS`
 entry is a gap, not a supported state.
 
@@ -254,6 +257,13 @@ Two things to know before adding or editing a pose:
   — for a leg, `bend: -1` puts the knee forward.
 - **The floor is `GROUND = 90`, and a standing figure has its hip at y≈58** (thigh 16 +
   shin 16). A support foot whose ankle does not land at y≈90 will look like it is hovering.
+
+- **A movement whose plane is perpendicular to the screen cannot be drawn at all.** Scapular
+  retraction happens across the back: from the side there is nothing to animate. The demo shows
+  what a side view *can* show — the elbow travelling backwards and the chest opening — because
+  a pose that animates the wrong thing is worse than one that animates a consequence. The same
+  limit is why the two stretches set `cycle` themselves and move by a couple of degrees: a hold
+  has no rep tempo to borrow, and the honest picture is a body that barely moves.
 
 Anything a demo is performed on is declared as data, not drawn ad hoc: `scene` for the floor
 and fixed apparatus, `props` for a bench/box/step or wall, and `weights` / `band` /
