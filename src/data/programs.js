@@ -13,6 +13,20 @@ export const PROGRAMS = [
   // 48 h de récupération. Elle est montée sur les exercices du catalogue, pas
   // sur des doublons : le Y, le W et le scapular push-up existaient déjà.
   { id: 'omoplates', nom: 'Omoplates & nuque', obj: 'Tonus', niveau: 'Débutant', lieu: 'Maison', duree: 18, kcal: 70, mat: ['Sans matériel', 'Maison'], icon: 'person-simple-tai-chi', exos: ['chin-tuck', 'retraction-scapulaire', 'y-raise', 'prone-w-raise', 'scapular-push-up', 'etirement-pectoral-porte', 'etirement-elevateur-scapula'], desc: "Posture du haut du dos : on réveille d'abord les stabilisateurs de l'omoplate (rhomboïdes, trapèzes moyen et inférieur, dentelé), puis on relâche ce qui tire l'épaule vers l'avant. Sans charge, à refaire souvent — et si une douleur persiste, irradie ou réveille la nuit, fais-toi examiner." },
+  // Le pendant bas d'« Omoplates & nuque », et pas par hasard : un bassin en
+  // antéversion creuse les lombaires, le haut du dos s'arrondit pour compenser
+  // et la tête part en avant. Même logique de séance — relâcher ce qui tire,
+  // réapprendre le mouvement, puis renforcer — et même absence de charge.
+  { id: 'bassin', nom: 'Bascule du bassin', obj: 'Tonus', niveau: 'Débutant', lieu: 'Maison', duree: 14, kcal: 55, mat: ['Sans matériel', 'Maison'], icon: 'arrow-counter-clockwise', exos: ['etirement-psoas-chevalier', 'posture-enfant', 'retroversion-bassin', 'glute-bridge', 'dead-bug', 'gainage'],
+    // Doses propres à la séance : le pont et la planche se font ici plus courts
+    // que dans leur fiche, parce que c'est la tenue du bassin qui compte et
+    // qu'elle lâche avant le muscle.
+    custom: {
+      'glute-bridge': { series: 3, reps: '12', charge: 'Poids du corps', repos: 45 },
+      'dead-bug': { series: 3, reps: '10 par côté', charge: 'Poids du corps', repos: 45 },
+      gainage: { series: 3, reps: '25 s', charge: 'Poids du corps', repos: 45 },
+    },
+    desc: "Antéversion du bassin : il bascule vers l'avant, le bas du dos se creuse et le ventre pousse. On relâche d'abord l'avant de la hanche, on réapprend la rétroversion, puis on renforce fessiers et abdos profonds. 3 à 4 fois par semaine — et lève-toi toutes les 30 minutes, c'est la position assise qui raccourcit le psoas. Une douleur qui persiste ou descend dans la jambe relève d'un examen." },
   { id: 'express', nom: 'Renforcement Express', obj: 'Prise de masse', niveau: 'Débutant', lieu: 'Maison', duree: 5, kcal: 55, mat: ['Sans matériel', 'Maison'], icon: 'timer', exos: ['pompes', 'squats', 'gainage'], desc: "5 minutes, 3 exercices : parfait quand le temps manque mais que tu veux rester régulier." },
 ];
 

@@ -175,8 +175,15 @@ run and shows the summary, and it takes a `partial` flag for a run stopped by th
 reintroduce a prescription-based count; for a completed program the two agree anyway.
 
 Per-exercise series/reps/charge/rest resolve through `src/lib/workout.js`, which layers a
-custom workout's `custom[exId]` overrides on top of the catalogue defaults. Always go through
+programme's `custom[exId]` overrides on top of the catalogue defaults. Always go through
 `effSeries`/`effRepos`/`curReps`/`curCharge` rather than reading `exById(id).series` directly.
+
+**An override belongs to the programme, not to who wrote it.** `customFor()` used to require
+`isCustom`, which meant a catalogue programme could not prescribe anything — a corrective
+session asking for 12 reps where the sheet says 20 had no way to say so. The gate is gone;
+`isCustom` still means "made by the user", and a catalogue programme with no `custom` map
+falls back to the sheet exactly as before. `Workout.jsx` and `ProgramDetail.jsx` read the map
+inline and must stay in step with `customFor()`.
 
 The voice coach effect compares a computed signature string (`view|phase|index|paused|voiceOn`)
 against a ref before restarting cadence — without it, every tick would cancel and restart

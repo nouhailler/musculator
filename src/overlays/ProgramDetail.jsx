@@ -11,7 +11,7 @@ export default function ProgramDetail() {
 
   const list = prog.exos.map((eid, i) => {
     const e = exById(eid);
-    const cp = (prog.isCustom && prog.custom && prog.custom[eid]) ? prog.custom[eid] : null;
+    const cp = (prog.custom && prog.custom[eid]) ? prog.custom[eid] : null;
     const se = cp ? cp.series : e.series;
     const rp = cp ? cp.reps : e.reps;
     const ro = cp ? cp.repos : e.repos;

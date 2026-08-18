@@ -4,7 +4,7 @@ Le prompt à donner à un assistant conversationnel pour qu'il compose un progra
 d'entraînement importable dans Musculator.
 
 > Fichier généré par `npm run gen-prompt` depuis `src/lib/programPrompt.js`, la seule source.
-> Ne pas l'éditer à la main : le prompt embarque le catalogue des 136 exercices,
+> Ne pas l'éditer à la main : le prompt embarque le catalogue des 139 exercices,
 > dérivé de `src/data/exercises.js`, et cette copie doit le suivre.
 
 ## Utilisation
@@ -179,6 +179,9 @@ chin-tuck|Chin tuck (menton rentré)|Fléchisseurs profonds du cou|D|SM
 retraction-scapulaire|Rétraction scapulaire|Rhomboïdes|D|SM
 etirement-pectoral-porte|Étirement pectoral au cadre de porte|Pectoraux|D|SM
 etirement-elevateur-scapula|Étirement élévateur de la scapula|Élévateur de la scapula|D|SM
+retroversion-bassin|Rétroversion du bassin|Sangle abdominale|D|SM
+etirement-psoas-chevalier|Étirement du psoas (chevalier servant)|Psoas-iliaque|D|SM
+posture-enfant|Posture de l'enfant|Lombaires|D|SM
 
 SÉANCES
 - Une séance Musculator = une liste d'exercices faite d'un coup. Un programme sur la semaine

@@ -206,6 +206,12 @@ export const CUES = {
   'retraction-scapulaire': { beat: 2500, seq: ['Serre les omoplates', 'Relâche'] },
   'etirement-pectoral-porte': { beat: 5000, seq: ['Avance le bassin', 'Respire', 'Épaule basse', 'Tiens bon'] },
   'etirement-elevateur-scapula': { beat: 5000, seq: ['Regarde en bas', 'Respire', 'Sans tirer', 'Relâche un peu'] },
+
+  // Bassin. Même logique : le maintien bat lentement, et les deux étirements
+  // portent une séquence de rappels puisque leur démo fixe son propre cycle.
+  'retroversion-bassin': { beat: 2500, seq: ['Plaque le dos', 'Relâche'] },
+  'etirement-psoas-chevalier': { beat: 5000, seq: ['Rentre les fesses', 'Avance un peu', 'Respire', 'Change de jambe'] },
+  'posture-enfant': { beat: 5000, seq: ['Assieds-toi', 'Bras loin devant', 'Respire', 'Relâche le dos'] },
 };
 
 export const ENCOURAGEMENTS = [

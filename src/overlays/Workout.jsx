@@ -20,7 +20,7 @@ export default function Workout() {
   const program = w.solo || progById(w.progId, allPrograms(state.customWorkouts));
   const curId = program.exos[Math.min(w.index, program.exos.length - 1)];
   const curBase = exById(curId);
-  const cp = (program.isCustom && program.custom && program.custom[curId]) ? program.custom[curId] : null;
+  const cp = (program.custom && program.custom[curId]) ? program.custom[curId] : null;
   const wCur = { ...curBase, series: cp ? cp.series : curBase.series, reps: cp ? cp.reps : curBase.reps };
   const cue = CUES[curBase.id];
   const cueHint = cue ? `« ${cue.seq.join(' — ')} »` : '';

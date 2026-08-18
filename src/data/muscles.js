@@ -15,11 +15,15 @@ export const MUSCLES = [
   { id: 'epaules', nom: 'Épaules (deltoïdes)', region: 'front', exos: ['oiseau-halteres', 'oiseau-elastique', 'developpe-arnold', 'elevation-frontale', 'face-pull', 'developpe', 'elevations-laterales', 'pompes'] },
   { id: 'pecs', nom: 'Pectoraux', region: 'front', exos: ['pompes-diamant', 'pompes-inclinees', 'pompes-declinees', 'developpe-couche', 'developpe-incline', 'ecartes-halteres', 'pull-over', 'etirement-pectoral-porte', 'pompes', 'pompes-elastique', 'dips', 'developpe'] },
   { id: 'biceps', nom: 'Biceps', region: 'front', exos: ['curl-marteau', 'curl-incline', 'curl-concentration', 'curl-elastique', 'curl-inverse', 'rowing-halteres-un-bras', 'rowing-inverse', 'curl-biceps', 'tractions', 'traction-supination', 'rowing'] },
-  { id: 'abdos', nom: 'Abdominaux', region: 'front', exos: ['dead-bug', 'hollow-body', 'bicycle', 'v-up', 'abdos', 'releve-jambes', 'reverse-crunch', 'hanging-knee-raise', 'hanging-leg-raise', 'toes-to-bar', 'ab-wheel-rollout', 'up-down-plank', 'gainage', 'mountain', 'copenhagen'] },
+  { id: 'abdos', nom: 'Abdominaux', region: 'front', exos: ['retroversion-bassin', 'dead-bug', 'hollow-body', 'bicycle', 'v-up', 'abdos', 'releve-jambes', 'reverse-crunch', 'hanging-knee-raise', 'hanging-leg-raise', 'toes-to-bar', 'ab-wheel-rollout', 'up-down-plank', 'gainage', 'mountain', 'copenhagen'] },
   // Ajoutés quand le catalogue a couvert la rotation, la préhension et les
   // érecteurs : trois familles qu'aucun exercice n'atteignait.
   { id: 'obliques', nom: 'Obliques', region: 'front', exos: ['planche-laterale', 'russian-twist', 'pallof-press', 'bicycle', 'copenhagen', 'hanging-windshield-wipers', 'suitcase-carry', 'up-down-plank'] },
   { id: 'avant-bras', nom: 'Avant-bras (grip)', region: 'front', exos: ['farmer-walk', 'dead-hang', 'wrist-curl', 'reverse-wrist-curl', 'pinch-grip', 'curl-inverse', 'curl-marteau', 'wrist-roller', 'pronation-supination-haltere', 'plate-wrist-curl'] },
+  // Le psoas n'avait pas de zone alors qu'il commande la bascule du bassin :
+  // il relie le fémur aux lombaires, et une journée assise le raccourcit. Sa
+  // zone est le pli de l'aine, là où on le sent.
+  { id: 'psoas', nom: 'Psoas-iliaque (fléchisseurs de hanche)', region: 'front', exos: ['etirement-psoas-chevalier', 'releve-jambes', 'hanging-knee-raise', 'reverse-nordic', 'mountain'] },
   {
     id: 'quads',
     nom: 'Quadriceps',
@@ -62,7 +66,7 @@ export const MUSCLES = [
     exos: ['sliding-leg-curl', 'hamstring-walkout', 'pull-through', 'rdl', 'rdl-unilateral', 'good-morning', 'curl-nordique', 'leg-curl-allonge', 'ghr', 'kettlebell-swing', 'hyperextension-45', 'fentes', 'squats'],
   },
   { id: 'mollets', nom: 'Mollets', region: 'back', exos: ['mollets-unilateral', 'mollets-marche', 'tibialis-raise', 'seated-tibialis-raise', 'pogo-jumps', 'mollets-debout', 'mollets-assis', 'fentes', 'step-up'] },
-  { id: 'lombaires', nom: 'Lombaires (érecteurs)', region: 'back', exos: ['superman', 'back-extension-sol', 'y-raise', 'pull-through', 'bird-dog', 'good-morning', 'hyperextension-45', 'suitcase-carry', 'reverse-hyperextension'] },
+  { id: 'lombaires', nom: 'Lombaires (érecteurs)', region: 'back', exos: ['posture-enfant', 'superman', 'back-extension-sol', 'y-raise', 'pull-through', 'bird-dog', 'good-morning', 'hyperextension-45', 'suitcase-carry', 'reverse-hyperextension'] },
 ];
 
 // ---------------------------------------------------------------------------
@@ -79,8 +83,8 @@ export const ZONES = [
   { label: 'Pectoraux', muscles: ['Pectoraux'] },
   // 'Rhomboïdes' et 'Trapèzes moyens' arrivent des exercices de posture : sans
   // eux dans la liste, une séance d'omoplates ne compterait pour aucune zone.
-  { label: 'Dos', muscles: ['Dos', 'Rhomboïdes', 'Trapèzes moyens'] },
-  { label: 'Jambes', muscles: ['Quadriceps', 'Ischios', 'Fessiers', 'Moyen fessier', 'Adducteurs', 'Mollets'] },
+  { label: 'Dos', muscles: ['Dos', 'Rhomboïdes', 'Trapèzes moyens', 'Lombaires'] },
+  { label: 'Jambes', muscles: ['Quadriceps', 'Ischios', 'Fessiers', 'Moyen fessier', 'Adducteurs', 'Mollets', 'Psoas-iliaque'] },
   { label: 'Épaules', muscles: ['Épaules', 'Rotateurs externes', 'Dentelé antérieur'] },
   { label: 'Bras', muscles: ['Triceps', 'Biceps'] },
   { label: 'Abdos', muscles: ['Sangle abdominale', 'Grand droit'] },

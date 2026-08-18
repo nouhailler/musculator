@@ -1,7 +1,13 @@
 import { exById } from '../data/exercises.js';
 
+// Per-exercise overrides. Deliberately not gated on `isCustom`: a prescription
+// belongs to the programme, not to who wrote it. A corrective session in the
+// catalogue asks for twelve reps where the exercise sheet's default is twenty,
+// and that has to reach the guided session the same way a user's own workout
+// does. `isCustom` still means "made by the user"; catalogue programmes without
+// a `custom` map keep falling back to the sheet.
 function customFor(program, exId) {
-  return program?.isCustom && program.custom && program.custom[exId] ? program.custom[exId] : null;
+  return program?.custom && program.custom[exId] ? program.custom[exId] : null;
 }
 
 export function effSeries(program, exId) {

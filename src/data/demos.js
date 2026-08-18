@@ -1323,6 +1323,39 @@ export const DEMOS = {
       { hip: [52, 72], torso: -85, arm: [-47, -153], armB: [88, 94], leg: [0, 90], legB: [4, 86], foot: 0 },
     ],
   },
+  // --- Bassin ---------------------------------------------------------------
+  // La rétroversion est un mouvement de quelques millimètres dans un plan que
+  // le profil montre mal : la pose fait tourner le bassin et redresse la ligne
+  // du buste, faute de pouvoir dessiner un creux lombaire qui s'écrase.
+  'retroversion-bassin': {
+    scene: 'mat',
+    frames: [
+      // dos creusé : le bassin bascule vers l'avant
+      { hip: [56, 86.5], torso: 176, arm: [8, 4], armB: [12, 8], leg: [-45, 80], legB: [-41, 84], foot: 0 },
+      // rétroversion : le pubis remonte, le bas du dos se plaque au sol
+      { hip: [56, 85.3], torso: 182, arm: [8, 4], armB: [12, 8], leg: [-45, 80], legB: [-41, 84], foot: 0 },
+    ],
+  },
+
+  'etirement-psoas-chevalier': {
+    scene: 'mat',
+    cycle: 5000, // maintien : seul le bassin avance de deux centimètres
+    frames: [
+      // chevalier servant : genou arrière au sol, tibia avant vertical
+      { hip: [46, 76], torso: -88, arm: [62.3, 59.5], armB: [66, 63], leg: [-7.2, 89.6], legB: [122.7, 180], foot: 0, footB: 190 },
+      // le bassin avance : l'aine et l'avant de la cuisse arrière s'ouvrent
+      { hip: [49, 76], torso: -90, arm: [63.9, 61.1], armB: [67, 65], leg: [-7.1, 93.1], legB: [126, 178], foot: 0, footB: 190 },
+    ],
+  },
+
+  'posture-enfant': {
+    scene: 'mat',
+    cycle: 5000, // maintien : la respiration seule
+    frames: [
+      { hip: [58, 75], torso: 162, arm: [170, 170], armB: [173, 173], leg: [70, 180], legB: [74, 177], foot: 192, footB: 190 },
+      { hip: [58, 74.4], torso: 165, arm: [168, 168], armB: [171, 171], leg: [70, 180], legB: [74, 177], foot: 192, footB: 190 },
+    ],
+  },
 };
 
 export function demoFor(exId) {

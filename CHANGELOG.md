@@ -10,6 +10,24 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Trois exercices de bassin et un programme « Bascule du bassin »** — le versant bas de la
+  même posture : un bassin en antéversion creuse les lombaires, et le haut du dos s'arrondit
+  pour compenser.
+  - **Ce qui manquait** : la rétroversion du bassin — le mouvement de contrôle lui-même, qu'il
+    faut réapprendre avant tout le reste — l'étirement du psoas en chevalier servant, et la
+    posture de l'enfant. Le renforcement, lui, existait déjà : le programme réutilise
+    `glute-bridge`, `dead-bug` et `gainage` plutôt que d'en refaire des variantes.
+  - **Le psoas entre sur la carte musculaire** (20 muscles) : il commande la bascule du bassin
+    et aucune zone ne le touchait. Au passage, `Lombaires` manquait dans le pont `ZONES` —
+    une séance de lombaires ne comptait pour aucune zone du profil ; elle compte maintenant
+    pour « Dos ».
+  - **Un programme du catalogue peut désormais prescrire ses propres doses.** `customFor()`
+    dans `lib/workout.js` exigeait `isCustom`, donc seules les séances créées par l'utilisateur
+    pouvaient surcharger séries et répétitions : le pont fessier serait parti à 3 × 20 là où la
+    séance en demande 12, et la planche à 45 s au lieu de 25. Le garde-fou est levé —
+    `isCustom` continue de dire « faite par l'utilisateur », et un programme sans `custom`
+    retombe sur la fiche comme avant.
+
 - **Quatre exercices de posture, trois muscles, et un programme « Omoplates & nuque »** — le
   travail correctif de la ceinture scapulaire, monté sur ce que le catalogue avait déjà.
   - **Ce qui manquait vraiment** : chin tuck (placement du cou), rétraction scapulaire

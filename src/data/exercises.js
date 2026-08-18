@@ -2135,7 +2135,63 @@ export const EXERCISES = [
     variFacile: "Sans les mains : le seul poids de la tête suffit.",
     variDifficile: "Assis sur la main du côté étiré pour bloquer l'épaule en bas.",
     similaires: ['chin-tuck', 'etirement-pectoral-porte'],
-  },];
+  },
+
+  // --- Bassin : rétroversion et libération des fléchisseurs -----------------
+  // Le versant bas du même problème postural que le bloc précédent : un bassin
+  // basculé en avant creuse les lombaires, et le haut du dos s'arrondit pour
+  // compenser. Le renforcement existait déjà (glute-bridge, dead-bug, gainage,
+  // bird-dog) ; ce qui manquait, c'est le mouvement de contrôle lui-même et de
+  // quoi relâcher l'avant de la hanche, qu'une journée assise raccourcit.
+  {
+    id: 'retroversion-bassin', nom: 'Rétroversion du bassin', muscle: 'Sangle abdominale · grand fessier', niveau: 'Débutant', lieu: 'Maison',
+    mat: ['Sans matériel', 'Maison'], series: 3, reps: '10 × 5 s', repos: 30, icon: 'arrow-counter-clockwise',
+    desc: "Allongé sur le dos, genoux pliés, pieds à plat : contracte les abdos et les fessiers pour écraser le creux du bas du dos contre le sol, comme si le pubis remontait vers le menton.",
+    conseils: ["Le mouvement vient du bassin : ne pousse pas sur les pieds", "Le bas du dos touche le sol sur toute sa longueur", "Cinq secondes de maintien, puis relâche complètement"],
+    primaire: 'Sangle abdominale', secondaires: ['Grand fessier', 'Transverse'],
+    sollicitation: "Le transverse et le grand droit tirent le pubis vers le haut pendant que les fessiers tirent l'arrière du bassin vers le bas : c'est un couple de forces, pas un effort de force. Le travail est isométrique et minuscule en amplitude — toute la difficulté est de le produire sans les jambes ni les lombaires.",
+    surcharge: "Rien à surcharger, mais tout à rater : pousser sur les talons ou serrer les cuisses fait bouger le bassin sans que les abdos travaillent. Si le bas du dos tire, réduis encore l'effort — c'est un exercice de contrôle, qui se refait plusieurs fois par jour sans fatigue.",
+    depart: "Allongé sur le dos, genoux pliés à 90°, pieds à plat au sol, bras le long du corps.",
+    mouvement: "Bascule le bassin en arrière pour plaquer le bas du dos au sol, tiens 5 secondes en respirant, puis relâche jusqu'à retrouver le creux naturel.",
+    respiration: "Souffle en plaquant le dos — l'expiration aide le transverse à se contracter — puis respire normalement pendant le maintien.",
+    erreurs: ["Pousser sur les pieds pour soulever le bassin", "Bloquer sa respiration", "Serrer les fessiers sans engager les abdos"],
+    variFacile: "Mains sous le bas du dos : elles disent quand le creux est bien écrasé.",
+    variDifficile: "Même chose debout dos au mur, ou à quatre pattes — le bassin n'a plus le sol comme repère.",
+    similaires: ['dead-bug', 'glute-bridge', 'gainage'],
+  },
+  {
+    id: 'etirement-psoas-chevalier', nom: 'Étirement du psoas (chevalier servant)', muscle: 'Psoas-iliaque', niveau: 'Débutant', lieu: 'Maison',
+    mat: ['Sans matériel', 'Maison'], series: 2, reps: '40 s / jambe', repos: 20, icon: 'person-simple-hike',
+    desc: "À genoux, une jambe devant, pied à plat. Rentre d'abord les fesses (rétroversion), puis avance très légèrement le bassin jusqu'à sentir l'aine et l'avant de la cuisse arrière s'étirer.",
+    conseils: ["Rétroversion d'abord : sans elle, tu cambres au lieu d'étirer", "Avance de deux centimètres, pas plus", "Buste droit, épaules au-dessus des hanches"],
+    primaire: 'Psoas-iliaque', secondaires: ['Droit fémoral', 'Grand fessier'],
+    sollicitation: "Le psoas relie le haut du fémur aux vertèbres lombaires : il ne s'allonge que si le bassin reste en rétroversion pendant que la hanche s'ouvre. Sans ce verrou, le bassin bascule en avant et c'est la colonne qui prend l'amplitude — on croit s'étirer alors qu'on creuse le dos.",
+    surcharge: "Le genou au sol et le bas du dos sont les deux points sensibles : pose un coussin sous le genou, et arrête d'avancer dès que tu sens le bas du dos plutôt que l'aine. Un étirement de psoas se dose en minutes par jour, jamais en intensité.",
+    depart: "À genoux sur une jambe, l'autre pied à plat devant, genou au-dessus de la cheville, buste droit.",
+    mouvement: "Rentre les fesses pour verrouiller le bassin, avance légèrement le poids du corps, tiens 40 secondes en respirant, puis change de jambe.",
+    respiration: "Respire lentement ; à chaque expiration, laisse la hanche s'ouvrir d'un demi-centimètre.",
+    erreurs: ["Cambrer le bas du dos pour aller plus loin", "Genou avant qui dépasse la cheville", "Rebondir au lieu de tenir"],
+    variFacile: "Mains posées sur la cuisse avant, amplitude réduite, coussin sous le genou.",
+    variDifficile: "Pied arrière posé sur un canapé — l'étirement passe alors sur le droit fémoral — ou bras levé du côté de la jambe arrière.",
+    similaires: ['posture-enfant', 'retroversion-bassin', 'reverse-nordic'],
+  },
+  {
+    id: 'posture-enfant', nom: "Posture de l'enfant", muscle: 'Lombaires (érecteurs)', niveau: 'Débutant', lieu: 'Maison',
+    mat: ['Sans matériel', 'Maison'], series: 2, reps: '60 s', repos: 20, icon: 'moon',
+    desc: "À genoux, assieds-toi sur les talons et penche-toi en avant, bras tendus loin devant sur le sol. Le bas du dos s'ouvre et les érecteurs lâchent prise.",
+    conseils: ["Fesses en contact avec les talons", "Bras loin devant, front vers le sol", "Respire dans le ventre, puis dans les côtes"],
+    primaire: 'Lombaires', secondaires: ['Grand dorsal', 'Trapèzes inférieurs'],
+    sollicitation: "La flexion complète des hanches et de la colonne met les érecteurs lombaires en allongement passif, sans qu'aucun muscle n'ait à travailler pour tenir la position. C'est le maintien long qui compte : un muscle contracté toute la journée pour soutenir une cambrure ne relâche pas en dix secondes.",
+    surcharge: "Rien ne se surcharge, mais la position tire sur les genoux et les chevilles : un coussin derrière les genoux ou sous les fesses règle la plupart des gênes. En cas de douleur qui descend dans la jambe, arrête et fais-toi examiner plutôt que d'insister.",
+    depart: "À genoux, gros orteils qui se touchent, genoux écartés de la largeur du bassin.",
+    mouvement: "Assieds-toi sur les talons, penche le buste en avant et allonge les bras devant toi ; tiens une minute en respirant lentement.",
+    respiration: "Respiration lente et profonde : chaque expiration relâche un peu plus le bas du dos.",
+    erreurs: ["Fesses qui restent en l'air", "Épaules haussées vers les oreilles", "Tenir en apnée"],
+    variFacile: "Coussin entre les fesses et les talons, genoux plus écartés.",
+    variDifficile: "Bras déportés d'un côté pour étirer aussi le grand dorsal et le flanc.",
+    similaires: ['etirement-psoas-chevalier', 'bird-dog', 'retroversion-bassin'],
+  },
+];
 
 // Movement patterns, in the order the catalogue presents them.
 export const PATTERNS = [

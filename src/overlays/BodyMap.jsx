@@ -135,6 +135,10 @@ const FRONT_ZONES = [
   { id: 'adducteurs', rect: { x: 104, y: 174, w: 8, h: 52, rx: 4 } },
   // Le dentelé court sous l'aisselle, sur les côtes : deux bandes latérales
   // posées après les pectoraux pour rester cliquables là où elles les touchent.
+  // Le pli de l'aine, sous les abdominaux et par-dessus eux dans l'ordre de
+  // rendu : c'est là qu'on sent le psoas, et là qu'on l'étire.
+  { id: 'psoas', rect: { x: 84, y: 122, w: 12, h: 17, rx: 5 } },
+  { id: 'psoas', rect: { x: 104, y: 122, w: 12, h: 17, rx: 5 } },
   { id: 'dentele', rect: { x: 72, y: 82, w: 9, h: 20, rx: 4 } },
   { id: 'dentele', rect: { x: 119, y: 82, w: 9, h: 20, rx: 4 } },
 ];
