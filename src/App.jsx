@@ -6,6 +6,7 @@ import TabBar from './components/TabBar.jsx';
 import TopBar from './components/TopBar.jsx';
 import Drawer from './components/Drawer.jsx';
 import HelpSheet from './components/HelpSheet.jsx';
+import Tour from './components/Tour.jsx';
 import Home from './screens/Home.jsx';
 import Programs from './screens/Programs.jsx';
 import Library from './screens/Library.jsx';
@@ -22,6 +23,7 @@ import FoodEntry from './overlays/FoodEntry.jsx';
 import ImportMeals from './overlays/ImportMeals.jsx';
 import Activity from './overlays/Activity.jsx';
 import ImportProgram from './overlays/ImportProgram.jsx';
+import Help from './overlays/Help.jsx';
 import Workout from './overlays/Workout.jsx';
 import WorkoutComplete from './overlays/WorkoutComplete.jsx';
 import AddExercises from './overlays/AddExercises.jsx';
@@ -30,7 +32,7 @@ const TAB_SCREENS = { home: Home, programs: Programs, library: Library, nutritio
 const OVERLAYS = {
   exercise: ExerciseDetail, program: ProgramDetail, bodymap: BodyMap, profile: Profile,
   builder: Builder, foodSearch: FoodSearch, foodEntry: FoodEntry, importMeals: ImportMeals,
-  activity: Activity, importProgram: ImportProgram, addExercises: AddExercises,
+  activity: Activity, importProgram: ImportProgram, addExercises: AddExercises, help: Help,
 };
 
 export default function App() {
@@ -51,6 +53,7 @@ export default function App() {
         <UpdateBanner />
         <Drawer />
         <HelpSheet />
+        <Tour />
         <DisclaimerModal />
       </div>
     </div>

@@ -7,6 +7,7 @@ import { scale } from '../lib/food.js';
 import { dateKey } from '../lib/format.js';
 import Icon from '../components/ui/Icon.jsx';
 import { SecondaryButton } from '../components/ui/Button.jsx';
+import Tip from '../components/Tip.jsx';
 
 const shiftDate = (key, days) => {
   const [y, m, d] = key.split('-').map(Number);
@@ -105,17 +106,19 @@ export default function Nutrition() {
 
       {/* Dictate-and-paste import. Sits above the day rather than inside a
           single meal: one dictation usually covers several meals at once. */}
-      <SecondaryButton
-        icon="sparkle" onClick={actions.openMealImport}
-        style={{ width: '100%', padding: 9, justifyContent: 'center', fontSize: 12, marginBottom: 14 }}
-      >
-        Importer un repas dicté
-      </SecondaryButton>
+      <div data-tour="nutrition-import" style={{ marginBottom: 14 }}>
+        <SecondaryButton
+          icon="sparkle" onClick={actions.openMealImport}
+          style={{ width: '100%', padding: 9, justifyContent: 'center', fontSize: 12 }}
+        >
+          Importer un repas dicté
+        </SecondaryButton>
+      </div>
 
       {/* --- Score Musculation Quotidien --- */}
-      <div style={{ background: 'linear-gradient(135deg,var(--color-accent-900),var(--color-surface))', border: '1px solid var(--color-accent-800)', borderRadius: 'var(--radius-lg)', padding: 14, marginBottom: 14 }}>
+      <div data-tour="nutrition-score" style={{ background: 'linear-gradient(135deg,var(--color-accent-900),var(--color-surface))', border: '1px solid var(--color-accent-800)', borderRadius: 'var(--radius-lg)', padding: 14, marginBottom: 14 }}>
         <div style={{ fontSize: 10, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--color-accent-200)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 5 }}>
-          <Icon name="target" weight="fill" size={12} />Score musculation quotidien
+          <Icon name="target" weight="fill" size={12} />Score musculation quotidien<Tip id="scoreJour" size={13} />
         </div>
         <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 12 }}>
           <Gauge score={score.score} vide={score.vide} />
@@ -148,9 +151,11 @@ export default function Nutrition() {
       </div>
 
       {/* --- Macros vs objectif --- */}
-      <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', padding: 13, marginBottom: 14 }}>
+      <div data-tour="nutrition-macros" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', padding: 13, marginBottom: 14 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
-          <span style={{ fontSize: 13, fontWeight: 600 }}>Consommé vs objectif</span>
+          <span style={{ fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 3 }}>
+            Consommé vs objectif<Tip id="ciblesMacros" size={13} />
+          </span>
           <span style={{ fontSize: 11, color: 'var(--color-neutral-500)' }}>
             {targets.goal.label}
             {/* Says where the bars' targets come from: the goal alone no longer

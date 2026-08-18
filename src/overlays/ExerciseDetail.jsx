@@ -6,6 +6,7 @@ import ExerciseDemo from '../components/ExerciseDemo.jsx';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
 import { PrimaryButton, SecondaryButton } from '../components/ui/Button.jsx';
+import Tip from '../components/Tip.jsx';
 
 function InfoRow({ icon, title, body }) {
   return (
@@ -91,6 +92,7 @@ export default function ExerciseDetail({ exId, onBack }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7 }}>
             <Icon name="target" weight="fill" size={16} color="var(--color-accent-200)" />
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-accent-100)' }}>{ex.primaire}</span>
+            <Tip id="sollicitation" size={13} />
           </div>
           <p style={{ fontSize: 12, lineHeight: 1.55, color: 'var(--color-neutral-200)', margin: '0 0 9px' }}>{ex.sollicitation}</p>
           <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', marginBottom: 11 }}>
@@ -99,7 +101,9 @@ export default function ExerciseDetail({ exId, onBack }) {
           <div style={{ display: 'flex', gap: 9, padding: '9px 10px', borderRadius: 'var(--radius-md)', background: 'var(--color-neutral-900)', border: '1px solid color-mix(in srgb,var(--color-warn) 30%,transparent)' }}>
             <Icon name="warning-circle" weight="fill" size={15} color="var(--color-warn)" style={{ flex: 'none', marginTop: 1 }} />
             <div>
-              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-warn)', marginBottom: 3 }}>Éviter la surcharge</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 2, fontSize: 11, fontWeight: 600, color: 'var(--color-warn)', marginBottom: 3 }}>
+                Éviter la surcharge<Tip id="surcharge" size={12} />
+              </div>
               <div style={{ fontSize: 12, lineHeight: 1.5, color: 'var(--color-neutral-200)' }}>{ex.surcharge}</div>
             </div>
           </div>

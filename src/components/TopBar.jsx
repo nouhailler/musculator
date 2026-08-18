@@ -35,7 +35,7 @@ export default function TopBar() {
     >
       <button
         type="button" onClick={actions.openMenu} title="Menu" aria-label="Ouvrir le menu"
-        style={btn}
+        data-tour="topbar-menu" style={btn}
       >
         <Icon name="list" size={21} />
       </button>
@@ -46,7 +46,7 @@ export default function TopBar() {
 
       <button
         type="button" onClick={actions.openHelp} title="Aide" aria-label="Aide sur cet écran"
-        disabled={!hasHelp}
+        disabled={!hasHelp} data-tour="topbar-help"
         style={{ ...btn, opacity: hasHelp ? 1 : 0.35, cursor: hasHelp ? 'pointer' : 'default' }}
       >
         <Icon name="question" size={20} />

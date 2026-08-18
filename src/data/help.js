@@ -113,6 +113,22 @@ export const HELP = {
   },
 
   // --- Overlays -----------------------------------------------------------
+  // The guided session hides the top bar, so this one is reached from the
+  // pause sheet rather than from the « ? ».
+  workout: {
+    titre: 'Séance guidée',
+    intro: "L'app enchaîne effort et repos, compte les séries et annonce le rythme — tu n'as qu'à exécuter.",
+    points: [
+      ['Série terminée', "Le bouton valide la série faite et lance le repos. C'est lui, et lui seul, qui compte ce qui sera enregistré : une séance arrêtée avant la fin ne consigne que le travail réel."],
+      ['Répétitions & charge', "Modifiables à la volée pendant la séance. Le programme d'origine n'est pas touché — le changement vaut pour cette séance."],
+      ['Repos', "Le décompte s'enchaîne tout seul. « +15 s » rallonge, « Passer » repart tout de suite."],
+      ['Mode plein écran', "Les grands boutons, pour un téléphone posé à un mètre. Il n'affiche que l'essentiel de la phase en cours."],
+      ['Coach vocal', "Il annonce le mouvement et rythme les répétitions. Le haut-parleur le coupe sans arrêter la séance."],
+      ['Pause', "Elle gèle le chrono, le coach et la démo — et donne accès à cette aide. Rien ne tourne tant qu'elle dure."],
+      ['Quitter', "La croix propose « Enregistrer et quitter » : les séries déjà faites partent au journal, marquées « partielle »."],
+      ['Pas de mise à jour ici', "Une mise à jour recharge l'app, et la séance en cours ne vit qu'en mémoire : elle est refusée jusqu'à la fin."],
+    ],
+  },
   exercise: {
     titre: 'Fiche exercice',
     intro: "Tout ce qu'il faut pour exécuter le mouvement correctement.",
@@ -185,6 +201,17 @@ export const HELP = {
       ['Valeurs manquantes', "Si l'assistant nomme un aliment sans donner ses valeurs, Musculator cherche d'abord dans tes propres aliments — un produit que tu as scanné porte les vraies valeurs de sa marque — puis dans la table CIQUAL. L'aperçu affiche la source retenue sous chaque aliment : vérifie-la, « chocolat noir » peut tomber sur un chocolat fourré."],
       ['Avertissements', "Ils listent ce qui a été deviné : quantité pas exprimée en grammes (« 3 figues » devient 100 g), repas non reconnu, valeurs hors du bloc « pour100g »."],
       ['Estimations', "Les valeurs viennent d'un modèle de langage, pas d'une table officielle : elles sont approximatives et à vérifier si un aliment compte vraiment."],
+    ],
+  },
+  help: {
+    titre: "Centre d'aide",
+    intro: "Tout ce qui explique l'app, au même endroit : recherche, questions fréquentes, tutoriels guidés et contact du support.",
+    points: [
+      ['Recherche', "Un seul champ cherche dans les trois : questions fréquentes, guides d'écran et tutoriels. Les accents ne comptent pas, et chaque mot tapé restreint la recherche."],
+      ['Tutoriels interactifs', "Ce ne sont pas des vidéos : l'app se déplace d'écran en écran et met en évidence l'élément dont parle l'étape. On peut en sortir à tout moment et les relancer d'ici."],
+      ['Guides des écrans', "Le même texte que le « ? » en haut à droite, mais consultable sans être sur l'écran concerné."],
+      ['Contacter le support', "Le message part vers contact@swinux.ch depuis ton application mail. Version, appareil, système et navigateur sont joints automatiquement, et affichés avant l'envoi."],
+      ['Rien de personnel dans le diagnostic', "Il porte le nombre de séances et de jours consignés, jamais leur contenu. La clé OpenRouter n'est jamais lue."],
     ],
   },
   foodEntry: {

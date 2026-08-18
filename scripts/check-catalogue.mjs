@@ -9,7 +9,7 @@
 // Reads the data modules directly and greps the two files that are code rather
 // than data (the icon registry and the body map's zones), so a rule can only
 // pass by actually being satisfied.
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 
 const { EXERCISES, PATTERNS } = await import('../src/data/exercises.js');
 const { PROGRAMS } = await import('../src/data/programs.js');
@@ -156,6 +156,113 @@ for (const m of MUSCLES) {
   if (!new RegExp(`id: '${m.id}'`).test(bodyMap)) {
     fail('muscle without zone', `"${m.id}" has no zone in BodyMap.jsx, so it cannot be selected`);
   }
+}
+
+// --- Help, FAQ, tutorials, tooltips ----------------------------------------
+//
+// The help is content like the catalogue is content, and it rots the same way:
+// a renamed screen leaves a FAQ answer pointing nowhere, a moved element leaves
+// a tour step highlighting nothing, a deleted `<Tip>` leaves an orphan entry.
+// None of that throws at runtime — it just quietly stops helping.
+
+const { HELP } = await import('../src/data/help.js');
+const { FAQ, FAQ_CATS } = await import('../src/data/faq.js');
+const { TOURS } = await import('../src/data/tours.js');
+const { TIPS } = await import('../src/data/tips.js');
+
+// Every source file, read once: the anchors and the <Tip> call sites are code,
+// not data, so they can only be verified by looking at the code.
+function sourceFiles(dir) {
+  const out = [];
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    const full = `${dir}/${e.name}`;
+    if (e.isDirectory()) out.push(...sourceFiles(full));
+    else if (/\.jsx?$/.test(e.name)) out.push(full);
+  }
+  return out;
+}
+const srcDir = new URL('../src', import.meta.url).pathname;
+const sources = sourceFiles(srcDir).map((f) => readFileSync(f, 'utf8')).join('\n');
+
+// The screens the app can actually be on, read from App.jsx so a renamed
+// screen breaks here rather than in a dead link.
+const appJsx = readFileSync(new URL('../src/App.jsx', import.meta.url), 'utf8');
+const mapKeys = (name) => {
+  const block = appJsx.match(new RegExp(`const ${name} = \\{([^}]*)\\}`, 's'));
+  return new Set(block ? [...block[1].matchAll(/(\w+):/g)].map((m) => m[1]) : []);
+};
+const TABS = mapKeys('TAB_SCREENS');
+const VIEWS = mapKeys('OVERLAYS');
+const tourIds = new Set(TOURS.map((t) => t.id));
+
+// `workout` and `complete` render outside the OVERLAYS map, through their own
+// conditionals in App.jsx. They may carry help — the session's is reached from
+// the pause sheet, since the top bar hides itself there — but nothing requires
+// it, which is why they are listed rather than parsed.
+const OUTSIDE = new Set(['workout', 'complete']);
+for (const key of [...TABS, ...VIEWS]) {
+  if (!HELP[key]) fail('screen without help', `"${key}" has no entry in help.js`);
+}
+for (const key of Object.keys(HELP)) {
+  if (!TABS.has(key) && !VIEWS.has(key) && !OUTSIDE.has(key)) {
+    fail('orphan help', `help.js has "${key}", which is neither a tab nor an overlay`);
+  }
+}
+
+const catKeys = new Set(FAQ_CATS.map((c) => c.key));
+for (const c of FAQ_CATS) {
+  if (c.icon && !registered.has(c.icon)) fail('unregistered icon', `FAQ category "${c.key}" uses "${c.icon}" — add it to Icon.jsx`);
+}
+
+const faqIds = new Set();
+for (const f of FAQ) {
+  const where = `FAQ "${f.id}"`;
+  if (faqIds.has(f.id)) fail('duplicate id', `FAQ "${f.id}"`);
+  faqIds.add(f.id);
+  if (!f.q || !Array.isArray(f.r) || !f.r.length) fail('empty FAQ', where);
+  if (!catKeys.has(f.cat)) fail('unknown category', `${where} is in "${f.cat}"`);
+  const l = f.lien;
+  if (l) {
+    if (!l.label) fail('link without label', where);
+    if (l.tab && !TABS.has(l.tab)) fail('broken link', `${where} points at tab "${l.tab}"`);
+    if (l.view && !VIEWS.has(l.view)) fail('broken link', `${where} points at view "${l.view}"`);
+    if (l.tour && !tourIds.has(l.tour)) fail('broken link', `${where} points at tour "${l.tour}"`);
+    if (!l.tab && !l.view && !l.tour) fail('empty link', where);
+  }
+}
+
+// Anchors written literally, plus the tab bar's computed ones — the only place
+// a `data-tour` is built rather than spelled out.
+const anchors = new Set([...sources.matchAll(/data-tour="([\w-]+)"/g)].map((m) => m[1]));
+if (/data-tour=\{`tab-\$\{/.test(sources)) for (const t of TABS) anchors.add(`tab-${t}`);
+
+const tourSeen = new Set();
+for (const t of TOURS) {
+  const where = `tour "${t.id}"`;
+  if (tourSeen.has(t.id)) fail('duplicate id', where);
+  tourSeen.add(t.id);
+  if (t.icon && !registered.has(t.icon)) fail('unregistered icon', `${where} uses "${t.icon}"`);
+  if (!t.steps?.length) fail('empty tour', where);
+  for (const [i, s] of (t.steps || []).entries()) {
+    const at = `${where} step ${i + 1}`;
+    if (!s.titre || !s.texte) fail('empty step', at);
+    if (s.tab && !TABS.has(s.tab)) fail('broken step', `${at} goes to tab "${s.tab}"`);
+    if (s.view && !VIEWS.has(s.view)) fail('broken step', `${at} goes to view "${s.view}"`);
+    if (s.cible && !anchors.has(s.cible)) {
+      fail('missing anchor', `${at} points at data-tour="${s.cible}", which no component carries`);
+    }
+  }
+}
+
+// A tip nobody renders is a tip nobody reads.
+const tipUses = new Set([...sources.matchAll(/<Tip\s+id="(\w+)"/g)].map((m) => m[1]));
+for (const [id, tip] of Object.entries(TIPS)) {
+  if (!tipUses.has(id)) fail('unused tip', `"${id}" is defined in tips.js but rendered nowhere`);
+  if (tip.faq && !faqIds.has(tip.faq)) fail('broken tip link', `"${id}" points at FAQ "${tip.faq}"`);
+  if (!tip.titre || !tip.texte) fail('empty tip', `"${id}"`);
+}
+for (const id of tipUses) {
+  if (!TIPS[id]) fail('unknown tip', `<Tip id="${id}"> has no entry in tips.js`);
 }
 
 // --- Report ----------------------------------------------------------------

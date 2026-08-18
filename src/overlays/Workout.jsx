@@ -227,6 +227,34 @@ export default function Workout() {
         </div>
       )}
 
+      {/* Pause is where help belongs during a session: the top bar hides itself
+          here on purpose, and a floating « ? » next to the set buttons would be
+          tapped by mistake and cost a series. Nothing runs while this is up —
+          the timers are already frozen — so reading is free. */}
+      {w.paused && !w.quitAsk && !state.helpOpen && (
+        <div className="sheet-backdrop" style={{ zIndex: 64 }} onClick={actions.togglePause}>
+          <div className="sheet" onClick={(e) => e.stopPropagation()} style={{ animation: 'mRise .2s ease' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 6 }}>
+              <Icon name="pause" weight="fill" size={17} color="var(--color-accent-200)" />
+              <span style={{ fontSize: 16, fontWeight: 600, fontFamily: 'var(--font-heading)' }}>Séance en pause</span>
+            </div>
+            <div style={{ fontSize: 13, lineHeight: 1.55, color: 'var(--color-neutral-300)', marginBottom: 16 }}>
+              {wCur.nom} · {doneSets} série{doneSets > 1 ? 's' : ''} en {fmt(w.elapsed)}. Le chrono et le coach vocal
+              sont arrêtés jusqu'à ce que tu reprennes.
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+              <PrimaryButton icon="play" onClick={actions.togglePause}>Reprendre</PrimaryButton>
+              <SecondaryButton icon="question" onClick={actions.openHelp} style={{ width: '100%', padding: 12, justifyContent: 'center' }}>
+                Aide sur la séance guidée
+              </SecondaryButton>
+              <GhostButton icon="x" onClick={actions.requestQuit} style={{ padding: 10, justifyContent: 'center' }}>
+                Quitter la séance
+              </GhostButton>
+            </div>
+          </div>
+        </div>
+      )}
+
       {w.quitAsk && (
         <div className="sheet-backdrop">
           <div className="sheet">

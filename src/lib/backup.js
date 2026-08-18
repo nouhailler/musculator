@@ -21,6 +21,7 @@ const SLICES = {
   sessionLog: 'array',
   disclaimerAcked: 'boolean',
   voiceOn: 'boolean',
+  tourDone: 'boolean',
   openrouter: 'object',
   nutriLog: 'object',
   foodCache: 'object',

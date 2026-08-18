@@ -10,6 +10,51 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Un centre d'aide dans l'app** — aide, FAQ, tutoriels et support, sans jamais avoir à en
+  sortir. Nouvel overlay `help`, joignable depuis le menu, depuis le profil (« Aide &
+  support ») et depuis le pied de la feuille d'aide contextuelle.
+  - **Une recherche, trois corpus** (`lib/helpSearch.js`) : la FAQ, les guides d'écran de
+    `data/help.js` et les tutoriels sont indexés ensemble, parce que l'utilisateur ne sait pas
+    dans lequel des trois se trouve sa réponse. Accents et casse sont retirés des deux côtés —
+    « seance partielle » trouve « Séance partielle » — et chaque mot tapé restreint la
+    recherche par préfixe, donc « micro » trouve encore « micronutriments » pendant la frappe.
+    Un extrait est découpé autour de la première correspondance, pour que la liste dise
+    *pourquoi* un résultat est là.
+  - **31 questions fréquentes** en 7 catégories (`data/faq.js`), écrites comme elles seraient
+    tapées et répondant sur le comportement réel : pourquoi le score est noté sur 80, pourquoi
+    les exercices d'une séance passée ne se réécrivent pas, pourquoi aucune PWA ne compte les
+    pas en arrière-plan. Chaque réponse peut porter un lien vers l'écran concerné, vérifié par
+    `check-catalogue`.
+  - **4 tutoriels interactifs** (`data/tours.js`, `components/Tour.jsx`) : pas un diaporama —
+    chaque étape *est* un endroit de l'app. La navigation se fait dans le reducer
+    (`applyTourStep`), donc l'écran affiché et l'index de l'étape ne peuvent pas diverger, et
+    un projecteur (`data-tour`) éclaire l'élément dont parle l'étape. Une invitation apparaît
+    une fois sur l'accueil (nouvelle tranche persistée `tourDone`, posée aussi bien par
+    « Plus tard » que par le tutoriel lui-même) ; les tutoriels restent relançables pour
+    toujours depuis le centre d'aide.
+  - **Tooltips contextuels** (`data/tips.js`, `components/Tip.jsx`) : un `(i)` à côté du
+    chiffre qui pose la question — score du jour, cibles perso, séance partielle, distance
+    déduite, source de l'analyse, micronutriments manquants, sollicitation et surcharge d'un
+    exercice. La bulle est positionnée depuis le rect du bouton, jamais dans le flux : chaque
+    endroit où un tip est utile est une ligne serrée qu'une bulle en flux ferait sauter.
+  - **Contact support** (`lib/diagnostics.js`) vers `contact@swinux.ch`, avec version, build,
+    appareil, système, navigateur, mode d'affichage, écran, langue, réseau, thème et *volume*
+    de données joints automatiquement — et affichés en entier avant l'envoi. Rien de personnel
+    n'y figure (des compteurs, jamais du contenu) et la clé OpenRouter n'est jamais lue. Le
+    `mailto:` échoue silencieusement sur un appareil sans compte mail, donc le message complet
+    part aussi dans le presse-papier et l'écran le dit.
+  - **L'aide de la séance guidée passe par la pause**, pas par un « ? » flottant : la barre du
+    haut se cache pendant une séance par choix, et un bouton près de « Série terminée » se
+    ferait toucher par erreur. La pause — où rien ne tourne déjà — ouvre un panneau
+    « Reprendre / Aide sur la séance guidée / Quitter », et la feuille d'aide y perd son lien
+    vers le centre d'aide : celui-ci est un overlay, il remplacerait la vue de la séance alors
+    que celle-ci continuerait de tourner en mémoire, sans chemin de retour. `START_TOUR` est
+    refusé pour la même raison pendant une séance.
+  - `check-catalogue` couvre désormais ce contenu : ids de FAQ uniques, catégories et icônes
+    connues, liens et étapes pointant vers un écran qui existe, ancre `data-tour` réellement
+    présente dans le source, tip défini mais jamais rendu — et, enfin, **chaque écran a son
+    entrée d'aide**, l'invariant que `CLAUDE.md` documentait sans que rien ne le vérifie.
+
 - **Step count on "Marche du jour"** — the Journal's walking card now shows an estimated
   step count alongside km/kcal/minutes. Steps are derived, not stored: `dayActivity()` turns
   each entry's distance (or duration, when that's all it has) back into steps using the same

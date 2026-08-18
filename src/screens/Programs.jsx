@@ -30,7 +30,7 @@ export default function Programs() {
       <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 14px' }}>Choisis selon ton objectif, ton niveau et ton temps.</p>
 
       <button
-        type="button" onClick={actions.openBuilder}
+        type="button" onClick={actions.openBuilder} data-tour="programs-create"
         style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: 12, marginBottom: 18, fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: 14, color: 'var(--color-accent-100)', background: 'transparent', border: '1px dashed var(--color-accent)', borderRadius: 'var(--radius-md)', cursor: 'pointer' }}
       >
         <Icon name="plus-circle" size={18} />Créer une séance
@@ -63,12 +63,14 @@ export default function Programs() {
         </>
       )}
 
+      <div data-tour="programs-filters">
       <div className="section-label">Durée</div>
       <PillGroup options={DUR_OPTS} value={state.fDur} onChange={(v) => actions.setProgFilter('fDur', v)} style={{ marginBottom: 14 }} />
       <div className="section-label">Niveau</div>
       <PillGroup options={LEVEL_OPTS} value={state.fLevel} onChange={(v) => actions.setProgFilter('fLevel', v)} style={{ marginBottom: 14 }} />
       <div className="section-label">Matériel & lieu</div>
       <PillGroup options={EQUIP_OPTS} value={state.fEquip} onChange={(v) => actions.setProgFilter('fEquip', v)} style={{ marginBottom: 20 }} />
+      </div>
 
       <div style={{ fontSize: 11, color: 'var(--color-neutral-500)', marginBottom: 10 }}>
         {filtered.length} programme{filtered.length > 1 ? 's' : ''}

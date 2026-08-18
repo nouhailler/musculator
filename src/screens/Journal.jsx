@@ -10,6 +10,7 @@ import Tag from '../components/ui/Tag.jsx';
 import { PrimaryButton, SecondaryButton, IconCircleButton } from '../components/ui/Button.jsx';
 import { TextArea } from '../components/ui/Field.jsx';
 import SessionForm, { DeleteSessionButton } from '../components/SessionForm.jsx';
+import Tip from '../components/Tip.jsx';
 
 export default function Journal() {
   const { state, actions } = useApp();
@@ -75,7 +76,9 @@ export default function Journal() {
           rather than netted off: the day's expenditure is not a balance. */}
       <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-md)', padding: 13, marginBottom: 14 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: marche.km || marche.minutes ? 10 : 4 }}>
-          <span style={{ fontSize: 13, fontWeight: 600 }}>Marche du jour</span>
+          <span style={{ fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 3 }}>
+            Marche du jour<Tip id="marcheKcal" size={13} />
+          </span>
           <button type="button" onClick={actions.openActivity}
             style={{ background: 'none', border: 'none', color: 'var(--color-accent-200)', fontSize: 11, cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 4 }}>
             <Icon name="plus" size={13} />Ajouter une marche
@@ -102,7 +105,7 @@ export default function Journal() {
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', margin: '4px 0 10px' }}>
         <h6 style={{ color: 'var(--color-neutral-400)', margin: 0 }}>Séances d'aujourd'hui · {journalToday.length}</h6>
         {!addOpen && (
-          <button type="button" onClick={() => setAddOpen(true)}
+          <button type="button" onClick={() => setAddOpen(true)} data-tour="journal-add"
             style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', color: 'var(--color-accent-200)', fontSize: 11, cursor: 'pointer', padding: 0 }}>
             <Icon name="plus" size={13} />Ajouter une séance
           </button>
@@ -138,6 +141,7 @@ export default function Journal() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--color-warn)', marginBottom: 8 }}>
                 <Icon name="warning-circle" weight="fill" size={13} style={{ flex: 'none' }} />
                 Séance partielle{j.exosTotal ? ` — arrêtée après ${j.exerciseIds.length} exercice${j.exerciseIds.length > 1 ? 's' : ''} sur ${j.exosTotal}` : ' — arrêtée en cours'}
+                <Tip id="seancePartielle" size={13} />
               </div>
             )}
             {j.manual && (
@@ -194,7 +198,9 @@ export default function Journal() {
       {an && (
         <div style={{ margin: '6px 0 18px', animation: 'mFade .35s ease' }}>
           <div style={{ background: 'linear-gradient(135deg,var(--color-accent-900),var(--color-surface))', border: '1px solid var(--color-accent-800)', borderRadius: 'var(--radius-lg)', padding: 14, marginBottom: 11 }}>
-            <div style={{ fontSize: 10, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--color-accent-200)', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 5 }}><Icon name="sparkle" weight="fill" size={12} />Analyse IA</div>
+            <div style={{ fontSize: 10, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--color-accent-200)', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
+              <Icon name="sparkle" weight="fill" size={12} />Analyse IA<Tip id="analyseSource" size={13} />
+            </div>
             <div style={{ fontSize: 13, lineHeight: 1.55, color: 'var(--color-neutral-100)' }}>{an.resume}</div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 11 }}>

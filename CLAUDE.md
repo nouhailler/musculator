@@ -19,7 +19,10 @@ npm run check-catalogue  # verify the content invariants below
 existing, icons being registered, `mat` being a closed vocabulary, every exercise having a
 demo and cues, every muscle having a body-map zone — none of it was checked by anything until
 the catalogue started growing. Run it after touching `src/data/`; it is the only thing
-standing between a typo and a blank demo in the middle of a session.
+standing between a typo and a blank demo in the middle of a session. It now covers the help
+content too (see *Aide, FAQ et support*), including the one rule this file used to say
+nothing enforced: **every screen has a help entry, and every help entry names a real
+screen** — both sides read from `App.jsx`'s two maps.
 
 `docs/screenshots/` is the README's gallery and is **generated** (`scripts/shots.mjs` seeds a
 fixed demo state, so the shots are reproducible and show populated screens). Re-run it when a
@@ -56,9 +59,9 @@ The split between the two files in `src/state/` is load-bearing:
 are recomputed by `useDerived()` (memoized on `state.sessionLog`). Don't add computed fields
 to reducer state; add them to `useDerived` or to a `lib/` helper.
 
-**Persistence covers 12 slices only** — `profile`, `customWorkouts`, `sessionLog`,
-`disclaimerAcked`, `voiceOn`, `openrouter`, `nutriLog`, `foodCache`, `theme`, `dayNotes`,
-`analysisLog`, `activityLog`, under the key `musculator:v1`. Everything else (current tab,
+**Persistence covers 13 slices only** — `profile`, `customWorkouts`, `sessionLog`,
+`disclaimerAcked`, `voiceOn`, `tourDone`, `openrouter`, `nutriLog`, `foodCache`, `theme`,
+`dayNotes`, `analysisLog`, `activityLog`, under the key `musculator:v1`. Everything else (current tab,
 filters, in-progress workout) is deliberately ephemeral. Adding a durable field means
 touching both `loadPersisted()` and the persist effect in `store.jsx`.
 
@@ -116,7 +119,8 @@ that view owns the screen, and a stray menu tap there would cost the user a set.
 
 **Contextual help keys off `state.view || state.tab`**, so it follows the overlay when one is
 open. Content lives in `src/data/help.js`; a screen with no entry gets a dimmed `?` rather
-than an empty sheet. Adding a screen means adding its help entry — nothing enforces it.
+than an empty sheet. Adding a screen means adding its help entry — `check-catalogue` fails
+otherwise. The sheet's footer leads into the help centre rather than restating it.
 
 ### The guided session
 
@@ -265,6 +269,55 @@ demo's tempo. A rep exercise therefore wants a two-entry `seq` matching its two 
 one cue per phase — while a hold can carry a longer `seq` of reminders because its demo sets
 `cycle` itself. `say()` cancels whatever is still speaking, so a cue longer than one beat is
 cut off by the next: keep them to three words.
+
+### Aide, FAQ et support
+
+Four kinds of help, one rule: **nothing sends the user out of the app.** The contextual `?`
+(`help.js` + `HelpSheet`) answers *what is this screen*; the help centre (`overlays/Help.jsx`)
+answers *how do I* and *why does it do that*; the tours show it; the support form reaches a
+human. They share one entry point and one piece of state.
+
+- **`state.helpTopic` (`{ kind, id }`) is what the centre is showing** — `faq`, `ecran`,
+  `tuto`, `cat`, `ecrans` or `support`. A tooltip's "En savoir plus", a FAQ cross-link and a
+  search result all open the same thing, so an answer is rendered in exactly one place. Back
+  goes up a level (answer → index → out), never straight out.
+- **One search over three corpora** (`lib/helpSearch.js`): the user does not know whether
+  their answer is a FAQ entry, a screen guide or a tutorial, so splitting the field in three
+  would make them guess the app's filing. Accents and case are stripped on both sides — help
+  typed on a phone keyboard rarely carries its accents — and every token must match by
+  prefix, so words narrow rather than widen. The index is built once, from the display prose,
+  and nothing is re-normalised per keystroke.
+- **A tour step *is* a location.** `applyTourStep` in the reducer applies the step's `tab` or
+  `view` in the same dispatch as the step index, which is what makes it impossible for the
+  spotlight and the screen to disagree; `components/Tour.jsx` only measures the `data-tour`
+  anchor and draws. The anchor is polled for ~700 ms because the target screen may still be
+  mounting, then scrolled into view and re-measured after the smooth scroll lands. A missing
+  anchor degrades to a centred card — `check-catalogue` verifies every `cible` exists in the
+  source, so that path is a safety net, not a way of writing steps.
+- **`tourDone` is the only persisted part.** It is set both by taking the tour and by
+  dismissing the invitation on the Accueil, because an invitation that comes back is an
+  advert. The tours themselves stay replayable from the centre for ever; a half-finished tour
+  is never resumed.
+- **A tip is not a shorter help entry.** `data/tips.js` answers the question the interface
+  itself provokes ("noté sur 80 ?", "cibles perso ?") at the spot where it is asked; anything
+  needing a paragraph belongs in `help.js` or the FAQ, and the tip links there instead of
+  growing. `Tip` positions its bubble from the button's rect rather than in flow: every place
+  a tip earns its keep is a tight row an in-flow bubble would break.
+- **Support diagnostics are shown before they are sent** (`lib/diagnostics.js`). They carry
+  build, device, OS, browser, display mode, screen, locale, theme and the *volume* of data —
+  counts, never content — because "ça ne marche pas" is unanswerable without them and no user
+  can be asked to look them up. The OpenRouter key is never read, only whether a model is
+  set. `mailto:` fails silently on a device with no mail account, so the full text goes to the
+  clipboard too and the screen says which happened.
+- **During a workout, help is reachable but the help *centre* is not.** The top bar hides
+  itself there, so the session's `help.js` entry is opened from the pause sheet — where the
+  timers are frozen already — and `HelpSheet` drops its "Centre d'aide" button. That button
+  opens an overlay, which would replace the workout view while `state.workout` kept ticking
+  in memory with no way back; `START_TOUR` refuses mid-session for the same reason. `workout`
+  and `complete` render outside the `OVERLAYS` map, so `check-catalogue` allows them a help
+  entry without requiring one.
+- UA parsing is guesswork and says so: every branch degrades to a family or to the raw string
+  rather than claiming a wrong device (iOS never volunteers a model at all).
 
 ### Nutrition
 

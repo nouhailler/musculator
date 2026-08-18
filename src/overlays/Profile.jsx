@@ -11,6 +11,8 @@ import { Field, TextInput, TextArea, RangeInput } from '../components/ui/Field.j
 import { PillGroup } from '../components/ui/Pill.jsx';
 import { SecondaryButton, PrimaryButton } from '../components/ui/Button.jsx';
 import Icon from '../components/ui/Icon.jsx';
+import Tip from '../components/Tip.jsx';
+import { SUPPORT_EMAIL } from '../lib/diagnostics.js';
 
 const SEXE_OPTS = ['Homme', 'Femme', 'Autre'];
 
@@ -44,7 +46,10 @@ function TargetFields() {
 
   return (
     <>
-      <Field label="Objectifs quotidiens" style={{ marginBottom: 4 }} />
+      <div data-tour="profile-targets" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <Field label="Objectifs quotidiens" style={{ marginBottom: 4 }} />
+        <Tip id="ciblesPerso" style={{ marginBottom: 4 }} />
+      </div>
       <p style={{ fontSize: 11, color: 'var(--color-neutral-400)', margin: '0 0 10px', lineHeight: 1.5 }}>
         Calculés depuis ton profil et ton objectif nutrition. Renseigne un champ pour imposer
         ta propre cible ; laisse-le vide pour garder le calcul automatique.
@@ -148,7 +153,7 @@ function BackupSection() {
 
   return (
     <>
-      <h5 style={{ margin: '0 0 4px' }}>Sauvegarde de mes données</h5>
+      <h5 data-tour="profile-backup" style={{ margin: '0 0 4px' }}>Sauvegarde de mes données</h5>
       <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 12px', lineHeight: 1.55 }}>
         Tout est stocké sur cet appareil et nulle part ailleurs : un navigateur nettoyé ou un
         téléphone changé et le journal disparaît. Exporte un fichier de temps en temps, et
@@ -297,6 +302,34 @@ export default function Profile() {
 
         <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
 
+        {/* The settings screen is where people look when something puzzles
+            them, so the help centre is reachable from here and not only from
+            the menu or the « ? » of the screen they were stuck on. */}
+        <h5 style={{ margin: '0 0 4px' }}>Aide & support</h5>
+        <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 12px', lineHeight: 1.55 }}>
+          Questions fréquentes, tutoriels guidés et contact direct — sans quitter l'application.
+        </p>
+        <SecondaryButton icon="question" onClick={() => actions.openHelpCenter()}
+          style={{ width: '100%', padding: 11, justifyContent: 'center', marginBottom: 8 }}>
+          Centre d'aide & FAQ
+        </SecondaryButton>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+          <SecondaryButton icon="play-circle" onClick={() => actions.startTour('decouverte')}
+            style={{ flex: 1, padding: 11, justifyContent: 'center' }}>
+            Revoir le tutoriel
+          </SecondaryButton>
+          <SecondaryButton icon="waveform" onClick={() => actions.openHelpCenter({ kind: 'support', id: '' })}
+            style={{ flex: 1, padding: 11, justifyContent: 'center' }}>
+            Contacter le support
+          </SecondaryButton>
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--color-neutral-500)', lineHeight: 1.5 }}>
+          Le support répond à <strong style={{ color: 'var(--color-neutral-300)' }}>{SUPPORT_EMAIL}</strong> ; version,
+          appareil et système sont joints au message, et affichés avant l'envoi.
+        </div>
+
+        <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
+
         <BackupSection />
 
         <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
@@ -306,9 +339,10 @@ export default function Profile() {
           L'app est installée sur ton téléphone : une nouvelle version se télécharge en arrière-plan
           mais ne s'applique qu'au redémarrage. Ce bouton la cherche et l'installe tout de suite.
         </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: 'var(--color-neutral-500)', marginBottom: 10 }}>
+        <div data-tour="profile-version" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--color-neutral-500)', marginBottom: 10 }}>
           <Icon name="info" size={14} style={{ flex: 'none' }} />
           <span>Version installée : <strong style={{ color: 'var(--color-neutral-300)' }}>{BUILD_ID}</strong> · {buildLabel}</span>
+          <Tip id="versionInstallee" />
         </div>
         <SecondaryButton
           icon={state.updateChecking ? 'circle-notch' : 'arrow-counter-clockwise'}

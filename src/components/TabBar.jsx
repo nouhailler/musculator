@@ -18,7 +18,7 @@ export default function TabBar() {
       {TABS.map((t) => {
         const on = state.tab === t.key;
         return (
-          <button key={t.key} type="button" onClick={() => actions.goTab(t.key)}>
+          <button key={t.key} type="button" data-tour={`tab-${t.key}`} onClick={() => actions.goTab(t.key)}>
             <Icon name={t.icon} weight={on ? 'fill' : 'regular'} size={23} color={on ? 'var(--color-accent)' : 'var(--color-neutral-500)'} />
             <span className="tab-label" style={{ color: on ? 'var(--color-accent)' : 'var(--color-neutral-500)' }}>{t.label}</span>
           </button>

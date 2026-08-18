@@ -5,6 +5,7 @@ import { scale } from '../lib/food.js';
 import Icon from '../components/ui/Icon.jsx';
 import Tag from '../components/ui/Tag.jsx';
 import { PrimaryButton, SecondaryButton } from '../components/ui/Button.jsx';
+import Tip from '../components/Tip.jsx';
 
 const NUTRISCORE_COLOR = { a: '#2e854a', b: '#5fd08a', c: '#f0c65e', d: '#f0a35e', e: '#e8654f' };
 const QUICK = [50, 100, 150, 200, 250];
@@ -74,7 +75,9 @@ export default function FoodEntry() {
 
         {micros.length > 0 ? (
           <>
-            <div className="section-label">Micronutriments apportés</div>
+            <div className="section-label" style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+              Micronutriments apportés<Tip id="micros" size={12} />
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 18 }}>
               {micros.map((m) => (
                 <div key={m.key} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--color-neutral-300)' }}>

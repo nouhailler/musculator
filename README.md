@@ -42,6 +42,10 @@ trigger yourself and the optional AI analysis if you plug in your own key.
 |:--:|:--:|:--:|
 | **Cartographie** — sollicitation et récupération, calculées sur tes séances réelles | **Bibliothèque** — 130 exercices groupés par schéma de mouvement | **Programmes** — filtrables, plus un constructeur de séance |
 
+| <img src="docs/screenshots/help.webp" width="250" alt="Centre d'aide"> |
+|:--:|
+| **Centre d'aide** — recherche, FAQ, tutoriels interactifs et contact du support |
+
 <details>
 <summary>🎨 <b>Et en thème clair</b></summary>
 
@@ -95,6 +99,17 @@ somewhere (profile & settings, muscle map, workout builder) plus the voice toggl
 medical disclaimer. The help sheet describes whatever is on screen — the overlay when one is
 open, the tab underneath otherwise — and its content lives in `src/data/help.js`.
 
+❓ **Aide, FAQ & support** — a help centre inside the app (menu → *Aide, FAQ & support*, or
+*Profil → Aide & support*): one search field over the FAQ, the per-screen guides and the
+tutorials at once (accent-insensitive, every typed word narrowing the result), 31 frequently
+asked questions in 7 categories, 4 **interactive tutorials** that walk the real interface —
+each step moves the app to the screen it describes and spotlights the element it is about —
+and a **support form** that mails `contact@swinux.ch` through the device's mail app with the
+diagnostics (build, device, OS, browser, install mode, data volume) attached and shown in full
+beforehand. Small `(i)` tooltips sit next to the figures that raise a question — the daily
+score, the targets, a partial session, a deduced walking distance. The contextual `?` in the
+top bar is unchanged and now links into the centre.
+
 🌗 **Dark or light**, picked under *Mon profil & objectifs → Apparence*: Sombre (the default
 and the app's original look), Clair, or Système to follow the phone. The palettes are the two
 token blocks in `src/styles/tokens.css` — light inverts each ramp rather than shifting it, so
@@ -110,7 +125,10 @@ the stored choice before first paint so a light-theme launch never flashes dark.
 - ⏱️ **Séance guidée** — exercise/rest phases, per-set stopwatch, rest countdown (+15s/skip),
   editable reps/charge/notes per exercise, a fullscreen "big buttons" mode for a phone
   propped up next to you, an animated demo of the current exercise, and a French voice coach
-  (Web Speech API) that calls out reps in rhythm and encouragement, per exercise.
+  (Web Speech API) that calls out reps in rhythm and encouragement, per exercise. Pausing
+  opens a small panel — resume, help on the guided session, quit — which is where the screen's
+  help lives: the top bar hides itself during a session, and a floating `?` next to the set
+  buttons would be tapped by mistake.
 - 🚪 **Sortie de séance** — closing a session offers to save what you have already done rather
   than discarding it; a partial session is logged from the sets actually performed.
 - 📋 **Programmes** — filterable by duration/level/equipment, a workout builder to compose and
@@ -327,7 +345,8 @@ reloads the page, and a running session lives in memory only.
 
 ```
 src/
-  data/        exercise/program/badge/muscle/cue/demo catalogues (static content)
+  data/        exercise/program/badge/muscle/cue/demo catalogues, plus the
+               help content: help.js, faq.js, tours.js, tips.js (static content)
   lib/         pure helpers: formatting, streak/muscle-stat derivation, pose
                kinematics, voice, theme, food, analysis
   state/       single Context + reducer store, localStorage-backed

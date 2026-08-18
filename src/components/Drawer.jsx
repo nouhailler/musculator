@@ -19,6 +19,7 @@ const ACTIONS = [
   { key: 'profile', label: 'Profil, objectifs & réglages', icon: 'gear-six', hint: 'OpenRouter, import Nutritor' },
   { key: 'bodymap', label: 'Cartographie musculaire', icon: 'person', hint: 'Sollicitation et récupération' },
   { key: 'builder', label: 'Créer une séance', icon: 'plus-circle', hint: 'Composer ton propre programme' },
+  { key: 'help', label: 'Aide, FAQ & support', icon: 'question', hint: 'Tutoriels, questions fréquentes, contact' },
 ];
 
 function Row({ icon, label, hint, active, onClick }) {

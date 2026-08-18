@@ -5,6 +5,7 @@ import { dayActivity } from '../lib/activity.js';
 import { DEFAULT_KM_TARGET } from '../data/activity.js';
 import Icon from '../components/ui/Icon.jsx';
 import { PrimaryButton, IconCircleButton } from '../components/ui/Button.jsx';
+import Tip from '../components/Tip.jsx';
 
 const TIPS = [
   { icon: 'thermometer-hot', title: 'Échauffe-toi', body: '5 min avant chaque séance' },
@@ -38,14 +39,42 @@ export default function Home() {
           <h3 style={{ margin: '2px 0 0' }}>Prêt à forger ? 💪</h3>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--color-accent-900)', border: '1px solid var(--color-accent-800)', color: 'var(--color-accent-200)', padding: '6px 11px', borderRadius: 999, fontSize: 13, fontWeight: 600 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'var(--color-accent-900)', border: '1px solid var(--color-accent-800)', color: 'var(--color-accent-200)', padding: '6px 8px 6px 11px', borderRadius: 999, fontSize: 13, fontWeight: 600 }}>
             <Icon name="fire" weight="fill" size={16} color="var(--color-warn)" />{streak}
+            <Tip id="streak" size={13} />
           </div>
           <IconCircleButton icon="gear-six" title="Profil & objectifs" onClick={actions.openProfile} size={36} />
         </div>
       </div>
 
-      <div style={{ background: 'linear-gradient(135deg,var(--color-accent-900),var(--color-surface))', border: '1px solid var(--color-accent-800)', borderRadius: 'var(--radius-lg)', padding: 16, marginBottom: 16 }}>
+      {/* Offered once, then never again: `tourDone` is set both by taking the
+          tour and by dismissing it, and the tutorials stay in the help centre
+          for ever. An invitation that comes back is an advert. */}
+      {!state.tourDone && (
+        <div style={{ display: 'flex', gap: 11, alignItems: 'flex-start', background: 'var(--color-surface)', border: '1px solid var(--color-accent-800)', borderRadius: 'var(--radius-lg)', padding: 13, marginBottom: 16 }}>
+          <div className="icon-tile" style={{ width: 34, height: 34 }}><Icon name="flag" size={18} weight="fill" /></div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>Première fois ici ?</div>
+            <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', lineHeight: 1.5, marginBottom: 9 }}>
+              Une visite guidée d'une minute te montre les six onglets et ce qu'on y fait.
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button type="button" onClick={() => actions.startTour('decouverte')}
+                style={{ font: 'inherit', fontSize: 12, fontWeight: 600, padding: '7px 13px', borderRadius: 999, cursor: 'pointer',
+                  color: 'var(--color-accent-100)', background: 'var(--color-accent-800)', border: '1px solid var(--color-accent)' }}>
+                Commencer la visite
+              </button>
+              <button type="button" onClick={actions.dismissTourInvite}
+                style={{ font: 'inherit', fontSize: 12, padding: '7px 11px', borderRadius: 999, cursor: 'pointer',
+                  color: 'var(--color-neutral-400)', background: 'transparent', border: '1px solid var(--color-divider)' }}>
+                Plus tard
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div data-tour="home-week" style={{ background: 'linear-gradient(135deg,var(--color-accent-900),var(--color-surface))', border: '1px solid var(--color-accent-800)', borderRadius: 'var(--radius-lg)', padding: 16, marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <span style={{ fontSize: 10, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--color-accent-200)' }}>Progression du jour</span>
           <span style={{ fontSize: 12, color: 'var(--color-neutral-300)' }}>{weekSessions.length} / {freqTarget} séances</span>
@@ -64,7 +93,7 @@ export default function Home() {
       {/* Walking, next to training rather than mixed into it: same day, other
           kind of effort. Tapping it opens where a walk is logged. */}
       <button
-        type="button" onClick={actions.openActivity}
+        type="button" onClick={actions.openActivity} data-tour="home-walk"
         style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 13, textAlign: 'left', font: 'inherit',
           cursor: 'pointer', color: 'var(--color-text)', background: 'var(--color-surface)',
           border: '1px solid var(--color-divider)', borderRadius: 'var(--radius-lg)', padding: 13, marginBottom: 16 }}
@@ -93,14 +122,16 @@ export default function Home() {
         <Icon name="caret-right" size={16} color="var(--color-neutral-500)" />
       </button>
 
-      <PrimaryButton icon="play-circle" size="lg" onClick={() => actions.startWorkout('fullbody')} style={{ marginBottom: 8 }}>
-        Commencer une séance
-      </PrimaryButton>
+      <div data-tour="home-start" style={{ marginBottom: 8 }}>
+        <PrimaryButton icon="play-circle" size="lg" onClick={() => actions.startWorkout('fullbody')}>
+          Commencer une séance
+        </PrimaryButton>
+      </div>
       <div style={{ fontSize: 11, color: 'var(--color-neutral-500)', textAlign: 'center', marginBottom: 16 }}>
         {today.nom} · {today.duree} min · {today.exos.length} exercices
       </div>
 
-      <button type="button" onClick={actions.openBodyMap} className="row-card" style={{ marginBottom: 20 }}>
+      <button type="button" onClick={actions.openBodyMap} className="row-card" data-tour="home-bodymap" style={{ marginBottom: 20 }}>
         <div className="icon-tile"><Icon name="person" weight="fill" size={24} /></div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 14, fontWeight: 600 }}>Cartographie musculaire</div>

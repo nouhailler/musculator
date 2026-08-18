@@ -19,6 +19,8 @@ import { applyUpdate, BUILD_ID, checkForUpdate, hardReload, onUpdateStatus, upda
 import { MEALS } from '../data/nutrition.js';
 import { mergeLog, parseNutritorCSV } from '../lib/importNutritor.js';
 import { applyImport, importedFoods } from '../lib/importMeals.js';
+import { tourById } from '../data/tours.js';
+import { sendSupport as sendSupportMail } from '../lib/diagnostics.js';
 
 const STORAGE_KEY = 'musculator:v1';
 const KCAL_PER_MIN = 9;
@@ -46,6 +48,10 @@ function loadPersisted() {
       sessionLog: Array.isArray(p.sessionLog) ? p.sessionLog : [],
       disclaimerAcked: !!p.disclaimerAcked,
       voiceOn: p.voiceOn !== false,
+      // Whether the guided tour has been offered. Persisted so the invitation
+      // on the Accueil appears once; the tours themselves stay replayable from
+      // the help centre for ever.
+      tourDone: !!p.tourDone,
       openrouter: {
         key: typeof p.openrouter?.key === 'string' ? p.openrouter.key : '',
         model: typeof p.openrouter?.model === 'string' ? p.openrouter.model : '',
@@ -74,7 +80,7 @@ function initialState() {
   const persisted = loadPersisted() || {
     profile: defaultProfile, customWorkouts: [], sessionLog: [], disclaimerAcked: false, voiceOn: true,
     openrouter: { key: '', model: '' }, nutriLog: {}, foodCache: {}, theme: DEFAULT_THEME,
-    dayNotes: {}, analysisLog: {}, activityLog: {},
+    dayNotes: {}, analysisLog: {}, activityLog: {}, tourDone: false,
   };
   // A cached analysis for today survives a reload — it is invalidated
   // (see finishWorkout) the moment a new session makes it stale.
@@ -83,6 +89,16 @@ function initialState() {
     ...persisted,
     tab: 'home', view: null,
     menuOpen: false, helpOpen: false,
+    // Help centre: the search box, and the answer being read (`{ kind, id }`
+    // where kind is 'faq' | 'ecran' | 'tuto'). Both ephemeral — reopening the
+    // centre starts from the index, which is where someone lost arrives.
+    helpQuery: '', helpTopic: null,
+    // The running interactive tutorial, `{ id, step }`. Never persisted: a
+    // half-finished tour is not something to resume three days later.
+    tour: null,
+    // The support form. `statut` is what the screen says after the mail app
+    // was handed the message.
+    support: { sujet: '', message: '', statut: '' },
     selExId: 'pompes', selProgId: 'fullbody',
     bodySide: 'front', selMuscleId: 'pecs',
     libSearch: '', libLevel: 'Tous', libMat: 'Tous', libOptionnels: false,
@@ -272,6 +288,20 @@ function buildManualSessionEntry(state, { progId, customName, minutes, dateKey: 
   };
 }
 
+// A tour step declares where it happens: `view` opens an overlay, `tab` goes
+// to a tab and closes any overlay, neither leaves the app where it is. The
+// drawer and the help sheet are closed either way — they would sit on top of
+// whatever the step is pointing at.
+function applyTourStep(state, tour, i) {
+  const step = tour.steps[i] || {};
+  const where = step.view
+    ? { view: step.view }
+    : step.tab
+      ? { tab: step.tab, view: null }
+      : {};
+  return { ...state, ...where, menuOpen: false, helpOpen: false, helpTopic: null };
+}
+
 function reducer(state, action) {
   switch (action.type) {
     case 'PATCH':
@@ -326,6 +356,54 @@ function reducer(state, action) {
       return { ...state, menuOpen: action.open };
     case 'SET_HELP':
       return { ...state, helpOpen: action.open };
+
+    // --- Aide, FAQ, tutoriels ----------------------------------------------
+    case 'OPEN_HELP_CENTER':
+      return {
+        ...state,
+        view: 'help', menuOpen: false, helpOpen: false,
+        helpTopic: action.topic || null,
+        helpQuery: action.query != null ? action.query : '',
+      };
+    case 'SET_HELP_QUERY':
+      // Typing is a new question: whatever answer was open stops applying.
+      return { ...state, helpQuery: action.query, helpTopic: null };
+    case 'OPEN_HELP_TOPIC':
+      return { ...state, helpTopic: { kind: action.kind, id: action.id } };
+    case 'CLOSE_HELP_TOPIC':
+      return { ...state, helpTopic: null };
+
+    // A tour step *is* a location: applying both here is what keeps the step
+    // index and the screen on show from ever disagreeing.
+    case 'START_TOUR': {
+      const tour = tourById(action.id);
+      if (!tour) return state;
+      // A tour walks the app from screen to screen, which would leave a running
+      // session behind with no way back to it. Same reason an update is refused
+      // mid-workout: that state lives in memory only.
+      if (state.workout) return state;
+      return { ...applyTourStep(state, tour, 0), tour: { id: tour.id, step: 0 }, tourDone: true };
+    }
+    case 'TOUR_GO': {
+      if (!state.tour) return state;
+      const tour = tourById(state.tour.id);
+      if (!tour) return { ...state, tour: null };
+      const next = state.tour.step + action.delta;
+      if (next < 0) return state;
+      // Walking off the end finishes the tour rather than trapping the user on
+      // a last step with a disabled button.
+      if (next >= tour.steps.length) return { ...state, tour: null, tourDone: true };
+      return { ...applyTourStep(state, tour, next), tour: { id: tour.id, step: next } };
+    }
+    case 'END_TOUR':
+      return { ...state, tour: null, tourDone: true };
+    // Dismissing the invitation counts as an answer: it is not offered again,
+    // and the tours stay in the help centre.
+    case 'DISMISS_TOUR_INVITE':
+      return { ...state, tourDone: true };
+
+    case 'SET_SUPPORT':
+      return { ...state, support: { ...state.support, ...action.patch } };
 
     case 'SET_NUTRI_DATE':
       return { ...state, nutriDate: action.dateKey };
@@ -707,6 +785,7 @@ export function AppProvider({ children }) {
         sessionLog: state.sessionLog,
         disclaimerAcked: state.disclaimerAcked,
         voiceOn: state.voiceOn,
+        tourDone: state.tourDone,
         openrouter: state.openrouter,
         nutriLog: state.nutriLog,
         foodCache: state.foodCache,
@@ -720,7 +799,7 @@ export function AppProvider({ children }) {
     }
   }, [state.profile, state.customWorkouts, state.sessionLog, state.disclaimerAcked, state.voiceOn,
       state.openrouter, state.nutriLog, state.foodCache, state.theme, state.dayNotes, state.analysisLog,
-      state.activityLog]);
+      state.activityLog, state.tourDone]);
 
   // A new build finishing its install is the one thing that can change the
   // app under the user's feet, so it is surfaced rather than applied silently.
@@ -779,6 +858,31 @@ export function AppProvider({ children }) {
     closeMenu: () => dispatch({ type: 'SET_MENU', open: false }),
     openHelp: () => dispatch({ type: 'SET_HELP', open: true }),
     closeHelp: () => dispatch({ type: 'SET_HELP', open: false }),
+
+    // --- Aide, FAQ, tutoriels, support -------------------------------------
+    // `topic` is `{ kind, id }`, so a tooltip or a FAQ link can open the centre
+    // directly on the answer instead of on its index.
+    openHelpCenter: (topic = null, query = null) => dispatch({ type: 'OPEN_HELP_CENTER', topic, query }),
+    setHelpQuery: (query) => dispatch({ type: 'SET_HELP_QUERY', query }),
+    openHelpTopic: (kind, id) => dispatch({ type: 'OPEN_HELP_TOPIC', kind, id }),
+    closeHelpTopic: () => dispatch({ type: 'CLOSE_HELP_TOPIC' }),
+    startTour: (id) => dispatch({ type: 'START_TOUR', id }),
+    tourNext: () => dispatch({ type: 'TOUR_GO', delta: 1 }),
+    tourPrev: () => dispatch({ type: 'TOUR_GO', delta: -1 }),
+    endTour: () => dispatch({ type: 'END_TOUR' }),
+    dismissTourInvite: () => dispatch({ type: 'DISMISS_TOUR_INVITE' }),
+    setSupport: (patch) => dispatch({ type: 'SET_SUPPORT', patch }),
+    // The diagnostics are read from the live state at send time, so what the
+    // form showed is what the mail carries.
+    sendSupport: async () => {
+      const st = stateRef.current;
+      const how = await sendSupportMail(st, st.support);
+      dispatch({ type: 'SET_SUPPORT', patch: { statut: {
+        mail: "Ton application mail s'ouvre avec le message et le diagnostic. Il ne part qu'une fois envoyé de là.",
+        clipboard: "Aucune application mail n'a répondu. Le message complet est dans le presse-papier : colle-le dans un mail à contact@swinux.ch.",
+        echec: "Impossible d'ouvrir le mail depuis ici. Écris à contact@swinux.ch en recopiant le diagnostic ci-dessous.",
+      }[how] } });
+    },
     acceptDisclaimer: () => dispatch({ type: 'ACCEPT_DISCLAIMER' }),
     showDisclaimer: () => dispatch({ type: 'SHOW_DISCLAIMER' }),
     toggleVoice: () => dispatch({ type: 'TOGGLE_VOICE' }),

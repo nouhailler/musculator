@@ -37,6 +37,10 @@ function demoState(theme) {
     disclaimerAcked: true,
     theme,
     voiceOn: true,
+    // The demo state is an app in use, so the first-run invitation to the
+    // guided tour has already been answered — it would sit oddly above five
+    // logged sessions.
+    tourDone: true,
     profile: {
       prenom: 'Patrick', sexe: 'Homme', age: 44, poids: 78, taille: 178, poidsCible: 74,
       experience: 'Intermédiaire', objectif: 'Force', zones: ['Dos', 'Jambes'], frequence: 4,
@@ -149,6 +153,16 @@ async function capture(theme, only = null) {
     await page.mouse.wheel(0, 190);
     await page.waitForTimeout(400);
     await shot(page, `progress${suffix}`);
+  }
+
+  if (wants('help')) {
+    await page.getByRole('button', { name: 'Ouvrir le menu' }).click();
+    await page.waitForTimeout(300);
+    await page.getByText('Aide, FAQ & support').click();
+    await page.waitForTimeout(500);
+    await shot(page, `help${suffix}`);
+    await page.getByRole('button', { name: 'Retour' }).first().click();
+    await page.waitForTimeout(300);
   }
 
   if (wants('workout')) {

@@ -53,9 +53,28 @@ export default function HelpSheet() {
           ))}
         </div>
 
-        <SecondaryButton icon="check" onClick={actions.closeHelp} style={{ width: '100%', padding: 12, justifyContent: 'center' }}>
-          Compris
-        </SecondaryButton>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {/* The sheet answers "what is this screen"; everything else — the
+              FAQ, the tutorials, the support form — lives one tap away rather
+              than being duplicated into every screen's entry.
+
+              Not during a session: the help centre is an overlay, so opening it
+              would replace the workout view while the session keeps running in
+              memory with no way back to it. The session's own help is the sheet
+              itself, reached from the pause. */}
+          {!state.workout && (
+            <SecondaryButton
+              icon="question"
+              onClick={() => actions.openHelpCenter()}
+              style={{ flex: 1, padding: 12, justifyContent: 'center' }}
+            >
+              Centre d'aide
+            </SecondaryButton>
+          )}
+          <SecondaryButton icon="check" onClick={actions.closeHelp} style={{ flex: 1, padding: 12, justifyContent: 'center' }}>
+            Compris
+          </SecondaryButton>
+        </div>
       </div>
     </div>
   );

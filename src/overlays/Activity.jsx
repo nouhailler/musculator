@@ -11,6 +11,7 @@ import Tag from '../components/ui/Tag.jsx';
 import { Field } from '../components/ui/Field.jsx';
 import { PillGroup } from '../components/ui/Pill.jsx';
 import { PrimaryButton, SecondaryButton, IconCircleButton } from '../components/ui/Button.jsx';
+import Tip from '../components/Tip.jsx';
 
 const km1 = (n) => (Math.round(n * 100) / 100).toLocaleString('fr-FR', { maximumFractionDigits: 2 });
 
@@ -227,6 +228,7 @@ export default function Activity() {
                 looks like a measured one. */}
             {apercu && kmAuto && (
               <div style={{ fontSize: 11, color: 'var(--color-neutral-400)', marginBottom: 8, lineHeight: 1.5 }}>
+                <Tip id="distanceEstimee" size={12} style={{ marginRight: 2 }} />
                 Distance déduite de la durée : pas de {apercu.pasM} cm × {walkType(type).cadence} pas/min,
                 soit ≈ {apercu.pas.toLocaleString('fr-FR')} pas et {apercu.kmh.toLocaleString('fr-FR')} km/h.
                 {!tailleConnue && ' Taille non renseignée : calcul sur 170 cm par défaut.'}
