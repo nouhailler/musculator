@@ -12,7 +12,11 @@ export const PROGRAMS = [
   // souvent, idéalement tous les jours, là où les autres programmes demandent
   // 48 h de récupération. Elle est montée sur les exercices du catalogue, pas
   // sur des doublons : le Y, le W et le scapular push-up existaient déjà.
-  { id: 'omoplates', nom: 'Omoplates & nuque', obj: 'Tonus', niveau: 'Débutant', lieu: 'Maison', duree: 18, kcal: 70, mat: ['Sans matériel', 'Maison'], icon: 'person-simple-tai-chi', exos: ['chin-tuck', 'retraction-scapulaire', 'y-raise', 'prone-w-raise', 'scapular-push-up', 'etirement-pectoral-porte', 'etirement-elevateur-scapula'], desc: "Posture du haut du dos : on réveille d'abord les stabilisateurs de l'omoplate (rhomboïdes, trapèzes moyen et inférieur, dentelé), puis on relâche ce qui tire l'épaule vers l'avant. Sans charge, à refaire souvent — et si une douleur persiste, irradie ou réveille la nuit, fais-toi examiner." },
+  { id: 'omoplates', nom: 'Omoplates & nuque', obj: 'Tonus', niveau: 'Débutant', lieu: 'Maison', duree: 18, kcal: 70, mat: ['Sans matériel', 'Maison'], icon: 'person-simple-tai-chi', exos: ['chin-tuck', 'retraction-scapulaire', 'y-raise', 'prone-w-raise', 'scapular-push-up', 'etirement-pectoral-porte', 'etirement-elevateur-scapula'],
+    // Les deux séances de posture se renvoient l'une à l'autre : elles traitent
+    // les deux bouts d'une même chaîne, et n'en faire qu'une plafonne vite.
+    complement: { id: 'bassin', raison: "Un bassin basculé en avant fait s'arrondir le haut du dos pour compenser : traiter les omoplates sans le bassin, c'est corriger le haut d'une chaîne qui tire par le bas." },
+    desc: "Posture du haut du dos : on réveille d'abord les stabilisateurs de l'omoplate (rhomboïdes, trapèzes moyen et inférieur, dentelé), puis on relâche ce qui tire l'épaule vers l'avant. Sans charge, à refaire souvent — et si une douleur persiste, irradie ou réveille la nuit, fais-toi examiner." },
   // Le pendant bas d'« Omoplates & nuque », et pas par hasard : un bassin en
   // antéversion creuse les lombaires, le haut du dos s'arrondit pour compenser
   // et la tête part en avant. Même logique de séance — relâcher ce qui tire,
@@ -26,6 +30,7 @@ export const PROGRAMS = [
       'dead-bug': { series: 3, reps: '10 par côté', charge: 'Poids du corps', repos: 45 },
       gainage: { series: 3, reps: '25 s', charge: 'Poids du corps', repos: 45 },
     },
+    complement: { id: 'omoplates', raison: "Le bas de la chaîne remonte : la cambrure lombaire arrondit le haut du dos et pousse la tête en avant, d'où les tensions entre les omoplates." },
     desc: "Antéversion du bassin : il bascule vers l'avant, le bas du dos se creuse et le ventre pousse. On relâche d'abord l'avant de la hanche, on réapprend la rétroversion, puis on renforce fessiers et abdos profonds. 3 à 4 fois par semaine — et lève-toi toutes les 30 minutes, c'est la position assise qui raccourcit le psoas. Une douleur qui persiste ou descend dans la jambe relève d'un examen." },
   { id: 'express', nom: 'Renforcement Express', obj: 'Prise de masse', niveau: 'Débutant', lieu: 'Maison', duree: 5, kcal: 55, mat: ['Sans matériel', 'Maison'], icon: 'timer', exos: ['pompes', 'squats', 'gainage'], desc: "5 minutes, 3 exercices : parfait quand le temps manque mais que tu veux rester régulier." },
 ];

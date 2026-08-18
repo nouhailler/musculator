@@ -10,6 +10,21 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Deux séances qui se renvoient l'une à l'autre** — « Bascule du bassin » et « Omoplates &
+  nuque » traitent les deux bouts d'une même chaîne, et chacune l'annonce désormais dans
+  l'app.
+  - Un programme peut nommer sa `complement: { id, raison }`. La carte, sous la liste des
+    exercices, ouvre l'autre séance et dit *pourquoi* elles vont ensemble — un « voir aussi »
+    sans raison n'aurait rien apporté à quelqu'un qui s'apprête à s'entraîner.
+  - **Le lien est symétrique et vérifié** : `check-catalogue` refuse une cible inexistante, un
+    renvoi vers soi-même, une raison manquante et un lien à sens unique. Rien à l'exécution ne
+    remarquerait une paire déclarée d'un seul côté.
+  - Au passage, le bouton « Démarrer ce programme » était en `position: absolute; bottom: 0`
+    dans l'overlay *scrollable* : il se plaçait à la fin du contenu, pas en bas de l'écran, et
+    recouvrait donc le dernier élément dès qu'on en ajoutait un. Il est maintenant `sticky`
+    dans une colonne flex — collé en bas d'un programme court, visible pendant qu'on fait
+    défiler un programme long, et il ne passe plus devant rien.
+
 - **Trois exercices de bassin et un programme « Bascule du bassin »** — le versant bas de la
   même posture : un bassin en antéversion creuse les lombaires, et le haut du dos s'arrondit
   pour compenser.

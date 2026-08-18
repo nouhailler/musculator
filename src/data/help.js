@@ -143,7 +143,8 @@ export const HELP = {
     intro: "La composition de la séance avant de la lancer.",
     points: [
       ['Démarrer', "Lance la séance guidée : phases d'effort et de repos, chronomètre, coach vocal."],
-      ['Personnalisation', "Sur une séance perso, séries, répétitions, charge et repos remplacent les valeurs du catalogue."],
+      ['Personnalisation', "Sur une séance perso, séries, répétitions, charge et repos remplacent les valeurs du catalogue. Certains programmes du catalogue en font autant : une séance corrective peut prescrire moins que la fiche de l'exercice."],
+      ['Séance complémentaire', "Quand deux séances traitent les deux bouts d'une même chaîne — bassin et omoplates, par exemple — chacune renvoie vers l'autre en disant pourquoi."],
     ],
   },
   bodymap: {

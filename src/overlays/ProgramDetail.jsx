@@ -19,12 +19,17 @@ export default function ProgramDetail() {
     return { num: i + 1, id: eid, nom: e.nom, meta: `${se} × ${rp}${ch ? ' · ' + ch : ''} · repos ${ro}s` };
   });
 
+  // A programme can name one that completes it — the pairing is symmetric and
+  // carries its reason, because a bare "see also" is noise next to a session
+  // someone is about to start.
+  const comp = prog.complement ? progById(prog.complement.id) : null;
+
   return (
-    <div className="overlay mscroll" style={{ paddingBottom: 110 }}>
+    <div className="overlay mscroll" style={{ display: 'flex', flexDirection: 'column' }}>
       <div className="overlay-header">
         <SecondaryButton icon="arrow-left" onClick={actions.closeOverlay} style={{ gap: 6 }}>Retour</SecondaryButton>
       </div>
-      <div style={{ padding: '14px 18px 0' }}>
+      <div style={{ padding: '14px 18px 0', flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
           <div style={{ width: 52, height: 52, flex: 'none', borderRadius: 'var(--radius-md)', background: 'var(--color-accent-800)', display: 'grid', placeItems: 'center', color: 'var(--color-accent-100)' }}>
             <Icon name={prog.icon} size={28} />
@@ -51,8 +56,24 @@ export default function ProgramDetail() {
             </button>
           ))}
         </div>
+
+        {comp && (
+          <>
+            <h6 style={{ color: 'var(--color-neutral-400)', margin: '20px 0 10px' }}>Séance complémentaire</h6>
+            <button type="button" onClick={() => actions.selectProgram(comp.id)} className="row-card" style={{ alignItems: 'flex-start' }}>
+              <div className="icon-tile" style={{ width: 34, height: 34 }}><Icon name={comp.icon} size={18} /></div>
+              <span style={{ flex: 1, minWidth: 0 }}>
+                <span style={{ display: 'block', fontSize: 13, fontWeight: 600 }}>{comp.nom}</span>
+                <span style={{ display: 'block', fontSize: 11, color: 'var(--color-neutral-500)', margin: '1px 0 4px' }}>{comp.duree} min · {comp.niveau}</span>
+                <span style={{ display: 'block', fontSize: 11.5, color: 'var(--color-neutral-400)', lineHeight: 1.5 }}>{prog.complement.raison}</span>
+              </span>
+              <Icon name="caret-right" size={16} color="var(--color-neutral-500)" style={{ flex: 'none', marginTop: 8 }} />
+            </button>
+
+          </>
+        )}
       </div>
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '12px 18px calc(30px + env(safe-area-inset-bottom))', background: 'linear-gradient(transparent,var(--color-bg) 30%)' }}>
+      <div style={{ position: 'sticky', bottom: 0, padding: '12px 18px calc(30px + env(safe-area-inset-bottom))', background: 'linear-gradient(transparent,var(--color-bg) 30%)' }}>
         <PrimaryButton icon="play-circle" size="lg" onClick={() => actions.startWorkout(prog.id)}>Démarrer ce programme</PrimaryButton>
       </div>
     </div>

@@ -158,6 +158,26 @@ for (const m of MUSCLES) {
   }
 }
 
+// --- Complementary programmes ----------------------------------------------
+//
+// `complement` is symmetric by meaning: two sessions that complete each other
+// both say so, or the reader only finds the pairing from one side. Nothing at
+// runtime notices a half-declared pair, so it is checked here.
+
+const progById2 = new Map(PROGRAMS.map((p) => [p.id, p]));
+for (const p of PROGRAMS) {
+  const c = p.complement;
+  if (!c) continue;
+  const where = `program "${p.id}"`;
+  if (!c.id || !progById2.has(c.id)) { fail('broken complement', `${where} points at "${c.id}"`); continue; }
+  if (c.id === p.id) fail('self complement', where);
+  if (!c.raison) fail('complement without reason', where);
+  const back = progById2.get(c.id).complement;
+  if (!back || back.id !== p.id) {
+    fail('one-way complement', `${where} names "${c.id}", which does not name it back`);
+  }
+}
+
 // --- Help, FAQ, tutorials, tooltips ----------------------------------------
 //
 // The help is content like the catalogue is content, and it rots the same way:
