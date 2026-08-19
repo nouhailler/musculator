@@ -10,6 +10,27 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Deux exercices de plancher pelvien et deux programmes « ménopause »** — la chute des
+  œstrogènes accélère la perte osseuse, la perte musculaire et la fragilisation du périnée en
+  même temps ; le catalogue savait répondre aux deux premières et n'avait rien pour la
+  troisième.
+  - **Contraction du périnée (Kegel) et respiration hypopressive** entrent au catalogue.
+    Aucun exercice existant ne les remplaçait : un crunch pousse la pression abdominale vers
+    le bas, exactement là où ces deux-là remontent. Nouveau muscle `perinee` (zone dans le
+    body map, `Plancher pelvien` rattaché à la zone « Abdos » du profil) — sans quoi une
+    séance de périnée n'aurait compté pour aucune zone.
+  - **Aucun des deux mouvements n'est visible de profil**, et la démo le dit à sa manière :
+    comme la rétraction scapulaire, elle montre la posture dans laquelle l'exercice se fait et
+    le buste qui se grandit, plutôt que d'animer autre chose à la place. Les deux fixent leur
+    `cycle` — un maintien n'a pas de tempo de répétition à emprunter aux cues.
+  - **« Ménopause : os & muscles »** porte la contrainte mécanique : tout en appui au sol
+    (l'os se densifie sous la charge, pas dans l'eau ni sur une selle), 8 à 12 répétitions dont
+    la dernière est difficile, aucun saut ni crunch. **« Périnée & tronc profond »** porte ce
+    que cette charge met sous pression, et les deux se nomment en `complement` l'une de
+    l'autre : c'est la paire qui est cohérente, pas chaque séance isolée.
+  - La marche rapide — deuxième pilier de la période — reste dans l'onglet Activité : ce n'est
+    pas une séance, et elle ne doit gonfler ni la série ni les badges.
+
 - **Six exercices « autonomie » et un programme « Sarcopénie & autonomie »** — la fonte
   musculaire liée à l'âge (~3 à 5 % de masse par décennie à partir de 30-40 ans, davantage
   passé 60 ans) se reprend par la résistance, encore faut-il une porte d'entrée.

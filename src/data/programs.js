@@ -77,6 +77,63 @@ export const PROGRAMS = [
     // La marche quotidienne se suit dans l'onglet Activité, pas ici : elle
     // n'est pas une séance et ne doit ni gonfler la série ni les badges.
   },
+  // Ménopause et périménopause. La chute des œstrogènes accélère trois choses à
+  // la fois — perte osseuse, perte musculaire, fragilisation du plancher
+  // pelvien — et une seule séance ne peut pas les traiter toutes sans devenir
+  // un fourre-tout. D'où une paire : celle-ci porte la contrainte mécanique
+  // (l'os se densifie sous la charge, loi de Wolff) et le muscle, « Périnée &
+  // tronc profond » porte ce que la charge, justement, met sous pression.
+  //
+  // Trois choix la distinguent de « Full Body Maison » :
+  //   - tout est en appui au sol : c'est la mise en charge qui parle à l'os,
+  //     là où la natation et le vélo laissent le squelette au repos ;
+  //   - 8 à 12 répétitions difficiles plutôt que des séries longues, parce
+  //     que c'est l'intensité de la contrainte qui stimule la densité osseuse ;
+  //   - aucun saut, aucun crunch : les deux poussent sur un périnée que cette
+  //     période fragilise, et la séance qui s'en occupe est en complément.
+  // La marche rapide quotidienne, le deuxième pilier, se suit dans l'onglet
+  // Activité — ce n'est pas une séance.
+  { id: 'menopause', nom: 'Ménopause : os & muscles', obj: 'Force', niveau: 'Débutant', lieu: 'Maison', duree: 35, kcal: 190, mat: ['Sans matériel', 'Élastique', 'Haltères', 'Maison'], icon: 'sun-horizon',
+    exos: ['marche-sur-place', 'cercles-epaules', 'squats', 'fente-arriere', 'step-up', 'rowing', 'pompes-inclinees', 'dead-bug', 'equilibre-unipodal', 'etirement-pectoral-porte', 'etirement-quadriceps-debout'],
+    // Doses de la séance : 8 à 12 répétitions dont la dernière est difficile,
+    // et des séries plus courtes que les fiches sur les mouvements unilatéraux,
+    // qui coûtent le double en temps.
+    custom: {
+      'marche-sur-place': { series: 1, reps: '90 s', charge: 'Poids du corps', repos: 30 },
+      'cercles-epaules': { series: 1, reps: '30 s par sens', charge: 'Poids du corps', repos: 30 },
+      squats: { series: 3, reps: '10', charge: 'Poids du corps, puis haltères', repos: 75 },
+      'fente-arriere': { series: 3, reps: '8 par jambe', charge: 'Poids du corps, puis haltères', repos: 75 },
+      'step-up': { series: 2, reps: '10 par jambe', charge: 'Poids du corps', repos: 60 },
+      rowing: { series: 3, reps: '12', charge: 'Élastique moyen', repos: 60 },
+      'pompes-inclinees': { series: 3, reps: '10', charge: 'Poids du corps', repos: 60 },
+      'dead-bug': { series: 2, reps: '8 par côté', charge: 'Poids du corps', repos: 45 },
+      'equilibre-unipodal': { series: 2, reps: '20 s par jambe', charge: 'Poids du corps', repos: 30 },
+      'etirement-pectoral-porte': { series: 2, reps: '30 s par côté', charge: 'Poids du corps', repos: 15 },
+      'etirement-quadriceps-debout': { series: 2, reps: '30 s par jambe', charge: 'Poids du corps', repos: 15 },
+    },
+    complement: [{ id: 'perinee', raison: "Renforcer sans s'occuper du périnée revient à charger un plancher qu'on laisse se fragiliser : c'est la séance qui rend les squats, les fentes et le port de charges tenables dans la durée." }],
+    desc: "La chute des œstrogènes accélère la perte osseuse et la perte musculaire en même temps ; l'entraînement en résistance est ce qui agit sur les deux. Tout se fait en appui au sol, parce que c'est le poids du corps passant dans le squelette qui déclenche la densification — le vélo et la natation, excellents par ailleurs, ne l'obtiennent pas. Vise 8 à 12 répétitions dont la dernière est difficile mais propre, et augmente la charge quand douze deviennent faciles : 2 à 3 fois par semaine, avec un jour de repos entre deux. Deux appuis indispensables autour : des protéines à chaque repas, du calcium et de la vitamine D, sans lesquels l'entraînement construit à vide. Une douleur articulaire vive n'est pas une fatigue musculaire : adapte l'exercice, et ce qui persiste ou réveille la nuit relève d'un examen.",
+  },
+  // Le pendant de la séance ci-dessus, et la raison pour laquelle elle ne
+  // contient ni crunch ni saut : sous l'effort, la pression abdominale
+  // redescend sur un plancher pelvien que la baisse d'œstrogènes fragilise.
+  // Deux exercices y sont nouveaux (Kegel et hypopressive) parce que rien dans
+  // le catalogue ne les remplaçait — un abdominal classique pousse là où ceux-ci
+  // remontent. Séance courte et quotidienne, sans charge : le périnée ne se
+  // renforce pas plus vite en serrant plus fort.
+  { id: 'perinee', nom: 'Périnée & tronc profond', obj: 'Tonus', niveau: 'Débutant', lieu: 'Maison', duree: 20, kcal: 50, mat: ['Sans matériel', 'Maison'], icon: 'arrows-in',
+    exos: ['contraction-perineale', 'respiration-hypopressive', 'retroversion-bassin', 'dead-bug', 'gainage', 'bird-dog'],
+    custom: {
+      'contraction-perineale': { series: 3, reps: '10 contractions', charge: 'Poids du corps', repos: 45 },
+      'respiration-hypopressive': { series: 2, reps: '3 apnées', charge: 'Poids du corps', repos: 60 },
+      'retroversion-bassin': { series: 2, reps: '10', charge: 'Poids du corps', repos: 30 },
+      'dead-bug': { series: 3, reps: '8 par côté', charge: 'Poids du corps', repos: 45 },
+      gainage: { series: 2, reps: '20 s sur les genoux', charge: 'Poids du corps', repos: 45 },
+      'bird-dog': { series: 2, reps: '8 par côté', charge: 'Poids du corps', repos: 45 },
+    },
+    complement: [{ id: 'menopause', raison: "Le périnée se renforce pour soutenir un effort : c'est la séance de résistance qui lui donne sa raison d'être, et l'os et le muscle ne se maintiennent que là." }],
+    desc: "Le plancher pelvien soutient les organes et se contracte avant chaque effort ; les œstrogènes en baisse en fragilisent les tissus, et une gêne à l'effort ou une fuite en est le signe le plus courant. Ici, rien ne pousse vers le bas : on contracte le périnée volontairement, on laisse la respiration hypopressive le remonter en réflexe, puis on gaine sans pression avec le dos soutenu. Les contractions se font tous les jours, le reste 2 à 3 fois par semaine ; comme pour tout muscle, le progrès demande des semaines, pas des séances. Tant que cette zone est faible, évite les sauts répétés et les crunchs, qui lui envoient exactement la pression dont elle se protège mal. Des fuites, une sensation de pesanteur ou une douleur se font examiner par un médecin, une sage-femme ou un kinésithérapeute : ce geste s'apprend mal sans retour extérieur, et très vite avec.",
+  },
   { id: 'express', nom: 'Renforcement Express', obj: 'Prise de masse', niveau: 'Débutant', lieu: 'Maison', duree: 5, kcal: 55, mat: ['Sans matériel', 'Maison'], icon: 'timer', exos: ['pompes', 'squats', 'gainage'], desc: "5 minutes, 3 exercices : parfait quand le temps manque mais que tu veux rester régulier." },
 ];
 

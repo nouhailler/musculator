@@ -24,6 +24,11 @@ export const MUSCLES = [
   // il relie le fémur aux lombaires, et une journée assise le raccourcit. Sa
   // zone est le pli de l'aine, là où on le sent.
   { id: 'psoas', nom: 'Psoas-iliaque (fléchisseurs de hanche)', region: 'front', exos: ['etirement-psoas-chevalier', 'marche-sur-place', 'releve-jambes', 'hanging-knee-raise', 'reverse-nordic', 'mountain'] },
+  // Le plancher pelvien : un muscle volontaire comme les autres, mais qu'aucun
+  // mouvement du catalogue n'atteignait — les abdominaux classiques poussent
+  // dessus plutôt qu'ils ne le soutiennent. Sa zone est le plancher du bassin,
+  // sous les abdominaux, là où le poids des organes se pose.
+  { id: 'perinee', nom: 'Plancher pelvien (périnée)', region: 'front', exos: ['contraction-perineale', 'respiration-hypopressive', 'retroversion-bassin'] },
   {
     id: 'quads',
     nom: 'Quadriceps',
@@ -89,7 +94,7 @@ export const ZONES = [
   // 'Avant-bras' manquait depuis le début : une séance de grip ne comptait pour
   // aucune zone. Les trois noms qui suivent viennent des exercices de poignet.
   { label: 'Bras', muscles: ['Triceps', 'Biceps', 'Avant-bras', "Extenseurs de l'avant-bras", "Fléchisseurs de l'avant-bras", 'Long abducteur du pouce'] },
-  { label: 'Abdos', muscles: ['Sangle abdominale', 'Grand droit'] },
+  { label: 'Abdos', muscles: ['Sangle abdominale', 'Grand droit', 'Plancher pelvien'] },
 ];
 
 export const ZONE_LABELS = ZONES.map((z) => z.label);

@@ -1486,6 +1486,39 @@ export const DEMOS = {
     ],
   },
 
+  // --- Plancher pelvien ---
+  //
+  // Deux mouvements que le corps ne montre pas : le périnée est interne, et le
+  // creux hypopressif se lit sur un ventre que le squelette n'a pas. Comme pour
+  // la rétraction scapulaire, la démo montre ce qu'une vue de profil peut
+  // montrer — la posture dans laquelle l'exercice se fait, et le buste qui se
+  // grandit avec la contraction — plutôt que d'animer autre chose à la place.
+  // Les deux fixent leur `cycle` : il n'y a pas de tempo de répétition à
+  // emprunter.
+
+  'contraction-perineale': {
+    scene: 'ground',
+    props: [{ kind: 'block', x: 34, y: 74, w: 24 }],
+    cycle: 6000, // 5 s de serrage, 5 s de relâchement : rien ne bouge au-dehors
+    frames: [
+      // assis au bord de la chaise, dos droit, mains posées sur les cuisses
+      { hip: [44, 74], torso: -88, arm: [78.7, 59.8], armB: [82, 63], leg: [0, 90], foot: 0 },
+      // serrage : le buste se grandit, le bassin remonte d'un rien
+      { hip: [44, 73.4], torso: -91, arm: [68, 64.9], armB: [71, 68], leg: [2.1, 90], foot: 0 },
+    ],
+  },
+
+  'respiration-hypopressive': {
+    scene: 'ground',
+    cycle: 6000, // apnée poumons vides : seules les côtes s'ouvrent
+    frames: [
+      // poumons vides, mains sur les côtes basses, buste légèrement avancé
+      { hip: [50, 59], torso: -80, arm: [48.8, 158.2], armB: [52, 155], leg: [75.6, 104.4], legB: [80, 100], foot: 0, footB: 0 },
+      // ouverture costale : le buste se grandit, les mains montent avec les côtes
+      { hip: [50, 58.6], torso: -83, arm: [43.5, 158.5], armB: [47, 155], leg: [78.9, 101.1], legB: [83, 97], foot: 0, footB: 0 },
+    ],
+  },
+
 };
 
 export function demoFor(exId) {

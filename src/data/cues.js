@@ -227,6 +227,13 @@ export const CUES = {
   'pompes-mur': { beat: 1600, seq: ['Approche', 'Repousse'] },
   'equilibre-unipodal': { beat: 4000, seq: ['Tiens bon', 'Regard fixe', 'Respire', 'Change de jambe'] },
   'etirement-quadriceps-debout': { beat: 5000, seq: ['Rentre les fesses', 'Genoux serrés', 'Respire', 'Change de jambe'] },
+
+  // --- Plancher pelvien ---
+  // Un serrage tenu cinq secondes puis relâché cinq : deux temps, un battement
+  // lent, et le rappel de respirer, parce que bloquer son souffle est l'erreur
+  // qui annule l'exercice.
+  'contraction-perineale': { beat: 3000, seq: ['Serre et remonte', 'Respire', 'Relâche tout', 'Cinq secondes'] },
+  'respiration-hypopressive': { beat: 3000, seq: ['Souffle tout', 'Ouvre les côtes', 'Tiens', 'Relâche et respire'] },
 };
 
 export const ENCOURAGEMENTS = [

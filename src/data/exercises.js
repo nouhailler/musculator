@@ -2384,6 +2384,46 @@ export const EXERCISES = [
     variDifficile: "Sans appui au mur : l'équilibre s'ajoute à l'étirement.",
     similaires: ['etirement-psoas-chevalier', 'reverse-nordic', 'sissy-squat'],
   },
+  // --- Plancher pelvien ---------------------------------------------------
+  //
+  // Deux exercices que le catalogue n'avait pas et qu'aucun autre ne remplace :
+  // le périnée ne se travaille par aucun mouvement visible, et les abdominaux
+  // classiques poussent dessus au lieu de le soutenir. Ils sont indispensables
+  // à la périménopause et après, quand la chute des œstrogènes fragilise ces
+  // tissus, mais ils ne s'adressent pas qu'à elle — après une grossesse ou
+  // devant un effort qui fait fuir, la logique est la même.
+  {
+    id: 'contraction-perineale', nom: 'Contraction du périnée (Kegel)', muscle: 'Plancher pelvien', niveau: 'Débutant', lieu: 'Maison',
+    mat: ['Sans matériel', 'Maison'], series: 3, reps: '10 contractions', repos: 45, icon: 'arrows-in',
+    desc: "Assis ou allongé, serre le périnée comme pour retenir un gaz et une envie d'uriner, en remontant vers l'intérieur. Tiens cinq secondes, puis relâche complètement cinq secondes.",
+    conseils: ["Le relâchement compte autant que la contraction : compte-le", "Ni les fesses, ni les cuisses, ni le ventre ne doivent se contracter", "Souffle pendant la contraction, ne bloque jamais ta respiration"],
+    primaire: 'Plancher pelvien', secondaires: ['Transverse de l\'abdomen'],
+    sollicitation: "Le plancher pelvien est un muscle strié, volontaire, qui se renforce comme les autres — et qui perd de la force comme les autres quand rien ne le sollicite. La contraction est un verrouillage isométrique vers le haut et vers l'avant, tenu quelques secondes : c'est la durée du maintien, pas la force du serrage, qui construit le soutien dont les organes pelviens ont besoin sous l'effort.",
+    surcharge: "Un périnée déjà fatigué se contracte mal et se crispe : dix contractions correctes valent mieux que trente approximatives, et une séance quotidienne suffit largement. Pousser vers le bas au lieu de remonter fait exactement l'inverse de l'exercice. Des fuites, une gêne de pesanteur ou une douleur pendant les contractions se font examiner par un médecin, une sage-femme ou un kinésithérapeute spécialisé — le geste s'apprend beaucoup plus vite avec un retour extérieur.",
+    depart: "Assis au bord d'une chaise, dos droit, pieds à plat, ou allongé sur le dos, genoux fléchis. Épaules et mâchoire relâchées.",
+    mouvement: "Serre et remonte le périnée vers l'intérieur, tiens cinq secondes en respirant, puis relâche complètement pendant cinq secondes avant la contraction suivante.",
+    respiration: "Respire normalement pendant tout l'exercice : souffle sur la contraction plutôt que de retenir ton souffle.",
+    erreurs: ["Bloquer sa respiration pendant le serrage", "Serrer les fesses ou les cuisses à la place", "Enchaîner sans relâcher entre deux contractions", "S'entraîner en urinant : ça perturbe la vessie"],
+    variFacile: "Allongé sur le dos, genoux fléchis : la position supprime le poids des organes et rend la contraction plus facile à sentir. Trois secondes suffisent.",
+    variDifficile: "Debout, puis en ajoutant une contraction rapide avant chaque effort (tousser, soulever, se lever) — c'est l'automatisme qui protège au quotidien.",
+    similaires: ['respiration-hypopressive', 'retroversion-bassin', 'dead-bug'],
+  },
+  {
+    id: 'respiration-hypopressive', nom: 'Respiration hypopressive', muscle: 'Plancher pelvien · transverse', niveau: 'Intermédiaire', lieu: 'Maison',
+    mat: ['Sans matériel', 'Maison'], series: 3, reps: '3 apnées', repos: 60, icon: 'wind',
+    desc: "Debout, le buste grandi, mains sur les côtes basses : souffle tout l'air, puis sans réinspirer, ouvre les côtes comme pour inspirer. Le ventre se creuse et remonte sous les côtes ; tiens quelques secondes.",
+    conseils: ["Vide vraiment tout l'air avant d'ouvrir les côtes", "Grandis-toi d'abord : nuque longue, épaules basses", "Commence par 5 secondes d'apnée, pas plus"],
+    primaire: 'Plancher pelvien', secondaires: ['Transverse de l\'abdomen', 'Diaphragme', 'Sangle abdominale'],
+    sollicitation: "L'ouverture des côtes poumons vides fait remonter le diaphragme et baisser la pression dans l'abdomen : le transverse et le plancher pelvien se contractent en réflexe, vers le haut, sans qu'on le leur demande. C'est l'inverse exact du crunch, où chaque répétition pousse les viscères vers le bas et vers l'avant — d'où l'intérêt quand le périnée est le maillon faible.",
+    surcharge: "L'apnée est le vrai facteur limitant : elle se tient poumons vides, quelques secondes, jamais jusqu'au malaise, et l'exercice se fait à jeun ou à distance des repas. Il ne convient pas pendant une grossesse ni en cas d'hypertension mal contrôlée ou de problème cardiaque — demande l'avis d'un médecin ou d'un kinésithérapeute avant de commencer, et arrête à la moindre sensation de vertige.",
+    depart: "Debout, pieds écartés de la largeur des hanches, genoux souples, buste légèrement avancé, mains posées à plat sur les côtes basses.",
+    mouvement: "Inspire, souffle lentement tout l'air, puis ferme la gorge et ouvre les côtes sous les mains sans laisser entrer d'air ; tiens 5 à 10 secondes, relâche et respire normalement avant la suivante.",
+    respiration: "Elle est l'exercice : trois respirations lentes entre chaque apnée, et jamais deux apnées enchaînées sans récupérer.",
+    erreurs: ["Ouvrir les côtes avant d'avoir vidé l'air", "Rentrer le ventre en poussant au lieu de laisser l'aspiration se faire", "Tenir l'apnée trop longtemps", "Hausser les épaules vers les oreilles"],
+    variFacile: "À quatre pattes ou assis : le dos soutenu, l'aspiration se sent mieux et l'apnée peut se limiter à trois secondes.",
+    variDifficile: "Debout bras tendus au-dessus de la tête, ou en ajoutant une contraction du périnée à chaque apnée.",
+    similaires: ['contraction-perineale', 'retroversion-bassin', 'gainage'],
+  },
 ];
 
 // Movement patterns, in the order the catalogue presents them.

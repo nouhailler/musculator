@@ -141,6 +141,9 @@ const FRONT_ZONES = [
   { id: 'psoas', rect: { x: 104, y: 122, w: 12, h: 17, rx: 5 } },
   { id: 'dentele', rect: { x: 72, y: 82, w: 9, h: 20, rx: 4 } },
   { id: 'dentele', rect: { x: 119, y: 82, w: 9, h: 20, rx: 4 } },
+  // Le plancher du bassin, sous les abdominaux et entre les hanches : la
+  // dernière bande avant le bas de la silhouette.
+  { id: 'perinee', rect: { x: 88, y: 139, w: 24, h: 11, rx: 5 } },
 ];
 
 const BACK_ZONES = [
