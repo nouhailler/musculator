@@ -1414,6 +1414,78 @@ export const DEMOS = {
       { hip: [44, 72], torso: -80, arm: [10, 10], armB: [27.3, -6], leg: [4, 86], legB: [-2, 92], foot: 0 },
     ],
   },
+  // --- Autonomie après 60 ans -----------------------------------------------
+
+  'marche-sur-place': {
+    scene: 'ground',
+    frames: [
+      // genou proche levé, bras opposé devant
+      { hip: [50, 58], torso: -90, arm: [130, 130], armB: [50, 50], leg: [0, 90], legB: [90, 90], foot: 30, footB: 0 },
+      // l'autre genou monte, les bras s'inversent
+      { hip: [50, 58], torso: -90, arm: [50, 50], armB: [130, 130], leg: [90, 90], legB: [0, 90], foot: 0, footB: 30 },
+    ],
+  },
+
+  // Une rotation complète ne peut pas boucler ici : les frames se rejoignent en
+  // interpolant les angles linéairement, donc la somme des segments d'une boucle
+  // vaut forcément zéro — un tour entier reviendrait en arrière à triple vitesse
+  // sur le dernier quart. Ce que le côté peut montrer honnêtement, c'est
+  // l'amplitude que le cercle balaye : le bras monte devant et redescend.
+  'cercles-epaules': {
+    scene: 'ground',
+    frames: [
+      // bras le long du corps
+      { hip: [50, 58], torso: -90, arm: [86, 86], armB: [94, 94], leg: [88, 88], legB: [92, 92], foot: 0, footB: 0 },
+      // passage haut, bras tendus au-dessus de la tête
+      { hip: [50, 58], torso: -90, arm: [-94, -94], armB: [-86, -86], leg: [88, 88], legB: [92, 92], foot: 0, footB: 0 },
+    ],
+  },
+
+  'sit-to-stand': {
+    scene: 'ground',
+    props: [{ kind: 'block', x: 34, y: 74, w: 22 }],
+    frames: [
+      // assis au bord de l'assise, buste penché, nez au-dessus des orteils
+      { hip: [42, 71], torso: -60, arm: [40, 160], leg: [11.1, 96.1], legB: [10.8, 89], foot: 0, footB: 0 },
+      // debout, hanches ouvertes, bras croisés sur la poitrine
+      { hip: [52, 58.5], torso: -88, arm: [40, 160], leg: [75.6, 89.9], legB: [77.8, 80.6], foot: 0, footB: 0 },
+    ],
+  },
+
+  'pompes-mur': {
+    scene: 'ground',
+    props: [{ kind: 'wall', x: 78, top: 22 }],
+    frames: [
+      // bras tendus, corps incliné d'une pièce
+      { hip: [49.1, 60.4], torso: -80.2, arm: [20.2, -19.3], leg: [79.4, 120.2], legB: [74.4, 117.5], foot: 0, footB: 0 },
+      // coudes fléchis vers le bas, poitrine près du mur
+      { hip: [53.2, 61.4], torso: -72.2, arm: [43.6, -54.9], leg: [87.4, 128.1], legB: [81.3, 127], foot: 0, footB: 0 },
+    ],
+  },
+
+  // Le pied d'appui ne bouge pas : ce qui corrige, ce sont le buste, les bras
+  // et la jambe levée. C'est aussi ce que l'exercice entraîne.
+  'equilibre-unipodal': {
+    scene: 'ground',
+    cycle: 4000, // maintien : le corps ne fait que rattraper son équilibre
+    frames: [
+      { hip: [50, 58], torso: -90, arm: [60, 20], armB: [68, 28], leg: [0, 90], legB: [90, 90], foot: 30, footB: 0 },
+      { hip: [50, 58], torso: -94, arm: [50, 8], armB: [58, 16], leg: [-6, 84], legB: [90, 90], foot: 38, footB: 0 },
+    ],
+  },
+
+  'etirement-quadriceps-debout': {
+    scene: 'ground',
+    props: [{ kind: 'wall', x: 76, top: 24 }],
+    cycle: 5000, // maintien : seuls le bassin et le genou avancent de quelques degrés
+    frames: [
+      // talon à la fesse, main libre au mur
+      { hip: [52, 58], torso: -85, arm: [87.4, 90.5], armB: [42, -21.7], leg: [95, -75], legB: [88.6, 91.4], foot: -60, footB: 0 },
+      // le bassin rentre, le genou recule de quelques degrés
+      { hip: [52, 58], torso: -87, arm: [86.1, 89.2], armB: [37.8, -17.9], leg: [101, -70], legB: [88.6, 91.4], foot: -55, footB: 0 },
+    ],
+  },
+
 };
 
 export function demoFor(exId) {

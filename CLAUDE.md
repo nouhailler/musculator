@@ -262,7 +262,7 @@ viewBox); `lib/pose.js` does forward kinematics, interpolation and per-exercise 
 framing and is kept React-free; `components/ExerciseDemo.jsx` mutates SVG nodes imperatively
 via refs so a running animation never re-renders the tree above it.
 
-All 112 exercises have a demo. `demoFor(id)` still returns `null` for an unknown id and both
+All 150 exercises have a demo. `demoFor(id)` still returns `null` for an unknown id and both
 call sites degrade to the icon, so that guard stays — but a new exercise without a `DEMOS`
 entry is a gap, not a supported state.
 
@@ -274,6 +274,11 @@ Two things to know before adding or editing a pose:
   — for a leg, `bend: -1` puts the knee forward.
 - **The floor is `GROUND = 90`, and a standing figure has its hip at y≈58** (thigh 16 +
   shin 16). A support foot whose ankle does not land at y≈90 will look like it is hovering.
+
+- **A continuous rotation cannot loop.** Frames interpolate angles linearly and the last
+  eases back into the first, so the segments of a loop must sum to zero — a full turn would
+  whip back at triple speed on the closing quarter. Arm circles therefore show the amplitude
+  the circle sweeps, not the circle.
 
 - **A movement whose plane is perpendicular to the screen cannot be drawn at all.** Scapular
   retraction happens across the back: from the side there is nothing to animate. The demo shows

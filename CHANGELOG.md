@@ -10,6 +10,27 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Six exercices « autonomie » et un programme « Sarcopénie & autonomie »** — la fonte
+  musculaire liée à l'âge (~3 à 5 % de masse par décennie à partir de 30-40 ans, davantage
+  passé 60 ans) se reprend par la résistance, encore faut-il une porte d'entrée.
+  - Marche sur place genoux hauts, cercles de bras, lever de chaise (sit-to-stand), pompes
+    contre un mur, équilibre sur une jambe et étirement des quadriceps debout. Le catalogue
+    partait d'un corps déjà capable d'un squat complet et d'une pompe au sol : ces six-là sont
+    le barreau du dessous des familles existantes, et leur version difficile est toujours un
+    autre exercice du catalogue plutôt qu'une charge en plus.
+  - **L'équilibre unipodal entre au catalogue au même titre que la force** : la prévention des
+    chutes est la moitié du problème après 60 ans, et rien ne l'entraînait.
+  - Le programme contient son échauffement et ses étirements — les deux étapes qu'on saute
+    ailleurs et qu'ici on ne peut pas — et prescrit ses propres doses (2-3 séries de 8-12,
+    plus courtes que les fiches) via `custom`. La marche quotidienne recommandée en complément
+    reste dans l'onglet Activité : ce n'est pas une séance, et elle ne doit gonfler ni la série
+    ni les badges.
+  - **Une rotation complète ne peut pas boucler dans une démo** : les frames interpolent les
+    angles linéairement, donc la somme des segments d'une boucle vaut zéro et un tour entier
+    reviendrait en arrière à triple vitesse sur le dernier quart. Les cercles de bras montrent
+    donc l'amplitude que le cercle balaye, pas le cercle — même limite assumée que la
+    rétraction scapulaire.
+
 - **Cinq exercices d'avant-bras et un programme « Syndrome de la souris »** — les TMS du
   membre supérieur côté bureau : contraction statique, micro-répétitions, poignet en extension.
   - Étirement des extenseurs, des fléchisseurs, du pouce (Finkelstein modifié), ouverture des

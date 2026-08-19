@@ -220,6 +220,13 @@ export const CUES = {
   'etirement-pouce-finkelstein': { beat: 5000, seq: ['Pouce dans le poing', 'Incline doucement', 'Sans forcer', 'Change de main'] },
   'ouverture-doigts-elastique': { beat: 2000, seq: ['Écarte', 'Referme lentement'] },
   'automassage-avant-bras': { beat: 5000, seq: ['Sous le coude', 'Descends', 'Cherche les points', 'Change de bras'] },
+  // --- Autonomie après 60 ans ---
+  'marche-sur-place': { beat: 800, seq: ['Genou haut', 'Change'] },
+  'cercles-epaules': { beat: 1800, seq: ['Monte devant', 'Redescends'] },
+  'sit-to-stand': { beat: 2200, seq: ['Lève-toi', 'Assieds-toi lentement'] },
+  'pompes-mur': { beat: 1600, seq: ['Approche', 'Repousse'] },
+  'equilibre-unipodal': { beat: 4000, seq: ['Tiens bon', 'Regard fixe', 'Respire', 'Change de jambe'] },
+  'etirement-quadriceps-debout': { beat: 5000, seq: ['Rentre les fesses', 'Genoux serrés', 'Respire', 'Change de jambe'] },
 };
 
 export const ENCOURAGEMENTS = [

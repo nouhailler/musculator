@@ -12,8 +12,8 @@
 // Every id here must exist in data/exercises.js, and every muscle id must have
 // at least one zone in overlays/BodyMap.jsx, otherwise it can't be selected.
 export const MUSCLES = [
-  { id: 'epaules', nom: 'Épaules (deltoïdes)', region: 'front', exos: ['oiseau-halteres', 'oiseau-elastique', 'developpe-arnold', 'elevation-frontale', 'face-pull', 'developpe', 'elevations-laterales', 'pompes'] },
-  { id: 'pecs', nom: 'Pectoraux', region: 'front', exos: ['pompes-diamant', 'pompes-inclinees', 'pompes-declinees', 'developpe-couche', 'developpe-incline', 'ecartes-halteres', 'pull-over', 'etirement-pectoral-porte', 'pompes', 'pompes-elastique', 'dips', 'developpe'] },
+  { id: 'epaules', nom: 'Épaules (deltoïdes)', region: 'front', exos: ['cercles-epaules', 'oiseau-halteres', 'oiseau-elastique', 'developpe-arnold', 'elevation-frontale', 'face-pull', 'developpe', 'elevations-laterales', 'pompes'] },
+  { id: 'pecs', nom: 'Pectoraux', region: 'front', exos: ['pompes-mur', 'pompes-diamant', 'pompes-inclinees', 'pompes-declinees', 'developpe-couche', 'developpe-incline', 'ecartes-halteres', 'pull-over', 'etirement-pectoral-porte', 'pompes', 'pompes-elastique', 'dips', 'developpe'] },
   { id: 'biceps', nom: 'Biceps', region: 'front', exos: ['curl-marteau', 'curl-incline', 'curl-concentration', 'curl-elastique', 'curl-inverse', 'rowing-halteres-un-bras', 'rowing-inverse', 'curl-biceps', 'tractions', 'traction-supination', 'rowing'] },
   { id: 'abdos', nom: 'Abdominaux', region: 'front', exos: ['retroversion-bassin', 'dead-bug', 'hollow-body', 'bicycle', 'v-up', 'abdos', 'releve-jambes', 'reverse-crunch', 'hanging-knee-raise', 'hanging-leg-raise', 'toes-to-bar', 'ab-wheel-rollout', 'up-down-plank', 'gainage', 'mountain', 'copenhagen'] },
   // Ajoutés quand le catalogue a couvert la rotation, la préhension et les
@@ -23,12 +23,12 @@ export const MUSCLES = [
   // Le psoas n'avait pas de zone alors qu'il commande la bascule du bassin :
   // il relie le fémur aux lombaires, et une journée assise le raccourcit. Sa
   // zone est le pli de l'aine, là où on le sent.
-  { id: 'psoas', nom: 'Psoas-iliaque (fléchisseurs de hanche)', region: 'front', exos: ['etirement-psoas-chevalier', 'releve-jambes', 'hanging-knee-raise', 'reverse-nordic', 'mountain'] },
+  { id: 'psoas', nom: 'Psoas-iliaque (fléchisseurs de hanche)', region: 'front', exos: ['etirement-psoas-chevalier', 'marche-sur-place', 'releve-jambes', 'hanging-knee-raise', 'reverse-nordic', 'mountain'] },
   {
     id: 'quads',
     nom: 'Quadriceps',
     region: 'front',
-    exos: ['cyclist-squat', 'spanish-squat', 'reverse-nordic', 'squats', 'front-squat', 'squat-talons-sureleves', 'sissy-squat', 'squat-sumo', 'wall-sit', 'leg-extension', 'fentes', 'fente-arriere', 'bulgarian-split-squat', 'step-up', 'pistol-squat'],
+    exos: ['sit-to-stand', 'etirement-quadriceps-debout', 'cyclist-squat', 'spanish-squat', 'reverse-nordic', 'squats', 'front-squat', 'squat-talons-sureleves', 'sissy-squat', 'squat-sumo', 'wall-sit', 'leg-extension', 'fentes', 'fente-arriere', 'bulgarian-split-squat', 'step-up', 'pistol-squat'],
   },
   {
     id: 'adducteurs',
@@ -46,12 +46,12 @@ export const MUSCLES = [
   { id: 'cou', nom: 'Cou & nuque', region: 'back', exos: ['chin-tuck', 'etirement-elevateur-scapula'] },
   { id: 'dentele', nom: 'Dentelé antérieur', region: 'front', exos: ['scapular-push-up', 'scapular-pull-up', 'pompes', 'gainage', 'pull-over'] },
   { id: 'dos', nom: 'Dos (grand dorsal)', region: 'back', exos: ['dead-hang', 'oiseau-halteres', 'rowing-halteres-un-bras', 'rowing-halteres-buste-penche', 'rowing-inverse', 'tirage-vertical-elastique', 'tirage-horizontal-elastique-assis', 'traction-supination', 'traction-neutre', 'traction-negative', 'traction-assistee-elastique', 'straight-arm-pulldown-elastique', 'pulldown-genoux-elastique', 'pull-over', 'tractions', 'rowing'] },
-  { id: 'triceps', nom: 'Triceps', region: 'back', exos: ['extension-triceps-unilaterale', 'extension-triceps-elastique', 'barre-au-front', 'pompes-diamant', 'developpe-couche', 'pompes-inclinees', 'dips', 'extension-triceps', 'pompes', 'developpe'] },
+  { id: 'triceps', nom: 'Triceps', region: 'back', exos: ['pompes-mur', 'extension-triceps-unilaterale', 'extension-triceps-elastique', 'barre-au-front', 'pompes-diamant', 'developpe-couche', 'pompes-inclinees', 'dips', 'extension-triceps', 'pompes', 'developpe'] },
   {
     id: 'fessiers',
     nom: 'Fessiers (grand fessier)',
     region: 'back',
-    exos: ['pull-through', 'hip-thrust-pause', 'hip-thrust', 'hip-thrust-unilateral', 'glute-bridge', 'glute-bridge-unilateral', 'frog-pump', 'kickback-elastique', 'squats', 'fentes', 'fente-arriere', 'fente-croisee', 'bulgarian-split-squat', 'step-up', 'rdl', 'kettlebell-swing', 'hyperextension-45'],
+    exos: ['sit-to-stand', 'pull-through', 'hip-thrust-pause', 'hip-thrust', 'hip-thrust-unilateral', 'glute-bridge', 'glute-bridge-unilateral', 'frog-pump', 'kickback-elastique', 'squats', 'fentes', 'fente-arriere', 'fente-croisee', 'bulgarian-split-squat', 'step-up', 'rdl', 'kettlebell-swing', 'hyperextension-45'],
   },
   {
     id: 'moyen-fessier',
@@ -65,7 +65,7 @@ export const MUSCLES = [
     region: 'back',
     exos: ['sliding-leg-curl', 'hamstring-walkout', 'pull-through', 'rdl', 'rdl-unilateral', 'good-morning', 'curl-nordique', 'leg-curl-allonge', 'ghr', 'kettlebell-swing', 'hyperextension-45', 'fentes', 'squats'],
   },
-  { id: 'mollets', nom: 'Mollets', region: 'back', exos: ['mollets-unilateral', 'mollets-marche', 'tibialis-raise', 'seated-tibialis-raise', 'pogo-jumps', 'mollets-debout', 'mollets-assis', 'fentes', 'step-up'] },
+  { id: 'mollets', nom: 'Mollets', region: 'back', exos: ['equilibre-unipodal', 'mollets-unilateral', 'mollets-marche', 'tibialis-raise', 'seated-tibialis-raise', 'pogo-jumps', 'mollets-debout', 'mollets-assis', 'fentes', 'step-up'] },
   { id: 'lombaires', nom: 'Lombaires (érecteurs)', region: 'back', exos: ['posture-enfant', 'superman', 'back-extension-sol', 'y-raise', 'pull-through', 'bird-dog', 'good-morning', 'hyperextension-45', 'suitcase-carry', 'reverse-hyperextension'] },
 ];
 

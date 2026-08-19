@@ -43,6 +43,40 @@ export const PROGRAMS = [
   { id: 'souris', nom: 'Syndrome de la souris', obj: 'Tonus', niveau: 'Débutant', lieu: 'Maison', duree: 10, kcal: 25, mat: ['Sans matériel', 'Élastique', 'Maison'], icon: 'arrows-down-up', exos: ['etirement-extenseurs-avant-bras', 'etirement-flechisseurs-avant-bras', 'etirement-pouce-finkelstein', 'ouverture-doigts-elastique', 'automassage-avant-bras'],
     complement: [{ id: 'omoplates', raison: "La tension part rarement du poignet seul : un bras non soutenu fait travailler l'épaule et les omoplates en permanence, et ça redescend jusqu'à la main." }],
     desc: "Avant-bras et poignet, côté clavier-souris : on étire ce qui reste contracté toute la journée, on rééquilibre en ouverture ce qui ne travaille qu'en fermeture, et on relance la circulation. Les étirements se refont 3 à 5 fois par jour, le reste 2 à 3 fois par semaine. Aucun exercice ne compense 8 h de mauvaise posture : souris verticale, avant-bras soutenu, poignet droit, micro-pause toutes les 30 minutes. Fourmillements la nuit, perte de force ou poignet gonflé : consulte." },
+  // Sarcopénie : la fonte musculaire liée à l'âge — de l'ordre de 3 à 5 % de
+  // masse par décennie à partir de 30-40 ans, davantage passé 60 ans — et la
+  // seule séance du catalogue dont l'objectif est l'autonomie plutôt que la
+  // performance : se lever d'une chaise, monter un escalier, porter des
+  // courses, ne pas tomber. D'où trois choix qui la distinguent de « Full Body
+  // Maison » :
+  //   - elle contient son échauffement et ses étirements, parce que ce sont
+  //     justement les deux étapes qu'on saute et qu'ici on ne peut pas ;
+  //   - aucune charge, et une progression qui se fait en changeant d'exercice
+  //     (mur → table → genoux au sol) plutôt qu'en ajoutant du poids ;
+  //   - l'équilibre unipodal y a sa place au même titre que la force : la
+  //     prévention des chutes est la moitié du problème.
+  // Les doses sont plus courtes que les fiches (2-3 séries de 8-12) : la
+  // régularité vaut mieux que l'intensité, et une séance qu'on ne finit pas
+  // n'entraîne rien.
+  { id: 'sarcopenie', nom: 'Sarcopénie & autonomie', obj: 'Tonus', niveau: 'Débutant', lieu: 'Maison', duree: 30, kcal: 120, mat: ['Sans matériel', 'Élastique', 'Maison'], icon: 'heartbeat',
+    exos: ['marche-sur-place', 'cercles-epaules', 'sit-to-stand', 'tirage-horizontal-elastique-assis', 'glute-bridge', 'pompes-mur', 'gainage', 'mollets-debout', 'equilibre-unipodal', 'etirement-quadriceps-debout', 'etirement-pectoral-porte'],
+    custom: {
+      'marche-sur-place': { series: 1, reps: '60 s', charge: 'Poids du corps', repos: 20 },
+      'cercles-epaules': { series: 1, reps: '30 s par sens', charge: 'Poids du corps', repos: 20 },
+      'sit-to-stand': { series: 3, reps: '10', charge: 'Poids du corps', repos: 60 },
+      'tirage-horizontal-elastique-assis': { series: 3, reps: '12', charge: 'Élastique léger', repos: 60 },
+      'glute-bridge': { series: 3, reps: '12', charge: 'Poids du corps', repos: 60 },
+      'pompes-mur': { series: 3, reps: '12', charge: 'Poids du corps', repos: 60 },
+      gainage: { series: 2, reps: '25 s sur les genoux', charge: 'Poids du corps', repos: 45 },
+      'mollets-debout': { series: 2, reps: '12', charge: 'Poids du corps', repos: 45 },
+      'equilibre-unipodal': { series: 2, reps: '15 s par jambe', charge: 'Poids du corps', repos: 30 },
+      'etirement-quadriceps-debout': { series: 2, reps: '30 s par jambe', charge: 'Poids du corps', repos: 15 },
+      'etirement-pectoral-porte': { series: 2, reps: '30 s par côté', charge: 'Poids du corps', repos: 15 },
+    },
+    desc: "La masse musculaire fond avec l'âge, mais le processus se reprend — à 60 ans comme à 75. Séance complète du corps entier, échauffement et étirements inclus : deux à trois fois par semaine, avec au moins un jour de repos entre chaque. On y travaille ce dont dépend l'autonomie : se lever sans les mains, tirer et pousser, tenir son tronc, et l'équilibre sur une jambe, qui décide d'une chute ou d'un pas de rattrapage. Deux choses comptent autant que la séance : des protéines à chaque repas, parce que le muscle a besoin de briques pour se reconstruire, et 30 minutes de marche par jour. Bois avant, pendant et après. Une brûlure musculaire est normale ; une douleur vive dans une articulation est un signal d'arrêt, et ce qui persiste, irradie ou réveille la nuit relève d'un examen.",
+    // La marche quotidienne se suit dans l'onglet Activité, pas ici : elle
+    // n'est pas une séance et ne doit ni gonfler la série ni les badges.
+  },
   { id: 'express', nom: 'Renforcement Express', obj: 'Prise de masse', niveau: 'Débutant', lieu: 'Maison', duree: 5, kcal: 55, mat: ['Sans matériel', 'Maison'], icon: 'timer', exos: ['pompes', 'squats', 'gainage'], desc: "5 minutes, 3 exercices : parfait quand le temps manque mais que tu veux rester régulier." },
 ];
 
