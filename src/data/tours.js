@@ -15,6 +15,8 @@
 // Keep a step's text to two sentences. It is read standing up, one thumb on
 // the screen, next to the thing it describes.
 
+import { EXERCISES } from './exercises.js';
+
 export const TOURS = [
   {
     id: 'decouverte',
@@ -48,7 +50,9 @@ export const TOURS = [
       },
       {
         titre: 'La bibliothèque',
-        texte: "112 exercices avec fiche technique, muscle ciblé et démonstration animée. Chaque fiche peut se lancer seule, sans monter un programme.",
+        // Le compte vient du catalogue : écrit à la main, il vieillit à chaque
+        // exercice ajouté — il était resté à 112 pour 152 entrées.
+        texte: `${EXERCISES.length} exercices avec fiche technique, muscle ciblé et démonstration animée. Chaque fiche peut se lancer seule, sans monter un programme.`,
         tab: 'library',
         cible: 'tab-library',
       },
