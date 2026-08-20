@@ -345,6 +345,19 @@ export const FAQ = [
       "Trois exceptions, toutes déclenchées par toi : la recherche d'un produit de marque interroge Open Food Facts avec le code-barres ou le mot cherché ; une analyse IA envoie tes statistiques au modèle OpenRouter que tu as configuré ; un message au support part par ton application mail, avec ce que l'écran te montre avant l'envoi.",
     ],
     mots: ['vie privée', 'rgpd', 'serveur', 'tracking', 'envoi'],
+    lien: { view: 'confidentialite', label: 'Lire la politique de confidentialité' },
+  },
+  {
+    id: 'politique-confidentialite',
+    cat: 'confidentialite',
+    q: 'Que devient exactement ce que je saisis ?',
+    r: [
+      "Tout est écrit dans le stockage de ce navigateur, sur ce téléphone : profil, séances, repas, marches, notes. L'éditeur n'y a pas accès, n'en a aucune copie et ne peut rien restaurer — c'est la contrepartie de l'absence de compte. La seule copie possible est la sauvegarde que tu exportes toi-même.",
+      "Trois choses seulement sortent de l'appareil, et chacune parce que tu l'as demandée : une recherche d'aliment part vers Open Food Facts (le code-barres ou les mots cherchés, rien d'autre) ; une analyse IA part vers OpenRouter si tu as configuré une clé — c'est le seul cas où poids, taille, âge et blessures déclarées quittent le téléphone ; un message au support part par ton application mail, avec un diagnostic technique affiché avant l'envoi.",
+      "Le suivi de marche au GPS calcule une distance au fil de l'eau puis jette les points : aucun trajet n'est conservé. Aucun cookie, aucune mesure d'audience, aucune publicité.",
+    ],
+    mots: ['confidentialité', 'données', 'rgpd', 'lpd', 'vie privée', 'cookies', 'traceurs', 'gps'],
+    lien: { view: 'confidentialite', label: 'Lire la politique de confidentialité' },
   },
   {
     id: 'cle-openrouter',
@@ -379,6 +392,17 @@ export const FAQ = [
     mots: ['support', 'mail', 'contact', 'bug', 'problème', 'aide'],
     // No `lien`: every answer already ends on "Écrire au support", and a link
     // from here to the screen the reader is already on would go nowhere.
+  },
+  {
+    id: 'mentions-legales',
+    cat: 'confidentialite',
+    q: 'Où sont les mentions légales ?',
+    r: [
+      "Menu → « Mentions légales », ou depuis le profil. On y retrouve le texte affiché au premier lancement, la limitation de responsabilité, ce que l'app fait de tes données, et l'avertissement sur les distances mesurées au GPS.",
+      "L'app est un outil d'information : ses calculs, estimations et analyses sont indicatifs et ne remplacent ni un professionnel de santé, ni une source officielle. Le fait d'avoir accepté l'avertissement est enregistré sur cet appareil uniquement, avec sa version.",
+    ],
+    mots: ['cgu', 'conditions', 'responsabilité', 'juridique', 'éditeur', 'avertissement', 'droit'],
+    lien: { view: 'mentions', label: 'Ouvrir les mentions légales' },
   },
 ];
 

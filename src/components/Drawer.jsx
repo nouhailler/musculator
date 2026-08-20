@@ -119,6 +119,18 @@ export default function Drawer() {
           hint="Relire les précautions"
           onClick={() => { actions.showDisclaimer(); actions.closeMenu(); }}
         />
+        <Row
+          icon="scales" label="Mentions légales"
+          hint="Conditions d'utilisation et responsabilité"
+          active={state.view === 'mentions'}
+          onClick={() => { actions.openView('mentions'); actions.closeMenu(); }}
+        />
+        <Row
+          icon="shield-check" label="Confidentialité"
+          hint="Ce qui est enregistré, ce qui sort de l'appareil"
+          active={state.view === 'confidentialite'}
+          onClick={() => { actions.openView('confidentialite'); actions.closeMenu(); }}
+        />
 
         <div style={{ flex: 1, minHeight: 12 }} />
         <div style={{ fontSize: 10, color: 'var(--color-neutral-600)', paddingLeft: 4, lineHeight: 1.5 }}>

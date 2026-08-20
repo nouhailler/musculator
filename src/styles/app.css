@@ -135,10 +135,23 @@
   backdrop-filter: blur(3px);
   display: flex; align-items: flex-end; padding: 16px;
 }
+/* A flex column with a capped height: the notice is now longer than a phone
+   screen, and the whole point is that "J'ai compris" is *visible* rather than
+   at the end of a scroll. The text scrolls in the middle, the buttons stay put
+   at the bottom of the card. */
 .disclaimer-card {
   background: var(--color-surface); border: 1px solid var(--color-divider);
   border-radius: var(--radius-lg); padding: 22px 20px 20px; box-shadow: var(--shadow-lg);
   width: 100%;
+  display: flex; flex-direction: column;
+  max-height: min(86dvh, 740px);
+}
+.disclaimer-body { flex: 1; min-height: 0; }
+/* Scrolled text meeting a button with no gap reads as "that's the end" when it
+   isn't; the rule says otherwise. */
+.disclaimer-foot {
+  flex: none; padding-top: 12px; margin-top: 2px;
+  border-top: 1px solid var(--color-divider);
 }
 
 @media (min-width: 481px) {

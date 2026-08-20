@@ -330,6 +330,33 @@ export default function Profile() {
 
         <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
 
+        {/* Kept next to the support block: someone who wonders what the app
+            promises is in the same frame of mind as someone about to write. */}
+        <h5 style={{ margin: '0 0 4px' }}>Mentions légales</h5>
+        <p style={{ fontSize: 12, color: 'var(--color-neutral-400)', margin: '0 0 12px', lineHeight: 1.55 }}>
+          Conditions d'utilisation, limitation de responsabilité, et le détail de ce qui est
+          enregistré sur ton téléphone et de ce qui en sort.
+        </p>
+        <SecondaryButton icon="scales" onClick={() => actions.openView('mentions')}
+          style={{ width: '100%', padding: 11, justifyContent: 'center', marginBottom: 8 }}>
+          Lire les mentions légales
+        </SecondaryButton>
+        <SecondaryButton icon="shield-check" onClick={() => actions.openView('confidentialite')}
+          style={{ width: '100%', padding: 11, justifyContent: 'center', marginBottom: 8 }}>
+          Politique de confidentialité
+        </SecondaryButton>
+        {/* Development only: replaying the first launch is a testing need, and
+            an "effacer mon acceptation" button has no business in a build
+            people install. */}
+        {import.meta.env.DEV && (
+          <SecondaryButton icon="arrow-counter-clockwise" onClick={actions.resetLegalAck}
+            style={{ width: '100%', padding: 11, justifyContent: 'center', marginBottom: 8 }}>
+            Rejouer le premier lancement (dev)
+          </SecondaryButton>
+        )}
+
+        <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />
+
         <BackupSection />
 
         <div style={{ height: 1, background: 'var(--color-divider)', margin: '20px 0' }} />

@@ -215,6 +215,28 @@ export const HELP = {
       ['Rien de personnel dans le diagnostic', "Il porte le nombre de séances et de jours consignés, jamais leur contenu. La clé OpenRouter n'est jamais lue."],
     ],
   },
+  mentions: {
+    titre: 'Mentions légales',
+    intro: "Les conditions d'utilisation de l'app : ce qu'elle garantit, ce qu'elle ne garantit pas, et ce qu'elle fait de tes données.",
+    points: [
+      ['Avertissement', "C'est le texte affiché au tout premier lancement, consultable ici à tout moment. L'app est un outil d'information : elle ne remplace ni un professionnel de santé, ni une source officielle."],
+      ['Limitation de responsabilité', "Les calculs, estimations et analyses sont donnés à titre indicatif. Rien ne garantit qu'ils soient exacts, complets ou adaptés à ton cas."],
+      ['Localisation', "Les distances mesurées au GPS pendant une marche dépendent du réseau, du matériel et de l'environnement ; elles peuvent se tromper. N'utilise pas l'app comme unique moyen d'orientation."],
+      ['Tes données', "Aucun compte, aucun serveur : tout reste sur cet appareil. Effacer les données du navigateur ou désinstaller l'app les supprime définitivement — la sauvegarde manuelle est la seule copie possible."],
+      ['Version acceptée', "L'app retient la version de l'avertissement que tu as acceptée, avec le reste de tes réglages, sur cet appareil uniquement."],
+    ],
+  },
+  confidentialite: {
+    titre: 'Politique de confidentialité',
+    intro: "Le détail de ce qui est enregistré sur ton téléphone, de ce qui en sort, vers qui et à quel moment.",
+    points: [
+      ['Rien par défaut', "Aucun compte, aucun serveur : tes séances, tes repas et tes marches restent sur cet appareil. L'éditeur n'y a pas accès et ne peut rien restaurer."],
+      ['Ce qui sort, et quand', "Trois cas, tous déclenchés par toi : une recherche d'aliment part vers Open Food Facts, une analyse IA part vers OpenRouter si tu as configuré une clé, un message au support part par ton application mail."],
+      ['Analyse IA', "C'est le seul endroit où des données de santé quittent l'appareil — poids, taille, âge et blessures déclarées pour l'analyse du jour. Sans clé configurée, rien ne part et l'analyse est calculée sur le téléphone."],
+      ['GPS', "Le suivi de marche calcule une distance au fil de l'eau puis jette les points : aucun trajet n'est enregistré, seuls la distance, la durée et les calories le sont."],
+      ['Aucun traceur', "Pas de cookie, pas de mesure d'audience, pas de publicité, aucun script tiers."],
+    ],
+  },
   foodEntry: {
     titre: 'Quantité',
     intro: "Ajuste la quantité : les valeurs affichées se recalculent en direct.",

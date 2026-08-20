@@ -24,6 +24,8 @@ import ImportMeals from './overlays/ImportMeals.jsx';
 import Activity from './overlays/Activity.jsx';
 import ImportProgram from './overlays/ImportProgram.jsx';
 import Help from './overlays/Help.jsx';
+import Legal from './overlays/Legal.jsx';
+import Privacy from './overlays/Privacy.jsx';
 import Workout from './overlays/Workout.jsx';
 import WorkoutComplete from './overlays/WorkoutComplete.jsx';
 import AddExercises from './overlays/AddExercises.jsx';
@@ -33,6 +35,7 @@ const OVERLAYS = {
   exercise: ExerciseDetail, program: ProgramDetail, bodymap: BodyMap, profile: Profile,
   builder: Builder, foodSearch: FoodSearch, foodEntry: FoodEntry, importMeals: ImportMeals,
   activity: Activity, importProgram: ImportProgram, addExercises: AddExercises, help: Help,
+  mentions: Legal, confidentialite: Privacy,
 };
 
 export default function App() {

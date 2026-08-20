@@ -12,7 +12,7 @@ import {
   House, HouseLine, Info, Lightning, LineSegment, ListChecks, MagnifyingGlass, Medal,
   Moon, MoonStars, Mountains, NotePencil, Notebook, Pause, PencilSimple, Person,
   PersonSimple, PersonSimpleHike, PersonSimpleTaiChi, PersonSimpleWalk, Play, PlayCircle,
-  Plus, PlusCircle, ShieldCheck, SkipForward, SneakerMove, Sparkle, SpeakerHigh,
+  Plus, PlusCircle, Scales, ShieldCheck, SkipForward, SneakerMove, Sparkle, SpeakerHigh,
   SpeakerSimpleX, Target, ThermometerHot, Timer, Trash, TrendUp, Trophy, UserGear,
   WarningCircle, Waveform, Wind, Wrench, X, XCircle,
 } from '@phosphor-icons/react';
@@ -27,6 +27,7 @@ const REGISTRY = {
   'caret-down': CaretDown, 'caret-left': CaretLeft, cookie: Cookie, copy: Copy,
   'fork-knife': ForkKnife, leaf: Leaf, list: List, question: Question,
   sun: Sun, 'sun-horizon': SunHorizon,
+  scales: Scales,
   'caret-right': CaretRight, 'caret-up': CaretUp, 'chart-line-up': ChartLineUp, check: Check,
   'check-circle': CheckCircle, 'check-fat': CheckFat, circle: Circle,
   'circle-notch': CircleNotch,

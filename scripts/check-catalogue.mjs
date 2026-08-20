@@ -289,6 +289,70 @@ for (const id of tipUses) {
   if (!TIPS[id]) fail('unknown tip', `<Tip id="${id}"> has no entry in tips.js`);
 }
 
+// --- Legal notice ----------------------------------------------------------
+//
+// The legal text is content too, and it fails silently in a particular way: an
+// empty section still renders, so nobody notices the paragraph that was never
+// written. The GPS rule is the one the brief insists on and the only one that
+// can actually be checked — the section must be there when the app really
+// reads a position, and must not be there when it doesn't.
+
+const { LEGAL_ALL, LEGAL_GPS, LEGAL_SECTIONS, LEGAL_VERSION } = await import('../src/data/legal.js');
+
+if (!LEGAL_VERSION) fail('legal', 'LEGAL_VERSION is empty');
+const legalSeen = new Set();
+for (const sec of LEGAL_ALL) {
+  const where = `legal section "${sec.id}"`;
+  if (!sec.id) fail('legal', 'a section has no id');
+  if (legalSeen.has(sec.id)) fail('duplicate id', where);
+  legalSeen.add(sec.id);
+  if (!sec.titre) fail('legal', `${where} has no title`);
+  if (!Array.isArray(sec.paragraphes) || !sec.paragraphes.length) fail('legal', `${where} has no text`);
+  for (const par of sec.paragraphes || []) {
+    if (typeof par !== 'string' || par.trim().length < 20) fail('legal', `${where} has an empty paragraph`);
+  }
+}
+if (!LEGAL_SECTIONS.some((sec) => sec.avert)) fail('legal', 'no section is marked as the warning');
+
+// The privacy policy is held to the same shape — it is rendered by the same
+// component and rots the same way. It carries one extra rule: it describes the
+// outbound requests by name, so a third host appearing in `src/` means the
+// document is now incomplete and nothing else would say so.
+const { PRIVACY_SECTIONS, PRIVACY_DATE, PRIVACY_INTRO, PRIVACY_VERSION } = await import('../src/data/privacy.js');
+
+if (!PRIVACY_VERSION) fail('privacy', 'PRIVACY_VERSION is empty');
+if (!PRIVACY_DATE) fail('privacy', 'PRIVACY_DATE is empty');
+if (!PRIVACY_INTRO || PRIVACY_INTRO.length < 40) fail('privacy', 'PRIVACY_INTRO is empty');
+const privacySeen = new Set();
+for (const sec of PRIVACY_SECTIONS) {
+  const where = `privacy section "${sec.id}"`;
+  if (!sec.id) fail('privacy', 'a section has no id');
+  if (privacySeen.has(sec.id)) fail('duplicate id', where);
+  privacySeen.add(sec.id);
+  if (!sec.titre) fail('privacy', `${where} has no title`);
+  if (!Array.isArray(sec.paragraphes) || !sec.paragraphes.length) fail('privacy', `${where} has no text`);
+  for (const par of sec.paragraphes || []) {
+    if (typeof par !== 'string' || par.trim().length < 20) fail('privacy', `${where} has an empty paragraph`);
+  }
+}
+
+// Every host the app can reach has to be named in the policy. `fetch` targets
+// are template literals over a module-level BASE, so the hosts are read from
+// the `https://…` literals in src/ rather than from the call sites.
+const HOSTS_NAMED = { 'openfoodfacts.org': 'Open Food Facts', 'openrouter.ai': 'OpenRouter' };
+const privacyText = PRIVACY_SECTIONS.flatMap((sec) => sec.paragraphes).join(' ');
+const reached = new Set([...sources.matchAll(/https:\/\/(?:[\w-]+\.)*([\w-]+\.(?:ai|org|com|ch|io|net))/g)].map((m) => m[1]));
+for (const [host, name] of Object.entries(HOSTS_NAMED)) {
+  if (reached.has(host) && !privacyText.includes(name)) {
+    fail('privacy', `the app reaches ${host} but the policy never names "${name}"`);
+  }
+}
+
+const usesGeo = /navigator\.geolocation/.test(sources);
+const hasGeoSection = LEGAL_ALL.includes(LEGAL_GPS);
+if (usesGeo && !hasGeoSection) fail('legal', 'the app reads navigator.geolocation but LEGAL_GPS is not in LEGAL_ALL');
+if (!usesGeo && hasGeoSection) fail('legal', 'LEGAL_GPS is shown but nothing in src/ reads navigator.geolocation');
+
 // --- Report ----------------------------------------------------------------
 
 console.log(`${EXERCISES.length} exercises · ${Object.keys(DEMOS).length} demos · ${Object.keys(CUES).length} cues · ${MUSCLES.length} muscles · ${PROGRAMS.length} programs`);

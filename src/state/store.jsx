@@ -20,6 +20,7 @@ import { MEALS } from '../data/nutrition.js';
 import { mergeLog, parseNutritorCSV } from '../lib/importNutritor.js';
 import { applyImport, importedFoods } from '../lib/importMeals.js';
 import { tourById } from '../data/tours.js';
+import { LEGAL_VERSION } from '../data/legal.js';
 import { sendSupport as sendSupportMail } from '../lib/diagnostics.js';
 
 const STORAGE_KEY = 'musculator:v1';
@@ -47,6 +48,10 @@ function loadPersisted() {
       customWorkouts: Array.isArray(p.customWorkouts) ? p.customWorkouts : [],
       sessionLog: Array.isArray(p.sessionLog) ? p.sessionLog : [],
       disclaimerAcked: !!p.disclaimerAcked,
+      // The notice version that was accepted. Recorded so a future change can
+      // be told from the first acceptance; nothing re-shows the notice on a
+      // bump today (see needsLegalAck in data/legal.js).
+      legalVersion: typeof p.legalVersion === 'string' ? p.legalVersion : '',
       voiceOn: p.voiceOn !== false,
       // Whether the guided tour has been offered. Persisted so the invitation
       // on the Accueil appears once; the tours themselves stay replayable from
@@ -78,7 +83,7 @@ function loadPersisted() {
 
 function initialState() {
   const persisted = loadPersisted() || {
-    profile: defaultProfile, customWorkouts: [], sessionLog: [], disclaimerAcked: false, voiceOn: true,
+    profile: defaultProfile, customWorkouts: [], sessionLog: [], disclaimerAcked: false, legalVersion: '', voiceOn: true,
     openrouter: { key: '', model: '' }, nutriLog: {}, foodCache: {}, theme: DEFAULT_THEME,
     dayNotes: {}, analysisLog: {}, activityLog: {}, tourDone: false,
   };
@@ -315,9 +320,13 @@ function reducer(state, action) {
       return { ...state, view: null, helpOpen: false };
 
     case 'ACCEPT_DISCLAIMER':
-      return { ...state, disclaimerAcked: true };
+      return { ...state, disclaimerAcked: true, legalVersion: LEGAL_VERSION };
     case 'SHOW_DISCLAIMER':
       return { ...state, disclaimerAcked: false };
+    // Development only (see the button in Profile.jsx): puts the device back in
+    // the state of a first launch, version included.
+    case 'RESET_LEGAL_ACK':
+      return { ...state, disclaimerAcked: false, legalVersion: '', view: null, menuOpen: false };
 
     case 'SET_THEME':
       return { ...state, theme: isTheme(action.theme) ? action.theme : DEFAULT_THEME };
@@ -784,6 +793,7 @@ export function AppProvider({ children }) {
         customWorkouts: state.customWorkouts,
         sessionLog: state.sessionLog,
         disclaimerAcked: state.disclaimerAcked,
+        legalVersion: state.legalVersion,
         voiceOn: state.voiceOn,
         tourDone: state.tourDone,
         openrouter: state.openrouter,
@@ -797,7 +807,7 @@ export function AppProvider({ children }) {
     } catch {
       // storage unavailable (private mode / quota) — app still works, just without persistence
     }
-  }, [state.profile, state.customWorkouts, state.sessionLog, state.disclaimerAcked, state.voiceOn,
+  }, [state.profile, state.customWorkouts, state.sessionLog, state.disclaimerAcked, state.legalVersion, state.voiceOn,
       state.openrouter, state.nutriLog, state.foodCache, state.theme, state.dayNotes, state.analysisLog,
       state.activityLog, state.tourDone]);
 
@@ -885,6 +895,7 @@ export function AppProvider({ children }) {
     },
     acceptDisclaimer: () => dispatch({ type: 'ACCEPT_DISCLAIMER' }),
     showDisclaimer: () => dispatch({ type: 'SHOW_DISCLAIMER' }),
+    resetLegalAck: () => dispatch({ type: 'RESET_LEGAL_ACK' }),
     toggleVoice: () => dispatch({ type: 'TOGGLE_VOICE' }),
 
     selectExercise: (id) => dispatch({ type: 'SELECT_EXERCISE', id }),

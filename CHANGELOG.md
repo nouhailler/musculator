@@ -10,6 +10,56 @@ grouped by date and reference the commit they landed in.
 
 ### Added
 
+- **Politique de confidentialité détaillée** (`data/privacy.js`, écran « Confidentialité »),
+  document séparé des mentions légales : les deux répondent à des questions différentes — ce
+  que l'app promet, et ce que deviennent les données — et les confondre ne sert ni l'une ni
+  l'autre.
+  - **Elle décrit ce build, vérifié dans le code**, pas un texte type : les tranches
+    réellement persistées, les deux seuls hôtes que l'app peut joindre, et — champ par champ
+    — ce qu'une analyse IA transmet. L'analyse du jour envoie prénom, poids, taille, âge et
+    blessures déclarées : le dire vaguement aurait masqué le seul endroit où des données de
+    santé quittent le téléphone.
+  - Elle constate aussi ce que le code garantit et qu'un texte type n'aurait pas su dire :
+    un suivi de marche calcule une distance puis jette les points GPS — aucun trajet n'est
+    conservé — et le coach vocal ne prononce jamais le prénom.
+  - **`check-catalogue` grep les hôtes `https://` de `src/` et échoue si la politique n'en
+    nomme pas un.** Aujourd'hui Open Food Facts et OpenRouter ; un troisième service ajouté
+    sans paragraphe casse le build, seule chose qui s'en apercevrait jamais.
+  - `EDITEUR.hebergeur` distingue désormais les deux rôles — Netlify sert l'application,
+    Infomaniak porte le domaine et la messagerie — parce qu'une politique de confidentialité
+    doit nommer le bon acteur pour la bonne chose.
+
+- **Mentions légales, limitation de responsabilité et versionnement de l'avertissement** —
+  l'app avertissait déjà sur le plan médical au premier lancement, mais ne disait nulle part
+  ce qu'elle garantit, ce qu'elle ne garantit pas, ni ce qu'elle fait des données.
+  - **L'avertissement de premier lancement a une seconde page** plutôt qu'une seconde
+    fenêtre : « Voir les détails » affiche les mentions complètes *dans* le modal. Un overlay
+    ouvert de là se serait dessiné derrière lui (`z-index` 56 contre 70), et l'avertissement
+    doit rester la seule chose à l'écran tant qu'il n'est pas lu. Le carton est devenu une
+    colonne flex à hauteur plafonnée : le texte défile au milieu, « J'ai compris » reste
+    visible sans avoir à faire défiler jusqu'au bout.
+  - **Un écran « Mentions légales » consultable en permanence** (menu, profil, FAQ), qui rend
+    exactement le même texte via `components/LegalText.jsx` — le contenu vit une seule fois,
+    dans `data/legal.js`.
+  - **La section GPS existe parce que l'app suit vraiment une marche au GPS**, et
+    `check-catalogue` vérifie les deux sens : pas de section sans géolocalisation dans le
+    code, pas de géolocalisation sans section. Il vérifie aussi qu'aucune section n'est vide,
+    la façon dont un texte légal se dégrade sans que rien ne le signale.
+  - **Rien n'est inventé** : l'identité de l'éditeur (Swinux, canton de Vaud, hébergement
+    Infomaniak) vient de l'éditeur, le contact est celui déjà présent dans le dépôt, et ce
+    qui manque encore reste à `[À COMPLÉTER]`, affiché comme tel — aujourd'hui la politique
+    de confidentialité. La section « Données personnelles » constate ce que fait ce build et
+    ne tient pas lieu de politique de confidentialité.
+  - **`legalVersion` est une 14ᵉ tranche persistée** : la version acceptée est enregistrée,
+    ce qui permettra un jour de redemander l'accord après un changement important. Ce build
+    ne redemande rien — `needsLegalAck(state)` est appelé sans `strict`.
+  - Accessibilité et navigation : `role="dialog"`, `aria-modal`, piège de focus, `Échap`, et
+    le **retour Android ferme les détails** au lieu de quitter l'app — la seule chose de
+    l'app qui touche à l'historique, et elle nettoie son entrée derrière elle.
+  - `npm run test:legal` (`scripts/legal.mjs`) parcourt les onze scénarios au navigateur :
+    premier lancement, acceptation, rechargement, accès permanent, effacement du stockage,
+    thèmes clair et sombre, absence de débordement horizontal.
+
 - **Deux exercices de plancher pelvien et deux programmes « ménopause »** — la chute des
   œstrogènes accélère la perte osseuse, la perte musculaire et la fragilisation du périnée en
   même temps ; le catalogue savait répondre aux deux premières et n'avait rien pour la

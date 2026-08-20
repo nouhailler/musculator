@@ -13,6 +13,7 @@ npm run gen-icons  # regenerate public/icons/*.png
 npm run gen-prompt # regenerate PROMPT-REPAS.md from src/lib/mealPrompt.js
 npm run shots      # regenerate docs/screenshots/*.webp (needs a build served on :4173)
 npm run check-catalogue  # verify the content invariants below
+npm run test:legal # walk the legal notice in a browser (needs a build on :4173)
 ```
 
 **`npm run check-catalogue` enforces what this file documents.** Every rule below about ids
@@ -59,10 +60,11 @@ The split between the two files in `src/state/` is load-bearing:
 are recomputed by `useDerived()` (memoized on `state.sessionLog`). Don't add computed fields
 to reducer state; add them to `useDerived` or to a `lib/` helper.
 
-**Persistence covers 13 slices only** — `profile`, `customWorkouts`, `sessionLog`,
-`disclaimerAcked`, `voiceOn`, `tourDone`, `openrouter`, `nutriLog`, `foodCache`, `theme`,
-`dayNotes`, `analysisLog`, `activityLog`, under the key `musculator:v1`. Everything else (current tab,
-filters, in-progress workout) is deliberately ephemeral. Adding a durable field means
+**Persistence covers 14 slices only** — `profile`, `customWorkouts`, `sessionLog`,
+`disclaimerAcked`, `legalVersion`, `voiceOn`, `tourDone`, `openrouter`, `nutriLog`,
+`foodCache`, `theme`, `dayNotes`, `analysisLog`, `activityLog`, under the key
+`musculator:v1`. Everything else (current tab, filters, in-progress workout) is deliberately
+ephemeral. Adding a durable field means
 touching both `loadPersisted()` and the persist effect in `store.jsx`.
 
 ### Backups
@@ -350,6 +352,59 @@ human. They share one entry point and one piece of state.
   entry without requiring one.
 - UA parsing is guesswork and says so: every branch degrades to a family or to the raw string
   rather than claiming a wrong device (iOS never volunteers a model at all).
+
+### Mentions légales et avertissement
+
+All the legal wording lives in **`src/data/legal.js`** and is rendered in exactly one place,
+`components/LegalText.jsx`, which the two screens that show it both call. A paragraph written
+into a screen instead would exist in one of the two only — the drift this split prevents.
+
+- **The first-launch notice is one modal with two pages, not two components.** `.overlay`
+  sits at `z-index: 56` and `.disclaimer-backdrop` at 70 (`app.css`), so "Voir les détails"
+  cannot open the `mentions` overlay: it would render *behind* the notice. The card is a flex
+  column with a capped height — the text scrolls in the middle, `.disclaimer-foot` keeps
+  "J'ai compris" visible without scrolling to the end of the legal text.
+- **`mentions` (`overlays/Legal.jsx`) is the permanent copy**, reachable from the drawer, the
+  profile and a FAQ entry. Like every overlay it needs a `help.js` entry — `check-catalogue`
+  fails otherwise.
+- **The GPS section is data-driven and checked both ways.** `LEGAL_GPS` is in `LEGAL_ALL`
+  because `overlays/Activity.jsx` really watches the device position; `check-catalogue` greps
+  `src/` and fails if one exists without the other. That is also why `legal.js` never spells
+  the API name in a comment — it would satisfy its own grep. The same block rejects an empty
+  section, which is how a legal text rots without anything noticing.
+- **Nothing legal is invented.** `EDITEUR` carries what the publisher gave (Swinux, canton
+  de Vaud, Infomaniak) and the contact is `SUPPORT_EMAIL`, already in the repo; anything
+  still unknown stays at `A_COMPLETER` and renders as visibly unfilled rather than being
+  guessed. `LEGAL_DONNEES` states what this build does with data and is **not** a privacy
+  policy — it leaves an `A_COMPLETER` slot for one rather than passing for it. `miseAJour` is
+  a hand-maintained date: bump it when the wording changes.
+- **`legalVersion` records which version was accepted**, written by `ACCEPT_DISCLAIMER`.
+  `needsLegalAck(state, strict)` is deliberately called *without* `strict`, so bumping
+  `LEGAL_VERSION` does not put the notice back in front of people who already accepted; flip
+  the call site in `DisclaimerModal` when a change is worth re-asking for.
+- **The notice is the only thing in the app that touches `history`**: opening the details
+  pushes an entry so Android's back button closes them instead of leaving the app, and the
+  in-app "Retour" pops that entry rather than leaving it behind. Nothing else navigates
+  through the history — don't generalise it without doing so everywhere.
+- `RESET_LEGAL_ACK` replays a first launch. Its button in `Profile.jsx` is behind
+  `import.meta.env.DEV`: an "erase my acceptance" button has no business in an installed
+  build. Testing by hand is the same thing — clear `musculator:v1` and reload.
+- **The privacy policy is a separate document, not a section of the mentions.** `data/privacy.js`
+  + `overlays/Privacy.jsx` (view key `confidentialite`); `LEGAL_DONNEES` summarises in three
+  paragraphs and points at it. Both documents render through the same exported `Sections`
+  component in `LegalText.jsx`, so they cannot drift apart visually.
+- **The policy describes this build, verified against the source — so changing the app means
+  changing it.** `check-catalogue` holds it to the legal sections' shape *and* greps every
+  `https://…` host in `src/`: reaching a host the policy never names is a failure. Today that
+  is Open Food Facts and OpenRouter; a third one added without a paragraph breaks the build,
+  which is the only thing that would ever notice. The fields listed under « Analyse par un
+  modèle d'IA » come from `buildPrompt` / `buildProgressPrompt` in `openrouter.js` — the day's
+  analysis really does send a first name, a weight and declared injuries, and the policy says
+  so field by field rather than hiding it behind "vos statistiques".
+- `npm run test:legal` (`scripts/legal.mjs`) walks the whole thing in a browser: first
+  launch, acceptance, reload, permanent access, cleared storage, both themes, no horizontal
+  overflow. It needs a build served on :4173 and, unlike `smoke.mjs`, resolves Chromium
+  through Playwright rather than a hard-coded path.
 
 ### Nutrition
 

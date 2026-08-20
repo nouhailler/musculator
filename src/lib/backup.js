@@ -20,6 +20,7 @@ const SLICES = {
   customWorkouts: 'array',
   sessionLog: 'array',
   disclaimerAcked: 'boolean',
+  legalVersion: 'string',
   voiceOn: 'boolean',
   tourDone: 'boolean',
   openrouter: 'object',
