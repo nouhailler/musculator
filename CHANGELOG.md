@@ -8,6 +8,21 @@ grouped by date and reference the commit they landed in.
 
 ## [Unreleased]
 
+### Fixed
+
+- **« Vérifier les mises à jour » pouvait rester bloqué sur « Recherche… » indéfiniment.**
+  `registration.update()` n'est pas garanti de se régler : il reste en attente pendant
+  l'installation du nouveau worker (~1,7 Mo de précache) et, sur un réseau qui décroche ou
+  sur iOS Safari, peut ne jamais aboutir. Rien ne bornait cette attente et rien ne rattrapait
+  une exception, donc le bouton tournait sans issue.
+  - La recherche est désormais bornée, et l'échec de délai est un résultat à part entière,
+    dit avec ses propres mots : annoncer « tu es déjà sur la dernière version » à quelqu'un
+    dont le téléchargement est encore en cours est la seule réponse fausse qui vaille la
+    peine d'être évitée.
+  - Une exception ne peut plus laisser le bouton figé — `checkUpdate` la rattrape.
+  - Vérifié sur les quatre chemins : nominal (155 ms), appel qui ne répond jamais (borné,
+    message d'échec), rejet et exception synchrone (« indisponible ici »).
+
 ### Added
 
 - **Politique de confidentialité détaillée** (`data/privacy.js`, écran « Confidentialité »),

@@ -101,6 +101,14 @@ the old JavaScript keeps running, and there is no moment the user can point at.
   immediately when nothing controls the page, and unregisters + reloads on a 2.5 s timer as
   a last resort. `hardReload()` is the manual version of that last resort; it clears Cache
   Storage only, never `localStorage`, where every user's data lives.
+- **The check is bounded, and a timeout is not "you are up to date".**
+  `registration.update()` is not guaranteed to settle — it stays pending while the worker it
+  found installs (~1.7 MB of precache), and on a stalled network or iOS Safari it can stay
+  pending for ever, which left the button reading "Recherche…" with no way out. `checkForUpdate`
+  races it against `CHECK_BUDGET_MS` and returns a fourth result, `'timeout'`, reported in its
+  own words: telling someone they are on the latest version while a new build is still
+  downloading is the one wrong answer worth avoiding. `checkUpdate` in the store wraps the call
+  in `try/catch` as well, so nothing can leave `updateChecking` stuck true.
 - **An update is never applied during a workout.** Applying reloads the page and the running
   session lives in memory only, so `checkUpdate` refuses and `UpdateBanner` hides itself.
 - `netlify.toml` carries headers only, no `[build]` block, so it cannot conflict with the

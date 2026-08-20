@@ -56,26 +56,60 @@ function waitForUpdate(ms = 12000) {
   });
 }
 
+// How long the whole check may take before it reports back anyway.
+//
+// **`registration.update()` is not guaranteed to settle.** It stays pending
+// while the worker it found installs — this app precaches ~1.7 MB, which is a
+// long time on a phone connection — and on a stalled network, behind a captive
+// portal, or on iOS Safari it can stay pending indefinitely. A caller cannot
+// recover from a promise that never settles, so the bound lives here rather
+// than being left to whoever awaits it.
+const CHECK_BUDGET_MS = 15000;
+
+/** Races `promise` against the clock; resolves `fallback` if the clock wins. */
+function atMost(promise, ms, fallback) {
+  let timer;
+  const capped = new Promise((resolve) => { timer = setTimeout(() => resolve(fallback), ms); });
+  return Promise.race([promise, capped]).finally(() => clearTimeout(timer));
+}
+
 /**
  * Asks the server for a new version right now.
  *
- * @returns 'unsupported' | 'current' | 'update' — never returns on 'update'
- * once applied, since applying reloads the page.
+ * @returns 'unsupported' | 'current' | 'update' | 'timeout' — never returns on
+ * 'update' once applied, since applying reloads the page. 'timeout' means the
+ * check did not conclude in time, which is **not** the same as 'current': it
+ * has to be said differently, or someone on a slow connection is told they are
+ * up to date while a new build is still downloading.
  */
 export async function checkForUpdate() {
   if (ready) return 'update';
   if (!registration) return 'unsupported';
+
+  const deadline = Date.now() + CHECK_BUDGET_MS;
+  const left = () => Math.max(0, deadline - Date.now());
+
+  // The rejection is handled on the original promise: attaching it only to the
+  // race would leave an unhandled rejection behind when the clock wins first.
+  // `update()` can also throw synchronously (InvalidStateError on a stale
+  // registration), which is the same answer as a rejection, not a timeout.
+  let updating;
   try {
-    await registration.update();
+    updating = registration.update().then(() => 'done', () => 'failed');
   } catch {
     return 'unsupported';
   }
-  // `update()` resolves when the check is done, but a worker it found still
-  // has to install before it is usable — hence the wait rather than an
-  // immediate verdict.
+  if (await atMost(updating, left(), 'timeout') === 'failed') return 'unsupported';
+
+  if (ready) return 'update';
+  // A worker the check found still has to install before it is usable — hence
+  // the wait rather than an immediate verdict. What is left of the budget is
+  // all it gets.
   if (registration.installing || registration.waiting) {
-    return (await waitForUpdate()) ? 'update' : 'current';
+    if (await waitForUpdate(left())) return 'update';
   }
+  if (ready) return 'update';
+  if (left() === 0 || registration.installing) return 'timeout';
   return 'current';
 }
 

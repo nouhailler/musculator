@@ -997,7 +997,15 @@ export function AppProvider({ children }) {
         return;
       }
       dispatch({ type: 'PATCH', payload: { updateChecking: true, updateStatus: 'Recherche…' } });
-      const result = await checkForUpdate();
+      // `checkForUpdate` bounds its own wait, but the button must come back out
+      // of "Recherche…" whatever happens here — a throw that left it spinning
+      // for ever is worse than any wrong answer it could give instead.
+      let result;
+      try {
+        result = await checkForUpdate();
+      } catch {
+        result = 'timeout';
+      }
       if (result === 'update') {
         dispatch({ type: 'PATCH', payload: { updateChecking: false, updateStatus: 'Nouvelle version installée, redémarrage…' } });
         setTimeout(applyUpdate, 400);
@@ -1005,9 +1013,12 @@ export function AppProvider({ children }) {
       }
       dispatch({ type: 'PATCH', payload: {
         updateChecking: false,
-        updateStatus: result === 'current'
-          ? "Tu es déjà sur la dernière version."
-          : "Mise à jour automatique indisponible ici (pas de service worker) — recharge la page.",
+        updateStatus: {
+          current: "Tu es déjà sur la dernière version.",
+          // Said apart from "current" on purpose: a slow connection that is
+          // still downloading the new build must not be told it is up to date.
+          timeout: "La recherche n'a pas abouti — réseau lent ou indisponible. Réessaie dans un moment, ou force le rechargement complet ci-dessous.",
+        }[result] || "Mise à jour automatique indisponible ici (pas de service worker) — recharge la page.",
       } });
     },
     applyUpdate: () => applyUpdate(),
