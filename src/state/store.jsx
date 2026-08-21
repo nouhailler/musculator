@@ -101,6 +101,12 @@ function initialState() {
     // The running interactive tutorial, `{ id, step }`. Never persisted: a
     // half-finished tour is not something to resume three days later.
     tour: null,
+    // The documentation reader (overlays/Documentation.jsx). `rel` is the page
+    // being read — null means the chapter index — and `open` the chapters
+    // expanded there. Ephemeral, like the help centre's own state: reopening
+    // the documentation starts from the index, which is where someone looking
+    // for something arrives.
+    doc: { rel: null, hash: '', query: '', open: [] },
     // The support form. `statut` is what the screen says after the mail app
     // was handed the message.
     support: { sujet: '', message: '', statut: '' },
@@ -365,6 +371,38 @@ function reducer(state, action) {
       return { ...state, menuOpen: action.open };
     case 'SET_HELP':
       return { ...state, helpOpen: action.open };
+
+    // --- Documentation ------------------------------------------------------
+    case 'OPEN_DOC':
+      return {
+        ...state,
+        view: 'documentation', menuOpen: false, helpOpen: false,
+        doc: action.rel
+          ? { ...state.doc, rel: action.rel, hash: action.hash || '', query: '' }
+          : { ...state.doc, rel: null, hash: '', query: '' },
+      };
+    case 'DOC_GO':
+      return { ...state, doc: {
+        ...state.doc,
+        rel: action.rel,
+        hash: action.hash || '',
+        // Following a link is a new question: a running search stops applying.
+        query: '',
+        // Arriving at a page expands its chapter, so going back to the index
+        // shows where you were rather than a fully collapsed list.
+        open: state.doc.open.includes(action.section)
+          ? state.doc.open
+          : [...state.doc.open, action.section],
+      } };
+    case 'DOC_INDEX':
+      return { ...state, doc: { ...state.doc, rel: null, hash: '', query: '' } };
+    case 'DOC_QUERY':
+      // Typing searches across every page, so it leaves the page being read.
+      return { ...state, doc: { ...state.doc, query: action.query, rel: null, hash: '' } };
+    case 'DOC_TOGGLE_CHAPTER':
+      return { ...state, doc: { ...state.doc, open: state.doc.open.includes(action.key)
+        ? state.doc.open.filter((k) => k !== action.key)
+        : [...state.doc.open, action.key] } };
 
     // --- Aide, FAQ, tutoriels ----------------------------------------------
     case 'OPEN_HELP_CENTER':
@@ -868,6 +906,17 @@ export function AppProvider({ children }) {
     closeMenu: () => dispatch({ type: 'SET_MENU', open: false }),
     openHelp: () => dispatch({ type: 'SET_HELP', open: true }),
     closeHelp: () => dispatch({ type: 'SET_HELP', open: false }),
+
+    // --- Documentation --------------------------------------------------------
+    // `rel` is a path under docs/, e.g. 'features/marche.md'. Omitted, the
+    // reader opens on the chapter index.
+    openDoc: (rel = null, hash = '') => dispatch({ type: 'OPEN_DOC', rel, hash }),
+    docGo: (rel, hash = '') => dispatch({
+      type: 'DOC_GO', rel, hash, section: rel.includes('/') ? rel.split('/')[0] : '',
+    }),
+    docIndex: () => dispatch({ type: 'DOC_INDEX' }),
+    docSearch: (query) => dispatch({ type: 'DOC_QUERY', query }),
+    docToggleChapter: (key) => dispatch({ type: 'DOC_TOGGLE_CHAPTER', key }),
 
     // --- Aide, FAQ, tutoriels, support -------------------------------------
     // `topic` is `{ kind, id }`, so a tooltip or a FAQ link can open the centre

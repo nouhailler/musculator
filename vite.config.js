@@ -28,6 +28,12 @@ export default defineConfig({
         // can single it out; its hash still changes with its content.
         manualChunks(id) {
           if (id.includes('@zxing')) return 'zxing';
+          // No entry for the documentation on purpose. `data/docs.js` is
+          // reached only through a dynamic import, which already gives it its
+          // own chunk *and* the name "docs" — while naming it here made it a
+          // manual chunk, which Vite then `modulepreload`s from index.html.
+          // That downloaded 236 KB of reference material on every cold start,
+          // for a screen most sessions never open. Verified both ways.
           return undefined;
         },
       },

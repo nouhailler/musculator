@@ -313,6 +313,12 @@ export default function Profile() {
           style={{ width: '100%', padding: 11, justifyContent: 'center', marginBottom: 8 }}>
           Centre d'aide & FAQ
         </SecondaryButton>
+        {/* The reference half of the help: exhaustive rather than contextual —
+            every setting, every error, every permission, in one place. */}
+        <SecondaryButton icon="books" onClick={() => actions.openDoc()}
+          style={{ width: '100%', padding: 11, justifyContent: 'center', marginBottom: 8 }}>
+          Documentation complète
+        </SecondaryButton>
         <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
           <SecondaryButton icon="play-circle" onClick={() => actions.startTour('decouverte')}
             style={{ flex: 1, padding: 11, justifyContent: 'center' }}>

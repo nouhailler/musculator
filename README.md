@@ -91,6 +91,22 @@ Playwright resolves by default and needs the same running preview.
 
 ---
 
+## 📚 Documentation
+
+User-facing documentation lives in [`docs/`](docs/) — 69 French pages covering installation,
+every screen, every feature, every setting, permissions, data, offline behaviour,
+troubleshooting, the FAQ and the legal chapter. It follows `DOCUMENTATION_SPEC.md`.
+
+```bash
+npm run docs        # audit, then build
+npm run docs:audit  # coverage audit only — reads the code, not the docs' own claims
+npm run docs:serve  # build and serve the site on :4180
+```
+
+`npm run docs:audit` fails when a screen ships without a guide page, a setting without a
+reference row, an error message without an entry, a new external host without a paragraph in
+the data chapter, or a broken internal link. Start at [`docs/index.md`](docs/index.md).
+
 ## ✨ What's implemented
 
 Every screen carries a slim top bar: a **menu** on the left and a contextual **help** button

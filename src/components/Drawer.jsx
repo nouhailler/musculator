@@ -20,6 +20,7 @@ const ACTIONS = [
   { key: 'bodymap', label: 'Cartographie musculaire', icon: 'person', hint: 'Sollicitation et récupération' },
   { key: 'builder', label: 'Créer une séance', icon: 'plus-circle', hint: 'Composer ton propre programme' },
   { key: 'help', label: 'Aide, FAQ & support', icon: 'question', hint: 'Tutoriels, questions fréquentes, contact' },
+  { key: 'documentation', label: 'Documentation', icon: 'books', hint: "Tout l'app expliquée, chapitre par chapitre" },
 ];
 
 function Row({ icon, label, hint, active, onClick }) {

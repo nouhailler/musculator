@@ -8,6 +8,70 @@ grouped by date and reference the commit they landed in.
 
 ## [Unreleased]
 
+### Added
+
+- **La documentation complète est lisible dans l'application** (menu ☰ → « Documentation »,
+  ou Profil → « Documentation complète ») : 69 pages, 14 chapitres repliés qui tiennent sur
+  un écran, recherche sur l'ensemble, et des renvois d'une page à l'autre qui s'ouvrent sur
+  place — rien ne fait sortir de l'app, comme le reste de l'aide.
+  - **Aucune copie n'a été faite.** `data/docs.js` lit `docs/**/*.md` directement, donc l'app
+    rend exactement les fichiers que le site de doc construit et que `docs:audit` vérifie
+    contre le code. Une page ne peut pas être à jour d'un côté et périmée de l'autre.
+  - Le moteur Markdown a été déplacé en `src/lib/markdown.js`, sans React, pour que le script
+    de build l'importe au lieu d'en avoir un second ; `data/docSections.js` porte la liste des
+    chapitres, partagée elle aussi.
+  - **Chargement paresseux, ~236 Ko / 73 Ko gzip**, téléchargé à la première ouverture
+    seulement — vérifié : rien ne part au démarrage. Contrairement au décodeur de code-barres
+    il est **préchargé par le service worker**, parce que le chapitre Dépannage est
+    précisément ce qu'on cherche quand quelque chose ne marche pas, souvent sans réseau.
+  - Nommer ce chunk dans `manualChunks` le transformait en chunk manuel, que Vite
+    `modulepreload` depuis `index.html` : 236 Ko téléchargés à chaque démarrage à froid pour
+    un écran que la plupart des sessions n'ouvrent jamais. L'import dynamique suffit, et
+    `docs:audit` échoue désormais si l'entrée revient.
+
+### Changed
+
+- **Le sommaire du site de documentation est en accordéons**, un chapitre par section, replié
+  par défaut sauf celui de la page lue. Les sous-pages sont décalées et rattachées par un
+  filet vertical, bleu sur le chapitre courant. Le sommaire passait mal sur un écran de
+  téléphone ; il tient maintenant largement.
+- `docs:audit` couvre trois joints de plus — la lecture directe de `docs/`, l'accès depuis le
+  menu, et le chunk paresseux — et résout les liens avec la fonction même qu'utilise le
+  lecteur intégré, si bien qu'un lien qui passe l'audit ne peut pas être un cul-de-sac dans
+  l'app.
+
+- **Documentation utilisateur complète** (`docs/`, 69 pages en français), produite selon
+  `DOCUMENTATION_SPEC.md` et construite en site statique par `npm run docs:build`.
+  - **Une page par écran, par fonctionnalité et par problème** : les 22 écrans de `App.jsx`
+    (6 onglets + 16 vues superposées), 21 fonctionnalités, 11 articles de dépannage, les
+    33 questions fréquentes reprises avec les mêmes ancres que `data/faq.js`, plus les
+    chapitres paramètres, permissions, données, hors-ligne, référence, versions, légal et
+    support.
+  - **Elle décrit ce build, lu dans le code**, pas une application générique : les tranches
+    réellement persistées, les deux seuls hôtes joignables, les messages d'erreur mot pour
+    mot, et — champ par champ — ce qu'une analyse IA distante transmet.
+  - **Le contenu juridique est explicitement marqué « à valider »** et liste les points
+    `[À COMPLÉTER]` restants plutôt que de les combler par une rédaction automatique.
+- **`npm run docs:audit` — audit de couverture qui lit le code, pas la doc.** C'est le seul
+  garde-fou possible : rien dans le build n'échouait jusqu'ici quand un écran partait sans
+  documentation, qu'un réglage changeait de défaut ou qu'un message d'erreur était reformulé.
+  - Il vérifie que chaque écran de `App.jsx` est revendiqué par une page de guide (front
+    matter `couvre:`, dans les deux sens), que chaque clé de `defaultProfile` figure dans la
+    référence des paramètres, que chaque capacité navigateur réellement utilisée a son entrée
+    de permission, que chaque message d'erreur du code figure dans la référence des erreurs,
+    que chaque hôte `https://` joignable depuis `src/` est nommé au chapitre Données, que les
+    chiffres du catalogue cités dans la doc correspondent encore aux catalogues, que les 403
+    liens et ancres internes résolvent, et qu'aucun secret n'a atterri dans la doc.
+  - Il sort en code 1, donc il peut bloquer un commit ou un build.
+  - Il a trouvé, à sa première exécution, deux messages de validation non documentés
+    (« Renseigne au moins une distance ou une durée. », « Renseigne au moins les calories ou
+    les protéines. »).
+- **Moteur documentaire sans dépendance** (`scripts/docs-lib.mjs`, `scripts/gen-docs.mjs`) :
+  rendu Markdown d'un sous-ensemble suffisant, navigation, fil d'Ariane, sommaire de page,
+  précédent/suivant, et une recherche client sur les 69 pages. Responsive et thème
+  clair/sombre ; vérifié sans débordement horizontal en 390 px de large, tableaux compris.
+  §4 de la spec demande de ne pas ajouter de technologie pour la seule documentation.
+
 ### Fixed
 
 - **« Vérifier les mises à jour » pouvait rester bloqué sur « Recherche… » indéfiniment.**

@@ -157,3 +157,112 @@
 @media (min-width: 481px) {
   .app { min-height: 100dvh; margin: 0 auto; border-radius: 0; }
 }
+
+/* --- Documentation ------------------------------------------------------- */
+/* Rendered Markdown (overlays/Documentation.jsx). The doc pages are prose with
+   tables and code, which the rest of the app never has — so this is the one
+   place that needs element selectors rather than inline styles. Every colour
+   goes through a token, like everywhere else, so both themes follow. */
+
+.doc-body {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--color-neutral-200);
+  overflow-wrap: break-word;
+}
+.doc-body > :first-child { margin-top: 0; }
+.doc-body h1 {
+  font-family: var(--font-heading);
+  font-size: 21px;
+  line-height: 1.25;
+  margin: 0 0 14px;
+  color: var(--color-text);
+}
+.doc-body h2 {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  margin: 26px 0 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-divider);
+  color: var(--color-text);
+}
+.doc-body h3 { font-size: 14px; margin: 18px 0 6px; color: var(--color-text); }
+.doc-body h4, .doc-body h5, .doc-body h6 {
+  font-size: 13px; margin: 14px 0 4px; color: var(--color-text);
+}
+.doc-body p { margin: 0 0 11px; }
+.doc-body ul, .doc-body ol { margin: 0 0 11px; padding-left: 20px; }
+.doc-body li { margin: 4px 0; }
+.doc-body strong { color: var(--color-text); }
+.doc-body a { color: var(--color-accent-200); text-decoration: none; }
+.doc-body a:active { opacity: .6; }
+/* The `#` deep-links of the static site have nothing to point at in the app. */
+.doc-body a.anchor { display: none; }
+.doc-body code {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-sm);
+  padding: 1px 5px;
+  font-size: .88em;
+}
+.doc-body pre {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  overflow-x: auto;
+  margin: 0 0 12px;
+}
+.doc-body pre code { background: none; border: none; padding: 0; font-size: 11.5px; }
+.doc-body blockquote {
+  margin: 0 0 12px;
+  padding: 2px 12px;
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-surface);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+.doc-body blockquote p:last-child { margin-bottom: 0; }
+.doc-body hr { border: 0; border-top: 1px solid var(--color-divider); margin: 20px 0; }
+.doc-body img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
+/* A wide table scrolls inside its own box; the page itself must never scroll
+   sideways on a phone. */
+.doc-body .table-wrap {
+  overflow-x: auto;
+  margin: 0 0 14px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  -webkit-overflow-scrolling: touch;
+}
+.doc-body table { border-collapse: collapse; width: 100%; font-size: 12px; }
+.doc-body th, .doc-body td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--color-divider);
+  vertical-align: top;
+  text-align: left;
+}
+.doc-body th {
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.doc-body tbody tr:last-child td { border-bottom: none; }
+/* Page outline, spliced under the H1 by overlays/Documentation.jsx. */
+.doc-body .doc-toc {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  margin: 0 0 18px;
+}
+.doc-body .doc-toc b {
+  display: block;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--color-neutral-500);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.doc-body .doc-toc a { display: block; padding: 3px 0; font-size: 12.5px; }
+.doc-body .doc-toc a.l3 { padding-left: 12px; font-size: 11.5px; }

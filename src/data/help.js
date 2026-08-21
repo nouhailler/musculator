@@ -204,6 +204,17 @@ export const HELP = {
       ['Estimations', "Les valeurs viennent d'un modèle de langage, pas d'une table officielle : elles sont approximatives et à vérifier si un aliment compte vraiment."],
     ],
   },
+  documentation: {
+    titre: 'Documentation',
+    intro: "La documentation complète de l'application, chapitre par chapitre — le même texte que le site de doc, lisible ici sans réseau.",
+    points: [
+      ['Chapitres repliés', "Tout est plié par défaut : on voit les 14 chapitres d'un coup d'œil, on n'en ouvre qu'un. Le chapitre de la page lue reste ouvert quand tu reviens au sommaire."],
+      ['Recherche', "Un seul champ cherche dans toutes les pages. Les accents ne comptent pas, et chaque mot tapé restreint la recherche."],
+      ['Aide ou documentation ?', "Le « ? » répond « qu'est-ce que cet écran », le centre d'aide « comment faire ». La documentation, elle, est exhaustive : tous les réglages, tous les messages d'erreur, toutes les permissions, ce qui marche hors-ligne."],
+      ['Liens internes', "Les renvois d'une page à l'autre s'ouvrent ici, jamais dans le navigateur. Rien ne te fait sortir de l'app."],
+      ['Premier chargement', "La documentation se télécharge à la première ouverture seulement, puis reste lisible hors connexion."],
+    ],
+  },
   help: {
     titre: "Centre d'aide",
     intro: "Tout ce qui explique l'app, au même endroit : recherche, questions fréquentes, tutoriels guidés et contact du support.",

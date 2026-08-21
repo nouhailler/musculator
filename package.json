@@ -12,7 +12,11 @@
     "gen-prompt": "node scripts/gen-prompt.mjs",
     "shots": "node scripts/shots.mjs",
     "check-catalogue": "node scripts/check-catalogue.mjs",
-    "test:legal": "node scripts/legal.mjs"
+    "test:legal": "node scripts/legal.mjs",
+    "docs:build": "node scripts/gen-docs.mjs",
+    "docs:serve": "node scripts/gen-docs.mjs --serve",
+    "docs:audit": "node scripts/audit-docs.mjs",
+    "docs": "npm run docs:audit && npm run docs:build"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
